@@ -8,7 +8,7 @@ The result is a different handling of Initializable.sol:
 
 - only one `initializer` modifier in Initializable.sol
 - "re-initialize" proxies (calling init on an already deployed proxy) is possible
-- not having to worry about an ("uninitialized implementation")[https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a]
+- not having to worry about an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
 
 Note: the contract /src/lib/proxy/UUPSVersionedUpgrade.sol is not written using the _diamond standard_,
 but is still compatible with EIP-2535.
