@@ -1,0 +1,15 @@
+!.prettierrc
+
+node_modules
+.env
+coverage
+coverage.json
+typechain
+
+json
+
+out
+
+#Hardhat files
+cache
+artifacts
