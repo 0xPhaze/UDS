@@ -19,15 +19,14 @@ new variables or adding new contract inheritance containing storage variables.
 
 ```ml
 src
-└── lib
-    ├── AccessControlUDS.sol - "OpenZeppelin's Access Control adapted for Diamond Storage"
-    ├── EIP712PermitUDS.sol - "EIP712 Permit"
-    ├── ERC20UDS.sol - "Solmate's ERC20 adapted for Diamond Storage"
-    ├── ERC721UDS.sol - "Solmate's ERC721 adapted for Diamond Storage"
-    ├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSVersionedUpgrade"
-    ├── OwnableUDS.sol - "Ownable Upgradeable"
-    └── proxy
-        ├── ERC1822Versioned.sol - "ERC1822 extended with proxiableVersion"
-        ├── ERC1967VersionedUDS.sol - "ERC1967, additionally keeps track of implementation version"
-        └── UUPSVersionedUpgrade.sol - "UUPSUpgrade.sol extended with proxiableVersion"
+├── AccessControlUDS.sol - "OpenZeppelin's Access Control adapted for Diamond Storage"
+├── EIP712PermitUDS.sol - "EIP712 Permit"
+├── ERC20UDS.sol - "Solmate's ERC20 adapted for Diamond Storage"
+├── ERC721UDS.sol - "Solmate's ERC721 adapted for Diamond Storage"
+├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSVersionedUpgrade"
+├── OwnableUDS.sol - "Ownable Upgradeable"
+└── proxy
+    ├── ERC1822Versioned.sol - "ERC1822 extended with proxiableVersion"
+    ├── ERC1967VersionedUDS.sol - "ERC1967, additionally keeps track of implementation version"
+    └── UUPSVersionedUpgrade.sol - "UUPSUpgrade.sol extended with proxiableVersion"
 ```
