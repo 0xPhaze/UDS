@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {UUPSVersionedUpgrade} from "../../lib/proxy/UUPSVersionedUpgrade.sol";
-import "../../lib/ERC721UDS.sol";
+import {UUPSVersionedUpgrade} from "../../proxy/UUPSVersionedUpgrade.sol";
+import "../../ERC721UDS.sol";
 
 contract MockERC721UDS is UUPSVersionedUpgrade(1), ERC721UDS {
     function init(string memory _name, string memory _symbol) external initializer {

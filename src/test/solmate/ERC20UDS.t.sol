@@ -5,7 +5,7 @@ import {DSTestPlus} from "solmate/test/utils/DSTestPlus.sol";
 import {DSInvariantTest} from "solmate/test/utils/DSInvariantTest.sol";
 
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
-import {ERC1967Proxy} from "../../lib/proxy/ERC1967VersionedUDS.sol";
+import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
 
 contract ERC20Test is DSTestPlus {
     MockERC20UDS token;

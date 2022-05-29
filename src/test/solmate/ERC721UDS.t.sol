@@ -7,7 +7,7 @@ import {DSInvariantTest} from "solmate/test/utils/DSInvariantTest.sol";
 import {ERC721TokenReceiver} from "solmate/tokens/ERC721.sol";
 
 import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
-import {ERC1967Proxy} from "../../lib/proxy/ERC1967VersionedUDS.sol";
+import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
     address public operator;

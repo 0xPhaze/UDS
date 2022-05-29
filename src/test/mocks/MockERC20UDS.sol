@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UUPSVersionedUpgrade} from "../../lib/proxy/UUPSVersionedUpgrade.sol";
-import "../../lib/ERC20UDS.sol";
+import {UUPSVersionedUpgrade} from "../../proxy/UUPSVersionedUpgrade.sol";
+import "../../ERC20UDS.sol";
 
 contract MockERC20UDS is UUPSVersionedUpgrade(1), ERC20UDS {
     function init(

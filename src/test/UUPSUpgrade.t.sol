@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
-import {ERC1967Proxy} from "../lib/proxy/ERC1967VersionedUDS.sol";
-import {UUPSVersionedUpgrade} from "../lib/proxy/UUPSVersionedUpgrade.sol";
+import {ERC1967Proxy} from "../proxy/ERC1967VersionedUDS.sol";
+import {UUPSVersionedUpgrade} from "../proxy/UUPSVersionedUpgrade.sol";
 
 error InvalidUpgradeVersion();
 
