@@ -1206,7 +1206,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
         for (uint256 i = 0; i < minLength; i++) {
             uint256 id = ids[i];
-            address to = tos[i] == address(0) ? address(0xBEEF) : tos[i];
+            address to = tos[i] == address(0) || tos[i] == address(token) ? address(0xBEEF) : tos[i];
 
             uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
 
