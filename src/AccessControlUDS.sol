@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 
-/* ------------- Storage ------------- */
+/* ============= Storage ============= */
 
 // keccak256("diamond.storage.access.control") == 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd
 bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
@@ -23,10 +23,12 @@ function ds() pure returns (AccessControlDS storage diamondStorage) {
     }
 }
 
-/* ------------- Contract ------------- */
+/* ============= Errors ============= */
 
 error AccountMissingRole();
 error RenounceForCallerOnly();
+
+/* ============= AccessControlUDS ============= */
 
 abstract contract AccessControlUDS is InitializableUDS {
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);

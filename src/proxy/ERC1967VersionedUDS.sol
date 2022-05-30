@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC1822Versioned} from "./ERC1822Versioned.sol";
 
-/* ------------- Storage ------------- */
+/* ============= Storage ============= */
 
 // keccak256("eip1967.proxy.implementation") - 1 = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 bytes32 constant DIAMOND_STORAGE_ERC1967_UPGRADE = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
@@ -19,14 +19,14 @@ function ds() pure returns (ERC1967VersionedUpgradeDS storage diamondStorage) {
     }
 }
 
-/* ------------- Errors ------------- */
+/* ============= Errors ============= */
 
 error InvalidUUID();
 error InvalidOwner();
 error NotAContract();
 error InvalidUpgradeVersion();
 
-/* ------------- ERC1967Versioned ------------- */
+/* ============= ERC1967Versioned ============= */
 
 abstract contract ERC1967Versioned {
     event Upgraded(address indexed implementation, uint256 indexed version);

@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import {InitializableUDS} from "./InitializableUDS.sol";
 import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
 
-/* ------------- Storage ------------- */
+/* ============= Storage ============= */
 
 struct ERC20DS {
     string name;
@@ -24,7 +24,7 @@ function ds() pure returns (ERC20DS storage diamondStorage) {
     }
 }
 
-/* ------------- Errors ------------- */
+/* ============= Errors ============= */
 
 error CallerNotOwnerNorApproved();
 error NonexistentToken();
@@ -41,7 +41,7 @@ error MintExceedsMaxPerWallet();
 error TransferFromIncorrectOwner();
 error TransferToZeroAddress();
 
-/* ------------- ERC20UDS ------------- */
+/* ============= ERC20UDS ============= */
 
 /// @notice Adapted for usage with Diamond Storage
 /// @author phaze (https://github.com/0xPhaze)

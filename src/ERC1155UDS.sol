@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-/* ------------- Storage ------------- */
+/* ============= Storage ============= */
 
 struct ERC1155DS {
     mapping(address => mapping(uint256 => uint256)) balanceOf;
@@ -17,12 +17,14 @@ function ds() pure returns (ERC1155DS storage diamondStorage) {
     }
 }
 
-/* ------------- Errors ------------- */
+/* ============= Errors ============= */
 
 error NotAuthorized();
 error LengthMismatch();
 error UnsafeRecipient();
 error InvalidRecipient();
+
+/* ============= ERC1155UDS ============= */
 
 /// @notice Adapted for usage with Diamond Storage
 /// @author phaze (https://github.com/0xPhaze)
@@ -65,8 +67,6 @@ abstract contract ERC1155UDS {
 
         balances = new uint256[](owners.length);
 
-        // Unchecked because the only math done is incrementing
-        // the array index counter which cannot possibly overflow.
         unchecked {
             for (uint256 i = 0; i < owners.length; ++i) {
                 balances[i] = ds().balanceOf[owners[i]][ids[i]];
@@ -125,7 +125,6 @@ abstract contract ERC1155UDS {
         if (ids.length != amounts.length) revert LengthMismatch();
         if (msg.sender != from && !ds().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
 
-        // Storing these outside the loop saves ~15 gas per iteration.
         uint256 id;
         uint256 amount;
 
@@ -136,8 +135,6 @@ abstract contract ERC1155UDS {
             ds().balanceOf[from][id] -= amount;
             ds().balanceOf[to][id] += amount;
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
             unchecked {
                 ++i;
             }
@@ -179,15 +176,13 @@ abstract contract ERC1155UDS {
         uint256[] memory amounts,
         bytes memory data
     ) internal virtual {
-        uint256 idsLength = ids.length; // Saves MLOADs.
+        uint256 idsLength = ids.length;
 
         if (idsLength != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < idsLength; ) {
             ds().balanceOf[to][ids[i]] += amounts[i];
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
             unchecked {
                 ++i;
             }
@@ -208,15 +203,13 @@ abstract contract ERC1155UDS {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal virtual {
-        uint256 idsLength = ids.length; // Saves MLOADs.
+        uint256 idsLength = ids.length;
 
         if (idsLength != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < idsLength; ) {
             ds().balanceOf[from][ids[i]] -= amounts[i];
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
             unchecked {
                 ++i;
             }

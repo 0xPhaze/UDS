@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 
-/* ------------- Storage ------------- */
+/* ============= Storage ============= */
 
 struct EIP2612DS {
     mapping(address => uint256) nonces;
@@ -18,12 +18,12 @@ function ds() pure returns (EIP2612DS storage diamondStorage) {
     }
 }
 
-/* ------------- Errors ------------- */
+/* ============= Errors ============= */
 
 error InvalidSigner();
 error PermitDeadlineExpired();
 
-/* ------------- EIP712PermitUDS ------------- */
+/* ============= EIP712PermitUDS ============= */
 
 abstract contract EIP712PermitUDS is InitializableUDS {
     // uint256 internal immutable INITIAL_CHAIN_ID;
