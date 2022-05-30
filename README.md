@@ -2,13 +2,13 @@
 
 A collection of commonly used contracts using diamond storage.
 
-UUPSUpgradeV.sol (in contrast to Openzeppelin's UUPSUpgrade.sol)
-keeps track of an implementation version which is checked when upgrading.
-The result is a different handling of Initializable.sol:
+Why use UUPSUpgradeV.sol (in contrast to Openzeppelin's UUPSUpgrade.sol)?
 
-- only one `initializer` modifier in Initializable.sol
-- "re-initialize" proxies (calling init on an already deployed proxy) is possible
-- not having to worry about an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
+- No worrying about storage gaps or adding/removing inheritance (Diamond Storage)
+- Keeps track of an implementation version which is checked when upgrading
+- Only one `initializer` modifier in Initializable.sol
+- "Re-initialize" proxies (calling init on an already deployed proxy) is possible
+- Removes possiblity of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
 
 Note: the contract /src/lib/proxy/UUPSUpgradeV.sol is not written using the _diamond standard_,
 but is still compatible with EIP-2535.
@@ -23,6 +23,7 @@ src
 ├── EIP712PermitUDS.sol - "EIP712 Permit"
 ├── ERC20UDS.sol - "Solmate's ERC20 adapted for Diamond Storage"
 ├── ERC721UDS.sol - "Solmate's ERC721 adapted for Diamond Storage"
+├── ERC1155UDS.sol - "Solmate's ERC1155 adapted for Diamond Storage"
 ├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSUpgradeV"
 ├── OwnableUDS.sol - "Ownable Upgradeable"
 └── proxy
