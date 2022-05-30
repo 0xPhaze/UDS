@@ -2,7 +2,7 @@
 
 A collection of commonly used contracts using diamond storage.
 
-UUPSVersionedUpgrade.sol (in contrast to Openzeppelin's UUPSUpgrade.sol)
+UUPSUpgradeV.sol (in contrast to Openzeppelin's UUPSUpgrade.sol)
 keeps track of an implementation version which is checked when upgrading.
 The result is a different handling of Initializable.sol:
 
@@ -10,7 +10,7 @@ The result is a different handling of Initializable.sol:
 - "re-initialize" proxies (calling init on an already deployed proxy) is possible
 - not having to worry about an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
 
-Note: the contract /src/lib/proxy/UUPSVersionedUpgrade.sol is not written using the _diamond standard_,
+Note: the contract /src/lib/proxy/UUPSUpgradeV.sol is not written using the _diamond standard_,
 but is still compatible with EIP-2535.
 These contracts simply use _diamond storage_ (where storage is located at some arbitrary slot as opposed to in succession)
 to facilitate upgrades.
@@ -23,10 +23,10 @@ src
 ├── EIP712PermitUDS.sol - "EIP712 Permit"
 ├── ERC20UDS.sol - "Solmate's ERC20 adapted for Diamond Storage"
 ├── ERC721UDS.sol - "Solmate's ERC721 adapted for Diamond Storage"
-├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSVersionedUpgrade"
+├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSUpgradeV"
 ├── OwnableUDS.sol - "Ownable Upgradeable"
 └── proxy
     ├── ERC1822Versioned.sol - "ERC1822 extended with proxiableVersion"
     ├── ERC1967VersionedUDS.sol - "ERC1967, additionally keeps track of implementation version"
-    └── UUPSVersionedUpgrade.sol - "UUPSUpgrade.sol extended with proxiableVersion"
+    └── UUPSUpgradeV.sol - "UUPSUpgrade.sol extended with proxiableVersion"
 ```

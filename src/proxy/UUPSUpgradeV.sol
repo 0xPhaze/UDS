@@ -9,11 +9,11 @@ import {ERC1967Versioned, DIAMOND_STORAGE_ERC1967_UPGRADE} from "./ERC1967Versio
 // keccak256("diamond.storage.uups.versioned.upgrade") == 0x84baf5225d2c25e851ba08f5463fbda2857188d63388c0dc9b62907467b54b47;
 bytes32 constant DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE = 0x84baf5225d2c25e851ba08f5463fbda2857188d63388c0dc9b62907467b54b47;
 
-struct UUPSVersionedUpgradeDS {
+struct UUPSUpgradeVDS {
     uint256 version;
 }
 
-function ds() pure returns (UUPSVersionedUpgradeDS storage diamondStorage) {
+function ds() pure returns (UUPSUpgradeVDS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE
     }
@@ -24,9 +24,9 @@ function ds() pure returns (UUPSVersionedUpgradeDS storage diamondStorage) {
 error OnlyProxyCallAllowed();
 error DelegateCallNotAllowed();
 
-/* ------------- UUPSVersionedUpgrade ------------- */
+/* ------------- UUPSUpgradeV ------------- */
 
-abstract contract UUPSVersionedUpgrade is ERC1967Versioned, ERC1822Versioned {
+abstract contract UUPSUpgradeV is ERC1967Versioned, ERC1822Versioned {
     address private immutable __implementation = address(this);
     uint256 private immutable __version;
 

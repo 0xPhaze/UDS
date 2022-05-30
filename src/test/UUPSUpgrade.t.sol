@@ -5,11 +5,11 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import {ERC1967Proxy} from "../proxy/ERC1967VersionedUDS.sol";
-import {UUPSVersionedUpgrade} from "../proxy/UUPSVersionedUpgrade.sol";
+import {UUPSUpgradeV} from "../proxy/UUPSUpgradeV.sol";
 
 error InvalidUpgradeVersion();
 
-contract MockLogicV1 is UUPSVersionedUpgrade(1) {
+contract MockLogicV1 is UUPSUpgradeV(1) {
     address public owner = address(0xb0b);
 
     function fn() public pure returns (uint256) {
@@ -23,7 +23,7 @@ contract MockLogicV1 is UUPSVersionedUpgrade(1) {
     function _authorizeUpgrade() internal virtual override {}
 }
 
-contract MockLogicV2 is UUPSVersionedUpgrade(2) {
+contract MockLogicV2 is UUPSUpgradeV(2) {
     address public owner = address(1);
 
     function fn2() public pure returns (uint256) {
@@ -33,7 +33,7 @@ contract MockLogicV2 is UUPSVersionedUpgrade(2) {
     function _authorizeUpgrade() internal virtual override {}
 }
 
-contract TestUUPSVersionedUpgrade is Test {
+contract TestUUPSUpgradeV is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
     address tester = address(this);

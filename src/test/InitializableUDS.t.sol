@@ -5,12 +5,12 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import {ERC1967Proxy} from "../proxy/ERC1967VersionedUDS.sol";
-import {UUPSVersionedUpgrade} from "../proxy/UUPSVersionedUpgrade.sol";
+import {UUPSUpgradeV} from "../proxy/UUPSUpgradeV.sol";
 
 import "../InitializableUDS.sol";
 
-contract Logic is UUPSVersionedUpgrade, InitializableUDS {
-    constructor(uint256 version) UUPSVersionedUpgrade(version) {}
+contract Logic is UUPSUpgradeV, InitializableUDS {
+    constructor(uint256 version) UUPSUpgradeV(version) {}
 
     bool public initialized;
 
