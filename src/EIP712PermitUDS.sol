@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {InitializableUDS} from "./InitializableUDS.sol";
-
 /* ============= Storage ============= */
 
 struct EIP2612DS {
@@ -25,7 +23,7 @@ error PermitDeadlineExpired();
 
 /* ============= EIP712PermitUDS ============= */
 
-abstract contract EIP712PermitUDS is InitializableUDS {
+abstract contract EIP712PermitUDS {
     /* ------------- Public ------------- */
 
     function nonces(address owner) public view returns (uint256) {
