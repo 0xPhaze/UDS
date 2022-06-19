@@ -14,7 +14,8 @@
     "dotenv": "^16.0.0"
   },
   "scripts": {
-    "test": "forge test -vvv --match-contract ERC1155Test",
+    "test": "forge test -vvv",
+    "testERC721": "forge test -vvv --match-contract ERC721Test",
     "testx": "forge test -vvv --no-match-path contracts/test/solmate/\\*.t.sol",
     "deploy": "npx hardhat run scripts/deploy.js"
   }

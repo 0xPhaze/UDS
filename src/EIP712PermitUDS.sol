@@ -9,12 +9,12 @@ struct EIP2612DS {
     mapping(address => uint256) nonces;
 }
 
-// keccak256("diamond.storage.eip-2612") == 0x849c7f5b4ebbadaf9ded81b9b15e8a309fe7876a607687fda84fe7e7355a02ee;
-bytes32 constant DIAMOND_STORAGE_EIP_2612 = 0x849c7f5b4ebbadaf9ded81b9b15e8a309fe7876a607687fda84fe7e7355a02ee;
+// keccak256("diamond.storage.eip.712.permit") == 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
+bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 
 function ds() pure returns (EIP2612DS storage diamondStorage) {
     assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_EIP_2612
+        diamondStorage.slot := DIAMOND_STORAGE_EIP_712_PERMIT
     }
 }
 
@@ -26,28 +26,14 @@ error PermitDeadlineExpired();
 /* ============= EIP712PermitUDS ============= */
 
 abstract contract EIP712PermitUDS is InitializableUDS {
-    // uint256 internal immutable INITIAL_CHAIN_ID;
-
-    // bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
-
-    // function __EIP2612_init() internal initializer {
-    //     INITIAL_CHAIN_ID = block.chainid;
-    //     INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
-    // }
-
     /* ------------- Public ------------- */
 
     function nonces(address owner) public view returns (uint256) {
         return ds().nonces[owner];
     }
 
-    // FIX check gas usage on these
+    // depends on address(this), so can't be pre-computed
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        // return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
-        return computeDomainSeparator();
-    }
-
-    function computeDomainSeparator() internal view virtual returns (bytes32) {
         return
             keccak256(
                 abi.encode(

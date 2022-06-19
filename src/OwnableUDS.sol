@@ -21,15 +21,14 @@ function ds() pure returns (OwnableDS storage diamondStorage) {
 /* ============= Errors ============= */
 
 error CallerNotOwner();
+error CallerNotNominated();
 
 /* ============= OwnableUDS ============= */
 
 abstract contract OwnableUDS is InitializableUDS {
-    address private immutable deployer;
+    event OwnerChanged(address oldOwner, address newOwner);
 
-    constructor() {
-        deployer = msg.sender; // fallback owner
-    }
+    address private immutable fallbackOwner = msg.sender;
 
     function __Ownable_init() internal initializer {
         ds().owner = msg.sender;
@@ -39,11 +38,13 @@ abstract contract OwnableUDS is InitializableUDS {
 
     function owner() public view returns (address) {
         address _owner = ds().owner;
-        return _owner != address(0) ? _owner : deployer;
+        return _owner != address(0) ? _owner : fallbackOwner;
     }
 
     function transferOwnership(address newOwner) external onlyOwner {
         ds().owner = newOwner;
+
+        emit OwnerChanged(msg.sender, newOwner);
     }
 
     /* ------------- Modifier ------------- */
