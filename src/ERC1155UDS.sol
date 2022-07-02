@@ -11,7 +11,7 @@ struct ERC1155DS {
 // keccak256("diamond.storage.erc1155") == 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
 bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
 
-function ds() pure returns (ERC1155DS storage diamondStorage) {
+function s() pure returns (ERC1155DS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_ERC1155
     }
@@ -54,7 +54,7 @@ abstract contract ERC1155UDS {
     function uri(uint256 id) public view virtual returns (string memory);
 
     function balanceOf(address owner, uint256 id) public view virtual returns (uint256) {
-        return ds().balanceOf[owner][id];
+        return s().balanceOf[owner][id];
     }
 
     function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
@@ -69,13 +69,13 @@ abstract contract ERC1155UDS {
 
         unchecked {
             for (uint256 i = 0; i < owners.length; ++i) {
-                balances[i] = ds().balanceOf[owners[i]][ids[i]];
+                balances[i] = s().balanceOf[owners[i]][ids[i]];
             }
         }
     }
 
     function isApprovedForAll(address operator, address owner) public view returns (bool) {
-        return ds().isApprovedForAll[operator][owner];
+        return s().isApprovedForAll[operator][owner];
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
@@ -88,7 +88,7 @@ abstract contract ERC1155UDS {
     /* ------------- Public ------------- */
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        ds().isApprovedForAll[msg.sender][operator] = approved;
+        s().isApprovedForAll[msg.sender][operator] = approved;
 
         emit ApprovalForAll(msg.sender, operator, approved);
     }
@@ -100,10 +100,10 @@ abstract contract ERC1155UDS {
         uint256 amount,
         bytes calldata data
     ) public virtual {
-        if (msg.sender != from && !ds().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
+        if (msg.sender != from && !s().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
 
-        ds().balanceOf[from][id] -= amount;
-        ds().balanceOf[to][id] += amount;
+        s().balanceOf[from][id] -= amount;
+        s().balanceOf[to][id] += amount;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -123,7 +123,7 @@ abstract contract ERC1155UDS {
         bytes calldata data
     ) public virtual {
         if (ids.length != amounts.length) revert LengthMismatch();
-        if (msg.sender != from && !ds().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
+        if (msg.sender != from && !s().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
 
         uint256 id;
         uint256 amount;
@@ -132,8 +132,8 @@ abstract contract ERC1155UDS {
             id = ids[i];
             amount = amounts[i];
 
-            ds().balanceOf[from][id] -= amount;
-            ds().balanceOf[to][id] += amount;
+            s().balanceOf[from][id] -= amount;
+            s().balanceOf[to][id] += amount;
 
             unchecked {
                 ++i;
@@ -158,7 +158,7 @@ abstract contract ERC1155UDS {
         uint256 amount,
         bytes memory data
     ) internal virtual {
-        ds().balanceOf[to][id] += amount;
+        s().balanceOf[to][id] += amount;
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
@@ -181,7 +181,7 @@ abstract contract ERC1155UDS {
         if (idsLength != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < idsLength; ) {
-            ds().balanceOf[to][ids[i]] += amounts[i];
+            s().balanceOf[to][ids[i]] += amounts[i];
 
             unchecked {
                 ++i;
@@ -208,7 +208,7 @@ abstract contract ERC1155UDS {
         if (idsLength != amounts.length) revert LengthMismatch();
 
         for (uint256 i = 0; i < idsLength; ) {
-            ds().balanceOf[from][ids[i]] -= amounts[i];
+            s().balanceOf[from][ids[i]] -= amounts[i];
 
             unchecked {
                 ++i;
@@ -223,7 +223,7 @@ abstract contract ERC1155UDS {
         uint256 id,
         uint256 amount
     ) internal virtual {
-        ds().balanceOf[from][id] -= amount;
+        s().balanceOf[from][id] -= amount;
 
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }

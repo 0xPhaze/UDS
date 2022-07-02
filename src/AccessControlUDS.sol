@@ -17,7 +17,7 @@ struct AccessControlDS {
     mapping(bytes32 => RoleData) roles;
 }
 
-function ds() pure returns (AccessControlDS storage diamondStorage) {
+function s() pure returns (AccessControlDS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL
     }
@@ -52,11 +52,11 @@ abstract contract AccessControlUDS is InitializableUDS {
     }
 
     function hasRole(bytes32 role, address account) public view virtual returns (bool) {
-        return ds().roles[role].members[account];
+        return s().roles[role].members[account];
     }
 
     function getRoleAdmin(bytes32 role) public view virtual returns (bytes32) {
-        return ds().roles[role].adminRole;
+        return s().roles[role].adminRole;
     }
 
     function grantRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
@@ -90,21 +90,21 @@ abstract contract AccessControlUDS is InitializableUDS {
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
         bytes32 previousAdminRole = getRoleAdmin(role);
 
-        ds().roles[role].adminRole = adminRole;
+        s().roles[role].adminRole = adminRole;
 
         emit RoleAdminChanged(role, previousAdminRole, adminRole);
     }
 
     function _grantRole(bytes32 role, address account) internal virtual {
         if (!hasRole(role, account)) {
-            ds().roles[role].members[account] = true;
+            s().roles[role].members[account] = true;
             emit RoleGranted(role, account, msg.sender);
         }
     }
 
     function _revokeRole(bytes32 role, address account) internal virtual {
         if (hasRole(role, account)) {
-            ds().roles[role].members[account] = false;
+            s().roles[role].members[account] = false;
             emit RoleRevoked(role, account, msg.sender);
         }
     }

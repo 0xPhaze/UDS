@@ -18,7 +18,7 @@ struct ERC20DS {
 // keccak256("diamond.storage.erc20") == 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
 bytes32 constant DIAMOND_STORAGE_ERC20 = 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
 
-function ds() pure returns (ERC20DS storage diamondStorage) {
+function s() pure returns (ERC20DS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_ERC20
     }
@@ -57,41 +57,41 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         string memory _symbol,
         uint8 _decimals
     ) internal initializer {
-        ds().name = _name;
-        ds().symbol = _symbol;
-        ds().decimals = _decimals;
+        s().name = _name;
+        s().symbol = _symbol;
+        s().decimals = _decimals;
     }
 
     /* ------------- View ------------- */
 
     function name() external view returns (string memory) {
-        return ds().name;
+        return s().name;
     }
 
     function symbol() external view returns (string memory) {
-        return ds().symbol;
+        return s().symbol;
     }
 
     function decimals() external view returns (uint8) {
-        return ds().decimals;
+        return s().decimals;
     }
 
     function totalSupply() external view returns (uint256) {
-        return ds().totalSupply;
+        return s().totalSupply;
     }
 
     function balanceOf(address owner) public view returns (uint256) {
-        return ds().balances[owner];
+        return s().balances[owner];
     }
 
     function allowance(address operator, address owner) public view returns (uint256) {
-        return ds().allowance[operator][owner];
+        return s().allowance[operator][owner];
     }
 
     /* ------------- Public ------------- */
 
     function approve(address spender, uint256 amount) public virtual returns (bool) {
-        ds().allowance[msg.sender][spender] = amount;
+        s().allowance[msg.sender][spender] = amount;
 
         emit Approval(msg.sender, spender, amount);
 
@@ -99,10 +99,10 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
     }
 
     function transfer(address to, uint256 amount) public virtual returns (bool) {
-        ds().balances[msg.sender] -= amount;
+        s().balances[msg.sender] -= amount;
 
         unchecked {
-            ds().balances[to] += amount;
+            s().balances[to] += amount;
         }
 
         emit Transfer(msg.sender, to, amount);
@@ -115,14 +115,14 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         address to,
         uint256 amount
     ) public virtual returns (bool) {
-        uint256 allowed = ds().allowance[from][msg.sender];
+        uint256 allowed = s().allowance[from][msg.sender];
 
-        if (allowed != type(uint256).max) ds().allowance[from][msg.sender] = allowed - amount;
+        if (allowed != type(uint256).max) s().allowance[from][msg.sender] = allowed - amount;
 
-        ds().balances[from] -= amount;
+        s().balances[from] -= amount;
 
         unchecked {
-            ds().balances[to] += amount;
+            s().balances[to] += amount;
         }
 
         emit Transfer(from, to, amount);
@@ -138,10 +138,10 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         uint256 deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s
+        bytes32 s_
     ) public virtual {
-        if (_usePermit(owner, spender, value, deadline, v, r, s)) {
-            ds().allowance[owner][spender] = value;
+        if (_usePermit(owner, spender, value, deadline, v, r, s_)) {
+            s().allowance[owner][spender] = value;
 
             emit Approval(owner, spender, value);
         }
@@ -150,20 +150,20 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
     /* ------------- Internal ------------- */
 
     function _mint(address to, uint256 amount) internal virtual {
-        ds().totalSupply += amount;
+        s().totalSupply += amount;
 
         unchecked {
-            ds().balances[to] += amount;
+            s().balances[to] += amount;
         }
 
         emit Transfer(address(0), to, amount);
     }
 
     function _burn(address from, uint256 amount) internal virtual {
-        ds().balances[from] -= amount;
+        s().balances[from] -= amount;
 
         unchecked {
-            ds().totalSupply -= amount;
+            s().totalSupply -= amount;
         }
 
         emit Transfer(from, address(0), amount);

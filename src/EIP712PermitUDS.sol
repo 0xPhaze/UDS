@@ -10,7 +10,7 @@ struct EIP2612DS {
 // keccak256("diamond.storage.eip.712.permit") == 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 
-function ds() pure returns (EIP2612DS storage diamondStorage) {
+function s() pure returns (EIP2612DS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_EIP_712_PERMIT
     }
@@ -27,7 +27,7 @@ abstract contract EIP712PermitUDS {
     /* ------------- Public ------------- */
 
     function nonces(address owner) public view returns (uint256) {
-        return ds().nonces[owner];
+        return s().nonces[owner];
     }
 
     // depends on address(this), so can't be pre-computed
@@ -53,11 +53,11 @@ abstract contract EIP712PermitUDS {
         uint256 deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s
+        bytes32 s_
     ) internal virtual returns (bool) {
         if (deadline < block.timestamp) revert PermitDeadlineExpired();
 
-        uint256 nonce = ds().nonces[owner]++;
+        uint256 nonce = s().nonces[owner]++;
 
         unchecked {
             address recoveredAddress = ecrecover(
@@ -81,7 +81,7 @@ abstract contract EIP712PermitUDS {
                 ),
                 v,
                 r,
-                s
+                s_
             );
 
             if (recoveredAddress == address(0) || recoveredAddress != owner) revert InvalidSigner();

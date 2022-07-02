@@ -13,7 +13,7 @@ struct UUPSUpgradeVDS {
     uint256 version;
 }
 
-function ds() pure returns (UUPSUpgradeVDS storage diamondStorage) {
+function s() pure returns (UUPSUpgradeVDS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE
     }

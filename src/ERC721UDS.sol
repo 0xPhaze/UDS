@@ -18,7 +18,7 @@ struct ERC721DS {
 // keccak256("diamond.storage.erc721") == 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
 bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
 
-function ds() pure returns (ERC721DS storage diamondStorage) {
+function s() pure returns (ERC721DS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_ERC721
     }
@@ -54,8 +54,8 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
     /* ------------- Init ------------- */
 
     function __ERC721UDS_init(string memory name_, string memory symbol_) internal initializer {
-        ds().name = name_;
-        ds().symbol = symbol_;
+        s().name = name_;
+        s().symbol = symbol_;
     }
 
     /* ------------- View ------------- */
@@ -63,29 +63,29 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
     function name() external view returns (string memory) {
-        return ds().name;
+        return s().name;
     }
 
     function symbol() external view returns (string memory) {
-        return ds().symbol;
+        return s().symbol;
     }
 
     function ownerOf(uint256 id) public view virtual returns (address owner) {
-        if ((owner = ds().owners[id]) == address(0)) revert NonexistentToken();
+        if ((owner = s().owners[id]) == address(0)) revert NonexistentToken();
     }
 
     function balanceOf(address owner) public view virtual returns (uint256) {
         if (owner == address(0)) revert BalanceOfZeroAddress();
 
-        return ds().balances[owner];
+        return s().balances[owner];
     }
 
     function getApproved(uint256 id) public view returns (address) {
-        return ds().getApproved[id];
+        return s().getApproved[id];
     }
 
     function isApprovedForAll(address operator, address owner) public view returns (bool) {
-        return ds().isApprovedForAll[operator][owner];
+        return s().isApprovedForAll[operator][owner];
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
@@ -98,17 +98,17 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
     /* ------------- Public ------------- */
 
     function approve(address spender, uint256 id) public virtual {
-        address owner = ds().owners[id];
+        address owner = s().owners[id];
 
-        if (msg.sender != owner && !ds().isApprovedForAll[owner][msg.sender]) revert CallerNotOwnerNorApproved();
+        if (msg.sender != owner && !s().isApprovedForAll[owner][msg.sender]) revert CallerNotOwnerNorApproved();
 
-        ds().getApproved[id] = spender;
+        s().getApproved[id] = spender;
 
         emit Approval(owner, spender, id);
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        ds().isApprovedForAll[msg.sender][operator] = approved;
+        s().isApprovedForAll[msg.sender][operator] = approved;
 
         emit ApprovalForAll(msg.sender, operator, approved);
     }
@@ -119,22 +119,22 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
         uint256 id
     ) public virtual {
         if (to == address(0)) revert TransferToZeroAddress();
-        if (from != ds().owners[id]) revert TransferFromIncorrectOwner();
+        if (from != s().owners[id]) revert TransferFromIncorrectOwner();
 
         bool isApprovedOrOwner = (msg.sender == from ||
-            ds().isApprovedForAll[from][msg.sender] ||
-            ds().getApproved[id] == msg.sender);
+            s().isApprovedForAll[from][msg.sender] ||
+            s().getApproved[id] == msg.sender);
 
         if (!isApprovedOrOwner) revert CallerNotOwnerNorApproved();
 
         unchecked {
-            ds().balances[from]--;
-            ds().balances[to]++;
+            s().balances[from]--;
+            s().balances[to]++;
         }
 
-        ds().owners[id] = to;
+        s().owners[id] = to;
 
-        delete ds().getApproved[id];
+        delete s().getApproved[id];
 
         emit Transfer(from, to, id);
     }
@@ -175,10 +175,10 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
         uint256 deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s
+        bytes32 s_
     ) public virtual {
-        if (_usePermit(owner, operator, 1, deadline, v, r, s)) {
-            ds().isApprovedForAll[owner][operator] = true;
+        if (_usePermit(owner, operator, 1, deadline, v, r, s_)) {
+            s().isApprovedForAll[owner][operator] = true;
             emit ApprovalForAll(owner, operator, true);
         }
     }
@@ -187,28 +187,28 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
 
     function _mint(address to, uint256 id) internal virtual {
         if (to == address(0)) revert MintToZeroAddress();
-        if (ds().owners[id] != address(0)) revert MintExistingToken();
+        if (s().owners[id] != address(0)) revert MintExistingToken();
 
         unchecked {
-            ds().balances[to]++;
+            s().balances[to]++;
         }
 
-        ds().owners[id] = to;
+        s().owners[id] = to;
 
         emit Transfer(address(0), to, id);
     }
 
     function _burn(uint256 id) internal virtual {
-        address owner = ds().owners[id];
+        address owner = s().owners[id];
 
         if (owner == address(0)) revert NonexistentToken();
 
         unchecked {
-            ds().balances[owner]--;
+            s().balances[owner]--;
         }
 
-        delete ds().owners[id];
-        delete ds().getApproved[id];
+        delete s().owners[id];
+        delete s().getApproved[id];
 
         emit Transfer(owner, address(0), id);
     }

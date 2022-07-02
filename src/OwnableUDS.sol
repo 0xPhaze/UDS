@@ -12,7 +12,7 @@ struct OwnableDS {
     address owner;
 }
 
-function ds() pure returns (OwnableDS storage diamondStorage) {
+function s() pure returns (OwnableDS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_OWNABLE
     }
@@ -31,18 +31,18 @@ abstract contract OwnableUDS is InitializableUDS {
     address private immutable fallbackOwner = msg.sender;
 
     function __Ownable_init() internal initializer {
-        ds().owner = msg.sender;
+        s().owner = msg.sender;
     }
 
     /* ------------- External ------------- */
 
     function owner() public view returns (address) {
-        address _owner = ds().owner;
+        address _owner = s().owner;
         return _owner != address(0) ? _owner : fallbackOwner;
     }
 
     function transferOwnership(address newOwner) external onlyOwner {
-        ds().owner = newOwner;
+        s().owner = newOwner;
 
         emit OwnerChanged(msg.sender, newOwner);
     }

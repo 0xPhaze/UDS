@@ -13,7 +13,7 @@ struct ERC1967VersionedUpgradeDS {
     uint256 version;
 }
 
-function ds() pure returns (ERC1967VersionedUpgradeDS storage diamondStorage) {
+function s() pure returns (ERC1967VersionedUpgradeDS storage diamondStorage) {
     assembly {
         diamondStorage.slot := DIAMOND_STORAGE_ERC1967_UPGRADE
     }
@@ -37,7 +37,7 @@ abstract contract ERC1967Versioned {
         bytes32 uuid = IERC1822Versioned(logic).proxiableUUID();
         uint256 newVersion = IERC1822Versioned(logic).proxiableVersion();
 
-        if (ds().version >= newVersion) revert InvalidUpgradeVersion();
+        if (s().version >= newVersion) revert InvalidUpgradeVersion();
         if (uuid != DIAMOND_STORAGE_ERC1967_UPGRADE) revert InvalidUUID();
 
         emit Upgraded(logic, newVersion);
@@ -53,8 +53,8 @@ abstract contract ERC1967Versioned {
             }
         }
 
-        ds().version = newVersion;
-        ds().implementation = logic;
+        s().version = newVersion;
+        s().implementation = logic;
     }
 }
 

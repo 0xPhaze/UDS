@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ERC1822Versioned} from "./proxy/ERC1822Versioned.sol";
-import {ds as erc1967DS} from "./proxy/ERC1967VersionedUDS.sol";
+import {s as erc1967DS} from "./proxy/ERC1967VersionedUDS.sol";
 
 /* ============= Errors ============= */
 
