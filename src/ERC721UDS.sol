@@ -62,11 +62,11 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
 
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
-    function name() external view returns (string memory) {
+    function name() external view virtual returns (string memory) {
         return s().name;
     }
 
-    function symbol() external view returns (string memory) {
+    function symbol() external view virtual returns (string memory) {
         return s().symbol;
     }
 
