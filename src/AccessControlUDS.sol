@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 
-/* ============= Storage ============= */
+// ------------- Storage
 
 // keccak256("diamond.storage.access.control") == 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd
 bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
@@ -18,18 +18,17 @@ struct AccessControlDS {
 }
 
 function s() pure returns (AccessControlDS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL
-    }
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL } // prettier-ignore
 }
 
-/* ============= Errors ============= */
+// ------------- Errors
 
 error AccountMissingRole();
 error RenounceForCallerOnly();
 
-/* ============= AccessControlUDS ============= */
-
+/// @notice AccessControl compatible with diamond storage
+/// @author phaze (https://github.com/0xPhaze/UDS)
+/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/)
 abstract contract AccessControlUDS is InitializableUDS {
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
 
 import {UUPSUpgradeV} from "../../proxy/UUPSUpgradeV.sol";
-// import {InitializableUDS} from "../../InitializableUDS.sol";
 import "../../ERC1155UDS.sol";
 
 contract MockERC1155UDS is UUPSUpgradeV(1), ERC1155UDS {

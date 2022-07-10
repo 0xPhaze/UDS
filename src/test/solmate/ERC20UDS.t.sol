@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import {Test} from "forge-std/Test.sol";
 
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
-import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
+import {ERC1967Proxy} from "../../proxy/ERC1967Proxy.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC20.sol)
 contract ERC20Test is Test {

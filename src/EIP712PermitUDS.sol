@@ -1,28 +1,27 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
 
-/* ============= Storage ============= */
-
-struct EIP2612DS {
-    mapping(address => uint256) nonces;
-}
+// ------------- Storage
 
 // keccak256("diamond.storage.eip.712.permit") == 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 
 function s() pure returns (EIP2612DS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_EIP_712_PERMIT
-    }
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_EIP_712_PERMIT } // prettier-ignore
 }
 
-/* ============= Errors ============= */
+struct EIP2612DS {
+    mapping(address => uint256) nonces;
+}
+
+// ------------- Errors
 
 error InvalidSigner();
 error PermitDeadlineExpired();
 
-/* ============= EIP712PermitUDS ============= */
-
+/// @notice EIP712Permit compatible with diamond storage
+/// @author phaze (https://github.com/0xPhaze/UDS)
+/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract EIP712PermitUDS {
     /* ------------- Public ------------- */
 
@@ -30,7 +29,6 @@ abstract contract EIP712PermitUDS {
         return s().nonces[owner];
     }
 
-    // depends on address(this), so can't be pre-computed
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
         return
             keccak256(
@@ -44,7 +42,7 @@ abstract contract EIP712PermitUDS {
             );
     }
 
-    /* ------------- internal ------------- */
+    /* ------------- Internal ------------- */
 
     function _usePermit(
         address owner,

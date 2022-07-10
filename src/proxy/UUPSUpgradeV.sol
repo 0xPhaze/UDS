@@ -2,30 +2,28 @@
 pragma solidity ^0.8.0;
 
 import {IERC1822Versioned, ERC1822Versioned} from "./ERC1822Versioned.sol";
-import {ERC1967Versioned, DIAMOND_STORAGE_ERC1967_UPGRADE} from "./ERC1967VersionedUDS.sol";
+import {ERC1967Versioned, DIAMOND_STORAGE_ERC1967_UPGRADE} from "./ERC1967Versioned.sol";
 
-/* ============= Storage ============= */
+// ------------- Storage
 
 // keccak256("diamond.storage.uups.versioned.upgrade") == 0x84baf5225d2c25e851ba08f5463fbda2857188d63388c0dc9b62907467b54b47;
 bytes32 constant DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE = 0x84baf5225d2c25e851ba08f5463fbda2857188d63388c0dc9b62907467b54b47;
+
+function s() pure returns (UUPSUpgradeVDS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE } // prettier-ignore
+}
 
 struct UUPSUpgradeVDS {
     uint256 version;
 }
 
-function s() pure returns (UUPSUpgradeVDS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_UUPS_VERSIONED_UPGRADE
-    }
-}
-
-/* ============= Errors ============= */
+// ------------- Errors
 
 error OnlyProxyCallAllowed();
 error DelegateCallNotAllowed();
 
-/* ============= UUPSUpgradeV ============= */
-
+/// @notice UUPSUpgrade with version control
+/// @author phaze (https://github.com/0xPhaze/UDS)
 abstract contract UUPSUpgradeV is ERC1967Versioned, ERC1822Versioned {
     address private immutable __implementation = address(this);
     uint256 private immutable __version;

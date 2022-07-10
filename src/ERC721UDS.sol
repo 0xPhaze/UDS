@@ -1,10 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
 
-/* ============= Storage ============= */
+// ------------- Storage
+
+// keccak256("diamond.storage.erc721") == 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
+bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
+
+function s() pure returns (ERC721DS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC721 } // prettier-ignore
+}
 
 struct ERC721DS {
     string name;
@@ -15,37 +22,20 @@ struct ERC721DS {
     mapping(address => mapping(address => bool)) isApprovedForAll;
 }
 
-// keccak256("diamond.storage.erc721") == 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
-bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
+// ------------- Errors
 
-function s() pure returns (ERC721DS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_ERC721
-    }
-}
-
-/* ============= Errors ============= */
-
-error CallerNotOwnerNorApproved();
 error NonexistentToken();
 error NonERC721Receiver();
-
-error BalanceOfZeroAddress();
-
 error MintExistingToken();
 error MintToZeroAddress();
-error MintZeroQuantity();
-error MintExceedsMaxSupply();
-error MintExceedsMaxPerWallet();
-
-error TransferFromIncorrectOwner();
+error BalanceOfZeroAddress();
 error TransferToZeroAddress();
+error TransferFromIncorrectOwner();
+error CallerNotOwnerNorApproved();
 
-/* ============= ERC721UDS ============= */
-
-/// @notice Adapted for usage with Diamond Storage
-/// @author phaze (https://github.com/0xPhaze)
-/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+/// @notice ERC721 compatible with diamond storage
+/// @author phaze (https://github.com/0xPhaze/UDS)
+/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
     event Approval(address indexed owner, address indexed spender, uint256 indexed id);
@@ -239,7 +229,7 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
 }
 
 /// @notice A generic interface for a contract which properly accepts ERC721 tokens.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/)
 abstract contract ERC721TokenReceiver {
     function onERC721Received(
         address,

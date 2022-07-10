@@ -1,10 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
 
-/* ============= Storage ============= */
+// ------------- Storage
+
+// keccak256("diamond.storage.erc20") == 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
+bytes32 constant DIAMOND_STORAGE_ERC20 = 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
+
+function s() pure returns (ERC20DS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC20 } // prettier-ignore
+}
 
 struct ERC20DS {
     string name;
@@ -15,37 +22,9 @@ struct ERC20DS {
     mapping(address => mapping(address => uint256)) allowance;
 }
 
-// keccak256("diamond.storage.erc20") == 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
-bytes32 constant DIAMOND_STORAGE_ERC20 = 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
-
-function s() pure returns (ERC20DS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_ERC20
-    }
-}
-
-/* ============= Errors ============= */
-
-error CallerNotOwnerNorApproved();
-error NonexistentToken();
-error NonERC721Receiver();
-
-error BalanceOfZeroAddress();
-
-error MintExistingToken();
-error MintToZeroAddress();
-error MintZeroQuantity();
-error MintExceedsMaxSupply();
-error MintExceedsMaxPerWallet();
-
-error TransferFromIncorrectOwner();
-error TransferToZeroAddress();
-
-/* ============= ERC20UDS ============= */
-
-/// @notice Adapted for usage with Diamond Storage
-/// @author phaze (https://github.com/0xPhaze)
-/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC20.sol)
+/// @notice ERC20 compatible with diamond storage
+/// @author phaze (https://github.com/0xPhaze/UDS)
+/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);

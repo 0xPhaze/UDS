@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "forge-std/Test.sol";
-import "forge-std/console.sol";
+import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "../proxy/ERC1967VersionedUDS.sol";
+import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
 import {UUPSUpgradeV} from "../proxy/UUPSUpgradeV.sol";
 
 error InvalidUpgradeVersion();

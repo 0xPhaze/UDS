@@ -1,34 +1,29 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.0;
 
-/* ============= Storage ============= */
+// ------------- Storage
+
+// keccak256("diamond.storage.erc1155") == 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
+bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
+
+function s() pure returns (ERC1155DS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC1155 } // prettier-ignore
+}
 
 struct ERC1155DS {
     mapping(address => mapping(uint256 => uint256)) balanceOf;
     mapping(address => mapping(address => bool)) isApprovedForAll;
 }
 
-// keccak256("diamond.storage.erc1155") == 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
-bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
-
-function s() pure returns (ERC1155DS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_ERC1155
-    }
-}
-
-/* ============= Errors ============= */
+// ------------- Errors
 
 error NotAuthorized();
 error LengthMismatch();
 error UnsafeRecipient();
-error InvalidRecipient();
 
-/* ============= ERC1155UDS ============= */
-
-/// @notice Adapted for usage with Diamond Storage
-/// @author phaze (https://github.com/0xPhaze)
-/// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155.sol)
+/// @notice ERC1155 compatible with diamond storage
+/// @author phaze (https://github.com/0xPhaze/UDS)
+/// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
 abstract contract ERC1155UDS {
     event TransferSingle(
         address indexed operator,

@@ -3,31 +3,29 @@ pragma solidity ^0.8.0;
 
 import {IERC1822Versioned} from "./ERC1822Versioned.sol";
 
-/* ============= Storage ============= */
+// ------------- Storage
 
 // keccak256("eip1967.proxy.implementation") - 1 = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 bytes32 constant DIAMOND_STORAGE_ERC1967_UPGRADE = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+
+function s() pure returns (ERC1967VersionedUpgradeDS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC1967_UPGRADE } // prettier-ignore
+}
 
 struct ERC1967VersionedUpgradeDS {
     address implementation;
     uint256 version;
 }
 
-function s() pure returns (ERC1967VersionedUpgradeDS storage diamondStorage) {
-    assembly {
-        diamondStorage.slot := DIAMOND_STORAGE_ERC1967_UPGRADE
-    }
-}
-
-/* ============= Errors ============= */
+// ------------- Errors
 
 error InvalidUUID();
 error InvalidOwner();
 error NotAContract();
 error InvalidUpgradeVersion();
 
-/* ============= ERC1967Versioned ============= */
-
+/// @notice ERC1967 with version control
+/// @author phaze (https://github.com/0xPhaze/UDS)
 abstract contract ERC1967Versioned {
     event Upgraded(address indexed implementation, uint256 indexed version);
 
@@ -55,31 +53,5 @@ abstract contract ERC1967Versioned {
 
         s().version = newVersion;
         s().implementation = logic;
-    }
-}
-
-/* ------------- ERC1967Proxy ------------- */
-
-contract ERC1967Proxy is ERC1967Versioned {
-    constructor(address logic, bytes memory data) payable {
-        _upgradeToAndCall(logic, data);
-    }
-
-    fallback() external payable {
-        assembly {
-            calldatacopy(0, 0, calldatasize())
-
-            let success := delegatecall(gas(), sload(DIAMOND_STORAGE_ERC1967_UPGRADE), 0, calldatasize(), 0, 0)
-
-            returndatacopy(0, 0, returndatasize())
-
-            switch success
-            case 0 {
-                revert(0, returndatasize())
-            }
-            default {
-                return(0, returndatasize())
-            }
-        }
     }
 }

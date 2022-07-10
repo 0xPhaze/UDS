@@ -28,6 +28,6 @@ src
 ├── OwnableUDS.sol - "Ownable Upgradeable"
 └── proxy
     ├── ERC1822Versioned.sol - "ERC1822 extended with proxiableVersion"
-    ├── ERC1967VersionedUDS.sol - "ERC1967, additionally keeps track of implementation version"
+    ├── ERC1967Versioned.sol - "ERC1967, additionally keeps track of implementation version"
     └── UUPSUpgradeV.sol - "UUPSUpgrade.sol extended with proxiableVersion"
 ```

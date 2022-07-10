@@ -2,8 +2,9 @@
 pragma solidity ^0.8.10;
 
 import {Test} from "forge-std/Test.sol";
+
 import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
-import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
+import {ERC1967Proxy} from "../../proxy/ERC1967Proxy.sol";
 import {ERC721TokenReceiver} from "../../ERC721UDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
@@ -51,7 +52,7 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 
 contract NonERC721Recipient {}
 
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/)
 contract ERC721Test is Test {
     MockERC721UDS token;
     MockERC721UDS logic;
