@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import {DSTestPlus} from "solmate/test/utils/DSTestPlus.sol";
-import {DSInvariantTest} from "solmate/test/utils/DSInvariantTest.sol";
+import {Test} from "forge-std/Test.sol";
 
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
 import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
 
-contract ERC20Test is DSTestPlus {
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC20.sol)
+contract ERC20Test is Test {
     MockERC20UDS token;
     MockERC20UDS logic;
 
@@ -63,7 +63,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), 1e18);
 
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
@@ -80,7 +80,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), type(uint256).max);
 
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
@@ -94,9 +94,9 @@ contract ERC20Test is DSTestPlus {
 
     function testPermit() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -123,7 +123,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), 0.9e18);
 
         token.transferFrom(from, address(0xBEEF), 1e18);
@@ -134,7 +134,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 0.9e18);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), 1e18);
 
         token.transferFrom(from, address(0xBEEF), 1e18);
@@ -142,9 +142,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitBadNonce() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -160,9 +160,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitBadDeadline() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -178,9 +178,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitPastDeadline() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -196,9 +196,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitReplay() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -278,7 +278,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, amount);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), approval);
 
         assertTrue(token.transferFrom(from, to, amount));
@@ -305,9 +305,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -357,7 +357,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, amount);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), approval);
 
         token.transferFrom(from, to, amount);
@@ -374,7 +374,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, mintAmount);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), sendAmount);
 
         token.transferFrom(from, to, sendAmount);
@@ -391,9 +391,9 @@ contract ERC20Test is DSTestPlus {
         if (privateKey == 0) privateKey = 1;
         if (nonce == 0) nonce = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -416,9 +416,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -441,9 +441,9 @@ contract ERC20Test is DSTestPlus {
         deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -466,9 +466,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -481,61 +481,5 @@ contract ERC20Test is DSTestPlus {
 
         token.permit(owner, to, amount, deadline, v, r, s);
         token.permit(owner, to, amount, deadline, v, r, s);
-    }
-}
-
-contract ERC20Invariants is DSTestPlus, DSInvariantTest {
-    BalanceSum balanceSum;
-    MockERC20UDS token;
-    MockERC20UDS logic;
-
-    function setUp() public {
-        bytes memory initializeData = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
-
-        logic = new MockERC20UDS();
-        token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initializeData)));
-
-        balanceSum = new BalanceSum(token);
-
-        addTargetContract(address(balanceSum));
-    }
-
-    function invariantBalanceSum() public {
-        assertEq(token.totalSupply(), balanceSum.sum());
-    }
-}
-
-contract BalanceSum {
-    MockERC20UDS token;
-    uint256 public sum;
-
-    constructor(MockERC20UDS _token) {
-        token = _token;
-    }
-
-    function mint(address from, uint256 amount) public {
-        token.mint(from, amount);
-        sum += amount;
-    }
-
-    function burn(address from, uint256 amount) public {
-        token.burn(from, amount);
-        sum -= amount;
-    }
-
-    function approve(address to, uint256 amount) public {
-        token.approve(to, amount);
-    }
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public {
-        token.transferFrom(from, to, amount);
-    }
-
-    function transfer(address to, uint256 amount) public {
-        token.transfer(to, amount);
     }
 }

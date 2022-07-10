@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import {DSTestPlus} from "solmate/test/utils/DSTestPlus.sol";
-import {DSInvariantTest} from "solmate/test/utils/DSInvariantTest.sol";
-
-import {ERC721TokenReceiver} from "solmate/tokens/ERC721.sol";
-
+import {Test} from "forge-std/Test.sol";
 import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
 import {ERC1967Proxy} from "../../proxy/ERC1967VersionedUDS.sol";
+import {ERC721TokenReceiver} from "../../ERC721UDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
     address public operator;
@@ -54,7 +51,8 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 
 contract NonERC721Recipient {}
 
-contract ERC721Test is DSTestPlus {
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+contract ERC721Test is Test {
     MockERC721UDS token;
     MockERC721UDS logic;
 
@@ -83,7 +81,7 @@ contract ERC721Test is DSTestPlus {
 
         assertEq(token.balanceOf(address(0xBEEF)), 0);
 
-        hevm.expectRevert(NonexistentToken.selector);
+        vm.expectRevert(NonexistentToken.selector);
         token.ownerOf(1337);
     }
 
@@ -105,7 +103,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.getApproved(1337), address(0));
 
-        hevm.expectRevert(NonexistentToken.selector);
+        vm.expectRevert(NonexistentToken.selector);
         token.ownerOf(1337);
     }
 
@@ -120,7 +118,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), 1337);
 
         token.transferFrom(from, address(0xBEEF), 1337);
@@ -147,7 +145,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.transferFrom(from, address(0xBEEF), 1337);
@@ -163,7 +161,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(0xBEEF), 1337);
@@ -180,7 +178,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), 1337);
@@ -193,7 +191,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(recipient.operator(), address(this));
         assertEq(recipient.from(), from);
         assertEq(recipient.id(), 1337);
-        assertBytesEq(recipient.data(), "");
+        assertEq(recipient.data(), "");
     }
 
     function testSafeTransferFromToERC721RecipientWithData() public {
@@ -202,7 +200,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), 1337, "testing 123");
@@ -215,7 +213,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(recipient.operator(), address(this));
         assertEq(recipient.from(), from);
         assertEq(recipient.id(), 1337);
-        assertBytesEq(recipient.data(), "testing 123");
+        assertEq(recipient.data(), "testing 123");
     }
 
     function testSafeMintToEOA() public {
@@ -236,7 +234,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(to.operator(), address(this));
         assertEq(to.from(), address(0));
         assertEq(to.id(), 1337);
-        assertBytesEq(to.data(), "");
+        assertEq(to.data(), "");
     }
 
     function testSafeMintToERC721RecipientWithData() public {
@@ -250,7 +248,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(to.operator(), address(this));
         assertEq(to.from(), address(0));
         assertEq(to.id(), 1337);
-        assertBytesEq(to.data(), "testing 123");
+        assertEq(to.data(), "testing 123");
     }
 
     function testFailMintToZero() public {
@@ -399,7 +397,7 @@ contract ERC721Test is DSTestPlus {
 
         assertEq(token.balanceOf(to), 0);
 
-        hevm.expectRevert(NonexistentToken.selector);
+        vm.expectRevert(NonexistentToken.selector);
         token.ownerOf(id);
     }
 
@@ -423,14 +421,14 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.getApproved(id), address(0));
 
-        hevm.expectRevert(NonexistentToken.selector);
+        vm.expectRevert(NonexistentToken.selector);
         token.ownerOf(id);
     }
 
     function testFuzzApproveAll(address to, bool approved) public {
         token.setApprovalForAll(to, approved);
 
-        assertBoolEq(token.isApprovedForAll(address(this), to), approved);
+        assertEq(token.isApprovedForAll(address(this), to), approved);
     }
 
     function testFuzzTransferFrom(uint256 id, address to) public {
@@ -440,7 +438,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.approve(address(this), id);
 
         token.transferFrom(from, to, id);
@@ -471,7 +469,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.transferFrom(from, to, id);
@@ -491,7 +489,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, to, id);
@@ -509,7 +507,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), id);
@@ -522,7 +520,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(recipient.operator(), address(this));
         assertEq(recipient.from(), from);
         assertEq(recipient.id(), id);
-        assertBytesEq(recipient.data(), "");
+        assertEq(recipient.data(), "");
     }
 
     function testFuzzSafeTransferFromToERC721RecipientWithData(uint256 id, bytes calldata data) public {
@@ -531,7 +529,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        vm.prank(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), id, data);
@@ -544,7 +542,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(recipient.operator(), address(this));
         assertEq(recipient.from(), from);
         assertEq(recipient.id(), id);
-        assertBytesEq(recipient.data(), data);
+        assertEq(recipient.data(), data);
     }
 
     function testFuzzSafeMintToEOA(uint256 id, address to) public {
@@ -569,7 +567,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(to.operator(), address(this));
         assertEq(to.from(), address(0));
         assertEq(to.id(), id);
-        assertBytesEq(to.data(), "");
+        assertEq(to.data(), "");
     }
 
     function testFuzzSafeMintToERC721RecipientWithData(uint256 id, bytes calldata data) public {
@@ -583,7 +581,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(to.operator(), address(this));
         assertEq(to.from(), address(0));
         assertEq(to.id(), id);
-        assertBytesEq(to.data(), data);
+        assertEq(to.data(), data);
     }
 
     function testFailFuzzMintToZero(uint256 id) public {
