@@ -6,8 +6,6 @@ import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-error InvalidUpgradeVersion();
-
 contract LogicV1 is MockUUPSUpgrade(1) {
     uint256 public data = 0x1337;
 
@@ -41,7 +39,7 @@ contract TestUUPSUpgrade is Test {
     LogicV1 logicV1;
     LogicV2 logicV2;
 
-    function setUp() public {
+    function setUp() public virtual {
         logicV1 = new LogicV1();
         logicV2 = new LogicV2();
 
