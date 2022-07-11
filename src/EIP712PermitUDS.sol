@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ------------- Storage
+// ------------- storage
 
 // keccak256("diamond.storage.eip.712.permit") == 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
@@ -14,16 +14,16 @@ struct EIP2612DS {
     mapping(address => uint256) nonces;
 }
 
-// ------------- Errors
+// ------------- errors
 
 error InvalidSigner();
-error PermitDeadlineExpired();
+error DeadlineExpired();
 
 /// @notice EIP712Permit compatible with diamond storage
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract EIP712PermitUDS {
-    /* ------------- Public ------------- */
+    /* ------------- public ------------- */
 
     function nonces(address owner) public view returns (uint256) {
         return s().nonces[owner];
@@ -34,7 +34,7 @@ abstract contract EIP712PermitUDS {
             keccak256(
                 abi.encode(
                     keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                    keccak256("ERC721"),
+                    keccak256("EIP712"),
                     keccak256("1"),
                     block.chainid,
                     address(this)
@@ -42,7 +42,7 @@ abstract contract EIP712PermitUDS {
             );
     }
 
-    /* ------------- Internal ------------- */
+    /* ------------- internal ------------- */
 
     function _usePermit(
         address owner,
@@ -53,7 +53,7 @@ abstract contract EIP712PermitUDS {
         bytes32 r,
         bytes32 s_
     ) internal virtual returns (bool) {
-        if (deadline < block.timestamp) revert PermitDeadlineExpired();
+        if (deadline < block.timestamp) revert DeadlineExpired();
 
         uint256 nonce = s().nonces[owner]++;
 

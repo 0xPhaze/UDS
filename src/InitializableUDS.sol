@@ -1,26 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC1822Versioned} from "./proxy/ERC1822Versioned.sol";
-import {s as erc1967DS} from "./proxy/ERC1967Versioned.sol";
+import {ERC1822, s as erc1967DS} from "./proxy/ERC1967Proxy.sol";
 
-// ------------- Errors
+// ------------- errors
 
 error ProxyCallRequired();
-error InvalidInitializerVersion();
-
-// ------------- InitializableUDS
+error AlreadyInitialized();
 
 /// @notice Initializable adapted for usage with versioned ERC1967
 /// @author phaze (https://github.com/0xPhaze/UDS)
-abstract contract InitializableUDS is ERC1822Versioned {
+abstract contract InitializableUDS is ERC1822 {
     address private immutable __implementation = address(this);
 
-    /* ------------- Modifier ------------- */
+    /* ------------- modifier ------------- */
 
     modifier initializer() {
         if (address(this) == __implementation) revert ProxyCallRequired();
-        if (proxiableVersion() <= erc1967DS().version) revert InvalidInitializerVersion();
+        if (erc1967DS().implementation == __implementation) revert AlreadyInitialized();
 
         _;
     }

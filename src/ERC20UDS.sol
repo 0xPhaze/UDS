@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {InitializableUDS} from "./InitializableUDS.sol";
 import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
 
-// ------------- Storage
+// ------------- storage
 
 // keccak256("diamond.storage.erc20") == 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
 bytes32 constant DIAMOND_STORAGE_ERC20 = 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
@@ -29,7 +29,7 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
-    /* ------------- Init ------------- */
+    /* ------------- init ------------- */
 
     function __ERC20UDS_init(
         string memory _name,
@@ -41,7 +41,7 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         s().decimals = _decimals;
     }
 
-    /* ------------- View ------------- */
+    /* ------------- view ------------- */
 
     function name() external view virtual returns (string memory) {
         return s().name;
@@ -67,7 +67,7 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         return s().allowance[operator][owner];
     }
 
-    /* ------------- Public ------------- */
+    /* ------------- public ------------- */
 
     function approve(address spender, uint256 amount) public virtual returns (bool) {
         s().allowance[msg.sender][spender] = amount;
@@ -126,7 +126,7 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
         }
     }
 
-    /* ------------- Internal ------------- */
+    /* ------------- internal ------------- */
 
     function _mint(address to, uint256 amount) internal virtual {
         s().totalSupply += amount;

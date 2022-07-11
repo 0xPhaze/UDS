@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
-import {UUPSUpgradeV} from "../proxy/UUPSUpgradeV.sol";
+import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 import "../OwnableUDS.sol";
 
-contract Logic is UUPSUpgradeV, InitializableUDS, OwnableUDS {
-    constructor(uint256 version) UUPSUpgradeV(version) {}
+contract Logic is MockUUPSUpgrade, InitializableUDS, OwnableUDS {
+    constructor(uint256 version) MockUUPSUpgrade(version) {}
 
     function init() public initializer {
         __Ownable_init();
@@ -24,7 +24,6 @@ contract TestOwnableUDS is Test {
     address tester = address(this);
 
     Logic proxy;
-    Logic proxyUninitialized;
 
     Logic logicV1;
     Logic logicV2;
@@ -33,43 +32,57 @@ contract TestOwnableUDS is Test {
         logicV1 = new Logic(1);
         logicV2 = new Logic(2);
 
-        proxy = Logic(address(new ERC1967Proxy(address(logicV1), abi.encodePacked(Logic.init.selector))));
-        proxyUninitialized = Logic(address(new ERC1967Proxy(address(logicV1), "")));
+        bytes memory calldata_ = abi.encodePacked(Logic.init.selector);
+        proxy = Logic(address(new ERC1967Proxy(address(logicV1), calldata_)));
     }
 
-    /* ------------- owner() ------------- */
+    /* ------------- setUp() ------------- */
 
-    function test_owner() public {
+    function test_setUp() public {
+        // make sure that s().owner is not
+        // located in sequential storage slot
+        proxy.scrambleStorage();
+
         assertEq(proxy.owner(), tester);
-        // assertEq(proxyUninitialized.owner(), address(0));
-    }
-
-    /* ------------- transferOwnership() ------------- */
-
-    function test_transferOwnership() public {
-        Logic(proxy).transferOwnership(alice);
-
-        assertEq(proxy.owner(), alice);
     }
 
     /* ------------- upgradeTo() ------------- */
 
     function test_upgradeTo() public {
-        Logic(proxy).upgradeTo(address(logicV2));
+        // test upgrade to new version
+        proxy.upgradeTo(address(logicV2));
 
+        // make sure owner stays the same
         assertEq(proxy.owner(), tester);
+
+        // test upgrade to new version
+        proxy.upgradeTo(address(logicV1));
     }
 
+    /// don't call init during proxy deployment
+    /// this makes the proxy non-upgradeable
+    /// because owner is not set
     function test_upgradeTo_fail_CallerNotOwner() public {
-        vm.prank(alice);
+        proxy = Logic(address(new ERC1967Proxy(address(logicV1), "")));
+        assertEq(proxy.owner(), address(0));
+
         vm.expectRevert(CallerNotOwner.selector);
-        Logic(proxy).upgradeTo(address(logicV2));
+        proxy.upgradeTo(address(logicV2));
     }
 
-    function test_upgradeTo_fail_CallerNotOwner2() public {
-        Logic(proxy).transferOwnership(alice);
+    /* ------------- transferOwnership() ------------- */
 
+    function test_transferOwnership() public {
+        proxy.transferOwnership(alice);
+
+        assertEq(proxy.owner(), alice);
+
+        // can't upgrade anymore because of owner restriction
         vm.expectRevert(CallerNotOwner.selector);
-        Logic(proxy).upgradeTo(address(logicV2));
+        proxy.upgradeTo(address(logicV2));
+
+        // alice is able to upgrade
+        vm.prank(alice);
+        proxy.upgradeTo(address(logicV2));
     }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ------------- Storage
+// ------------- storage
 
 // keccak256("diamond.storage.erc1155") == 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
 bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
@@ -15,7 +15,7 @@ struct ERC1155DS {
     mapping(address => mapping(address => bool)) isApprovedForAll;
 }
 
-// ------------- Errors
+// ------------- errors
 
 error NotAuthorized();
 error LengthMismatch();
@@ -44,7 +44,7 @@ abstract contract ERC1155UDS {
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
     event URI(string value, uint256 indexed id);
 
-    /* ------------- View ------------- */
+    /* ------------- view ------------- */
 
     function uri(uint256 id) public view virtual returns (string memory);
 
@@ -80,7 +80,7 @@ abstract contract ERC1155UDS {
             interfaceId == 0x0e89341c; // ERC165 Interface ID for ERC1155MetadataURI
     }
 
-    /* ------------- Public ------------- */
+    /* ------------- public ------------- */
 
     function setApprovalForAll(address operator, bool approved) public virtual {
         s().isApprovedForAll[msg.sender][operator] = approved;
@@ -145,7 +145,7 @@ abstract contract ERC1155UDS {
         ) revert UnsafeRecipient();
     }
 
-    /* ------------- Internal ------------- */
+    /* ------------- internal ------------- */
 
     function _mint(
         address to,

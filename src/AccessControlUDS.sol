@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {InitializableUDS} from "./InitializableUDS.sol";
 
-// ------------- Storage
+// ------------- storage
 
 // keccak256("diamond.storage.access.control") == 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd
 bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
@@ -21,7 +21,7 @@ function s() pure returns (AccessControlDS storage diamondStorage) {
     assembly { diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL } // prettier-ignore
 }
 
-// ------------- Errors
+// ------------- errors
 
 error AccountMissingRole();
 error RenounceForCallerOnly();
@@ -36,13 +36,13 @@ abstract contract AccessControlUDS is InitializableUDS {
 
     bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
 
-    /* ------------- Init ------------- */
+    /* ------------- init ------------- */
 
     function __AccessControl_init() external initializer {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    /* ------------- Public ------------- */
+    /* ------------- public ------------- */
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
@@ -72,7 +72,7 @@ abstract contract AccessControlUDS is InitializableUDS {
         _revokeRole(role, account);
     }
 
-    /* ------------- Internal ------------- */
+    /* ------------- internal ------------- */
 
     function _checkRole(bytes32 role) internal view virtual {
         _checkRole(role, msg.sender);
@@ -108,7 +108,7 @@ abstract contract AccessControlUDS is InitializableUDS {
         }
     }
 
-    /* ------------- Modifier ------------- */
+    /* ------------- modifier ------------- */
 
     modifier onlyRole(bytes32 role) {
         _checkRole(role);

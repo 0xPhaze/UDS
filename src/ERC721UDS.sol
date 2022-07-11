@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {InitializableUDS} from "./InitializableUDS.sol";
 import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
 
-// ------------- Storage
+// ------------- storage
 
 // keccak256("diamond.storage.erc721") == 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
 bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
@@ -22,7 +22,7 @@ struct ERC721DS {
     mapping(address => mapping(address => bool)) isApprovedForAll;
 }
 
-// ------------- Errors
+// ------------- errors
 
 error NonexistentToken();
 error NonERC721Receiver();
@@ -41,14 +41,14 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
     event Approval(address indexed owner, address indexed spender, uint256 indexed id);
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
-    /* ------------- Init ------------- */
+    /* ------------- init ------------- */
 
     function __ERC721UDS_init(string memory name_, string memory symbol_) internal initializer {
         s().name = name_;
         s().symbol = symbol_;
     }
 
-    /* ------------- View ------------- */
+    /* ------------- view ------------- */
 
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
@@ -85,7 +85,7 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
             interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
     }
 
-    /* ------------- Public ------------- */
+    /* ------------- public ------------- */
 
     function approve(address spender, uint256 id) public virtual {
         address owner = s().ownerOf[id];
@@ -173,7 +173,7 @@ abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {
         }
     }
 
-    /* ------------- Internal ------------- */
+    /* ------------- internal ------------- */
 
     function _mint(address to, uint256 id) internal virtual {
         if (to == address(0)) revert MintToZeroAddress();

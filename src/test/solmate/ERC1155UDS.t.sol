@@ -3,8 +3,9 @@ pragma solidity ^0.8.10;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1155TokenReceiver} from "../../ERC1155UDS.sol";
 import {ERC1967Proxy} from "../../proxy/ERC1967Proxy.sol";
+import {ERC1155TokenReceiver} from "../../ERC1155UDS.sol";
+
 import {MockERC1155UDS} from "../mocks/MockERC1155UDS.sol";
 
 contract ERC1155Recipient is ERC1155TokenReceiver {

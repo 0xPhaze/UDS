@@ -4,20 +4,18 @@ pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
-import {UUPSUpgradeV} from "../proxy/UUPSUpgradeV.sol";
+import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 import "../InitializableUDS.sol";
 
-contract Logic is UUPSUpgradeV, InitializableUDS {
-    constructor(uint256 version) UUPSUpgradeV(version) {}
+contract Logic is MockUUPSUpgrade, InitializableUDS {
+    uint256 public initializedCount;
 
-    bool public initialized;
+    constructor(uint256 version) MockUUPSUpgrade(version) {}
 
     function initializerRestricted() public initializer {
-        initialized = true;
+        ++initializedCount;
     }
-
-    function _authorizeUpgrade() internal override {}
 }
 
 contract TestInitializableUDS is Test {
@@ -34,35 +32,60 @@ contract TestInitializableUDS is Test {
         logicV2 = new Logic(2);
 
         proxy = Logic(address(new ERC1967Proxy(address(logicV1), "")));
+    }
 
-        assertFalse(proxy.initialized());
+    /* ------------- setUp() ------------- */
+
+    function test_setUp() public {
+        assertEq(proxy.version(), 1);
+        assertEq(proxy.initializedCount(), 0);
+        assertEq(proxy.implementation(), address(logicV1));
+
+        assertEq(logicV1.version(), 1);
+        assertEq(logicV1.initializedCount(), 0);
+
+        assertEq(logicV2.version(), 2);
+        assertEq(logicV2.initializedCount(), 0);
     }
 
     /* ------------- initializerRestricted() ------------- */
 
-    function test_initializerRestricted() public {
-        proxy.upgradeToAndCall(address(logicV2), abi.encodePacked(logicV2.initializerRestricted.selector));
-
-        assertTrue(proxy.initialized());
-    }
-
-    function test_initializerRestricted_fail_InvalidUpgradeVersion() public {
-        vm.expectRevert(InvalidInitializerVersion.selector);
+    /// make sure initializerRestricted function can't be called
+    function test_initializerRestricted_fail() public {
+        vm.expectRevert(AlreadyInitialized.selector);
         proxy.initializerRestricted();
 
-        proxy.upgradeTo(address(logicV2));
-
-        vm.expectRevert(InvalidInitializerVersion.selector);
-        proxy.initializerRestricted();
-    }
-
-    function test_initializerRestricted_fail_NotProxyCall() public {
         vm.expectRevert(ProxyCallRequired.selector);
         logicV1.initializerRestricted();
 
-        proxy.upgradeTo(address(logicV2));
+        vm.expectRevert(ProxyCallRequired.selector);
+        logicV2.initializerRestricted();
+
+        proxy.upgradeToAndCall(address(logicV2), "");
+
+        vm.expectRevert(AlreadyInitialized.selector);
+        proxy.initializerRestricted();
 
         vm.expectRevert(ProxyCallRequired.selector);
         logicV1.initializerRestricted();
+
+        vm.expectRevert(ProxyCallRequired.selector);
+        logicV2.initializerRestricted();
+    }
+
+    /// call initializerRestricted during upgrade
+    function test_upgradeToAndCallInitializerRestricted() public {
+        proxy.upgradeToAndCall(address(logicV2), abi.encodePacked(Logic.initializerRestricted.selector));
+
+        assertEq(proxy.version(), 2);
+        assertEq(proxy.implementation(), address(logicV2));
+        assertEq(proxy.initializedCount(), 1);
+
+        // switch back to v1
+        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(Logic.initializerRestricted.selector));
+
+        assertEq(proxy.version(), 1);
+        assertEq(proxy.implementation(), address(logicV1));
+        assertEq(proxy.initializedCount(), 2);
     }
 }

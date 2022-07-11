@@ -3,7 +3,7 @@
 	"tasks": [
 		{
             "type": "shell",
-			"command": "forge test -vvv",
+			"command": "forge test --match-contract UDS -vvv",
 			"group": {
 				"kind": "test",
 				"isDefault": true

@@ -3,9 +3,10 @@ pragma solidity ^0.8.10;
 
 import {Test} from "forge-std/Test.sol";
 
-import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
 import {ERC1967Proxy} from "../../proxy/ERC1967Proxy.sol";
 import {ERC721TokenReceiver} from "../../ERC721UDS.sol";
+
+import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
     address public operator;
