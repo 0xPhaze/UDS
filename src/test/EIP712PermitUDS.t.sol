@@ -18,11 +18,11 @@ contract MockEIP712Permit is MockUUPSUpgrade(1), EIP712PermitUDS {
         address spender,
         uint256 value,
         uint256 deadline,
-        uint8 v,
-        bytes32 r,
+        uint8 v_,
+        bytes32 r_,
         bytes32 s_
     ) public returns (bool) {
-        return _usePermit(owner, spender, value, deadline, v, r, s_);
+        return _usePermit(owner, spender, value, deadline, v_, r_, s_);
     }
 }
 
@@ -44,7 +44,7 @@ contract TestEIP712PermitUDS is Test {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+        (uint8 v_, bytes32 r_, bytes32 s_) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -55,7 +55,7 @@ contract TestEIP712PermitUDS is Test {
             )
         );
 
-        bool success = permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        bool success = permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
 
         assertTrue(success);
         assertEq(permit.nonces(owner), 1);
@@ -66,7 +66,7 @@ contract TestEIP712PermitUDS is Test {
         address owner = vm.addr(privateKey);
 
         // bad timestamp
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+        (uint8 v_, bytes32 r_, bytes32 s_) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -78,10 +78,10 @@ contract TestEIP712PermitUDS is Test {
         );
 
         vm.expectRevert(InvalidSigner.selector);
-        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
 
         // bad nonce
-        (v, r, s) = vm.sign(
+        (v_, r_, s_) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -93,10 +93,10 @@ contract TestEIP712PermitUDS is Test {
         );
 
         vm.expectRevert(InvalidSigner.selector);
-        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
 
         // bad nonce; replay
-        (v, r, s) = vm.sign(
+        (v_, r_, s_) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -107,17 +107,17 @@ contract TestEIP712PermitUDS is Test {
             )
         );
 
-        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
 
         vm.expectRevert(InvalidSigner.selector);
-        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
     }
 
     function test_permit_fail_DeadlineExpired() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+        (uint8 v_, bytes32 r_, bytes32 s_) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -129,6 +129,6 @@ contract TestEIP712PermitUDS is Test {
         );
 
         vm.expectRevert(DeadlineExpired.selector);
-        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp - 1, v, r, s);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp - 1, v_, r_, s_);
     }
 }

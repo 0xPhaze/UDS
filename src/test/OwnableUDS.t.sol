@@ -32,8 +32,8 @@ contract TestOwnableUDS is Test {
         logicV1 = new Logic(1);
         logicV2 = new Logic(2);
 
-        bytes memory calldata_ = abi.encodePacked(Logic.init.selector);
-        proxy = Logic(address(new ERC1967Proxy(address(logicV1), calldata_)));
+        bytes memory initCalldata = abi.encodePacked(Logic.init.selector);
+        proxy = Logic(address(new ERC1967Proxy(address(logicV1), initCalldata)));
     }
 
     /* ------------- setUp() ------------- */

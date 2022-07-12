@@ -49,8 +49,8 @@ abstract contract EIP712PermitUDS {
         address spender,
         uint256 value,
         uint256 deadline,
-        uint8 v,
-        bytes32 r,
+        uint8 v_,
+        bytes32 r_,
         bytes32 s_
     ) internal virtual returns (bool) {
         if (deadline < block.timestamp) revert DeadlineExpired();
@@ -77,8 +77,8 @@ abstract contract EIP712PermitUDS {
                         )
                     )
                 ),
-                v,
-                r,
+                v_,
+                r_,
                 s_
             );
 

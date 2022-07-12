@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UUPSUpgrade} from "../../proxy/UUPSUpgrade.sol";
+import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
 import "../../ERC20UDS.sol";
 
-contract MockERC20UDS is UUPSUpgrade, ERC20UDS {
+contract MockERC20UDS is MockUUPSUpgrade(1), ERC20UDS {
     function init(
         string memory _name,
         string memory _symbol,
@@ -20,6 +20,4 @@ contract MockERC20UDS is UUPSUpgrade, ERC20UDS {
     function mint(address to, uint256 quantity) external {
         _mint(to, quantity);
     }
-
-    function _authorizeUpgrade() internal virtual override {}
 }

@@ -59,10 +59,10 @@ contract ERC721Test is Test {
     MockERC721UDS logic;
 
     function setUp() public {
-        bytes memory initializeData = abi.encodeWithSelector(MockERC721UDS.init.selector, "Token", "TKN");
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC721UDS.init.selector, "Token", "TKN");
 
         logic = new MockERC721UDS();
-        token = MockERC721UDS(address(new ERC1967Proxy(address(logic), initializeData)));
+        token = MockERC721UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
     }
 
     function invariantMetadata() public {
@@ -374,9 +374,9 @@ contract ERC721Test is Test {
     }
 
     function testFuzzMetadata(string memory name, string memory symbol) public {
-        bytes memory initializeData = abi.encodeWithSelector(MockERC721UDS.init.selector, name, symbol);
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC721UDS.init.selector, name, symbol);
 
-        MockERC721UDS tkn = MockERC721UDS(address(new ERC1967Proxy(address(logic), initializeData)));
+        MockERC721UDS tkn = MockERC721UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
 
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);

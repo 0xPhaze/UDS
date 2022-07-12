@@ -7,15 +7,18 @@ Benefits over using Openzeppelin's upgradeable contracts:
 - "Re-initialize" proxies (calling init on an already deployed proxy) is possible
 - Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
 
+
+**All contracts are compatible with diamond storage**
 ```ml
 src
-├── AccessControlUDS.sol - "OpenZeppelin's Access Control diamond storage compatible"
-├── EIP712PermitUDS.sol - "EIP712 Permit diamond storage compatible"
-├── ERC20UDS.sol - "Solmate's ERC20 diamond storage compatible"
-├── ERC721UDS.sol - "Solmate's ERC721 diamond storage compatible"
-├── ERC1155UDS.sol - "Solmate's ERC1155 diamond storage compatible"
+├── AccessControlUDS.sol - "OpenZeppelin's Access Control"
+├── EIP712PermitUDS.sol - "EIP712 Permit"
+├── ERC20UDS.sol - "Solmate's ERC20"
+├── ERC20DripUDS.sol - "ERC20 with dripping abilities"
+├── ERC721UDS.sol - "Solmate's ERC721"
+├── ERC1155UDS.sol - "Solmate's ERC1155"
 ├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSUpgrade"
-├── OwnableUDS.sol - "Ownable diamond storage compatible"
+├── OwnableUDS.sol - "Ownable"
 └── proxy
     ├── ERC1967Proxy.sol - "ERC1967Proxy, proxy implementation"
     ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967Proxy, supports up to 3 immutable bytes32 args"

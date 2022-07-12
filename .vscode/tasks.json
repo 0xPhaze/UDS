@@ -3,8 +3,8 @@
 	"tasks": [
 		{
             "type": "shell",
-			// "command": "forge test  -vvv --match-contract Immutable",
-			"command": "forge test -vvv ",
+			"command": "forge test  -vvv --match-contract TestERC20",
+			// "command": "forge test -vvv ",
 			"group": {
 				"kind": "test",
 				"isDefault": true

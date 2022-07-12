@@ -15,14 +15,18 @@ contract ERC20Test is Test {
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    function setUp() public {
-        bytes memory initializeData = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
+    function setUp() public virtual {
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
 
         logic = new MockERC20UDS();
-        token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initializeData)));
+        token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+
+        // make sure that storage data is not
+        // located in sequential storage slot
+        token.scrambleStorage();
     }
 
-    function invariantMetadata() public {
+    function testInvariantMetadata() public {
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
         assertEq(token.decimals(), 18);
@@ -219,8 +223,8 @@ contract ERC20Test is Test {
         string calldata symbol,
         uint8 decimals
     ) public {
-        bytes memory initializeData = abi.encodeWithSelector(MockERC20UDS.init.selector, name, symbol, decimals);
-        MockERC20UDS tkn = MockERC20UDS(address(new ERC1967Proxy(address(logic), initializeData)));
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, name, symbol, decimals);
+        MockERC20UDS tkn = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
 
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
