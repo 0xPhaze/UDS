@@ -1,14 +1,8 @@
 # Upgradeable Contracts Using Diamond Storage
 
-A collection of commonly used upgradeable contracts. All contracts are compatible with diamond storage.
+A collection of upgradeable contracts compatible with diamond storage.
 
-Benefits over using Openzeppelin's upgradeable contracts:
-- No worrying about calculating storage gaps or adding/removing inheritance, because of diamond storage
-- "Re-initialize" proxies (calling init on an already deployed proxy) is possible
-- Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
-
-
-**All contracts are compatible with diamond storage**
+## Contracts
 ```ml
 src
 ├── AccessControlUDS.sol - "OpenZeppelin's Access Control"
@@ -17,13 +11,19 @@ src
 ├── ERC20DripUDS.sol - "ERC20 with dripping abilities"
 ├── ERC721UDS.sol - "Solmate's ERC721"
 ├── ERC1155UDS.sol - "Solmate's ERC1155"
-├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts using UUPSUpgrade"
+├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts"
 ├── OwnableUDS.sol - "Ownable"
 └── proxy
-    ├── ERC1967Proxy.sol - "ERC1967Proxy, proxy implementation"
-    ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967Proxy, supports up to 3 immutable bytes32 args"
-    └── UUPSUpgrade.sol - "UUPSUpgrade.sol extended with proxiableVersion"
+    ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
+    ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967 proxy, supports up to 3 immutable args"
+    └── UUPSUpgrade.sol - "Minimal UUPSUpgrade"
 ```
+
+Benefits over using Openzeppelin's upgradeable contracts:
+- No worrying about calculating storage gaps or adding/removing inheritance, because of diamond storage
+- "Re-initialize" proxies (calling init on an already deployed proxy) is possible
+- Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
+
 
 ## What is diamond storage?
 
