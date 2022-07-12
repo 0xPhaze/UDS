@@ -9,8 +9,8 @@ import {InitializableUDS} from "./InitializableUDS.sol";
 bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
 
 struct RoleData {
-    mapping(address => bool) members;
     bytes32 adminRole;
+    mapping(address => bool) members;
 }
 
 struct AccessControlDS {
@@ -23,7 +23,7 @@ function s() pure returns (AccessControlDS storage diamondStorage) {
 
 // ------------- errors
 
-error AccountMissingRole();
+error NotAuthorized();
 error RenounceForCallerOnly();
 
 /// @notice AccessControl compatible with diamond storage
@@ -39,10 +39,10 @@ abstract contract AccessControlUDS is InitializableUDS {
     /* ------------- init ------------- */
 
     function __AccessControl_init() external initializer {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    /* ------------- public ------------- */
+    /* ------------- view ------------- */
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
@@ -58,32 +58,40 @@ abstract contract AccessControlUDS is InitializableUDS {
         return s().roles[role].adminRole;
     }
 
-    function grantRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
+    /* ------------- public ------------- */
+
+    function grantRole(bytes32 role, address account) public virtual {
+        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
+
         _grantRole(role, account);
     }
 
-    function revokeRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
+    function revokeRole(bytes32 role, address account) public virtual {
+        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
+
         _revokeRole(role, account);
     }
 
-    function renounceRole(bytes32 role, address account) public virtual {
-        if (account != msg.sender) revert RenounceForCallerOnly();
-
-        _revokeRole(role, account);
+    function renounceRole(bytes32 role) public virtual {
+        _revokeRole(role, msg.sender);
     }
 
     /* ------------- internal ------------- */
 
-    function _checkRole(bytes32 role) internal view virtual {
-        _checkRole(role, msg.sender);
+    function _grantRole(bytes32 role, address account) internal virtual {
+        if (!hasRole(role, account)) {
+            s().roles[role].members[account] = true;
+
+            emit RoleGranted(role, account, msg.sender);
+        }
     }
 
-    function _checkRole(bytes32 role, address account) internal view virtual {
-        if (!hasRole(role, account)) revert AccountMissingRole();
-    }
+    function _revokeRole(bytes32 role, address account) internal virtual {
+        if (hasRole(role, account)) {
+            s().roles[role].members[account] = false;
 
-    function _setupRole(bytes32 role, address account) internal virtual {
-        _grantRole(role, account);
+            emit RoleRevoked(role, account, msg.sender);
+        }
     }
 
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
@@ -94,24 +102,10 @@ abstract contract AccessControlUDS is InitializableUDS {
         emit RoleAdminChanged(role, previousAdminRole, adminRole);
     }
 
-    function _grantRole(bytes32 role, address account) internal virtual {
-        if (!hasRole(role, account)) {
-            s().roles[role].members[account] = true;
-            emit RoleGranted(role, account, msg.sender);
-        }
-    }
-
-    function _revokeRole(bytes32 role, address account) internal virtual {
-        if (hasRole(role, account)) {
-            s().roles[role].members[account] = false;
-            emit RoleRevoked(role, account, msg.sender);
-        }
-    }
-
     /* ------------- modifier ------------- */
 
     modifier onlyRole(bytes32 role) {
-        _checkRole(role);
+        if (!hasRole(role, msg.sender)) revert NotAuthorized();
         _;
     }
 }
