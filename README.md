@@ -2,6 +2,10 @@
 
 A collection of upgradeable contracts compatible with diamond storage.
 
+```sh
+forge install 0xPhaze/UDS
+```
+
 ## Contracts
 ```ml
 src
@@ -18,6 +22,7 @@ src
     ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967 proxy, supports up to 3 immutable args"
     └── UUPSUpgrade.sol - "Minimal UUPSUpgrade"
 ```
+
 
 Benefits over using Openzeppelin's upgradeable contracts:
 - No worrying about calculating storage gaps or adding/removing inheritance, because of diamond storage
@@ -39,22 +44,25 @@ read/write any state.
 ## What is a proxy?
 
 A proxy contract delegates all calls to an implementation contract.
-Mostly, it behaves as though it was the implementation contract itself.
-Storage is written to the proxy contract and only the code logic is read/used from the implementation contract.
-This means that the only interactions (in its intended way) that have a noticeable effect on the blockchain happen with the proxy contract.
+This means that it runs the code/logic of the implementation contract is executed in the context of the proxy contract.
+If storage is read from or written to, it happens in the proxy itself.
+The implementation is (generally) not intended to be interacted with directly.
+It only serves as a reference for the proxy on how to execute functions.
+For the most part, a proxy behaves as though it was the implementation contract itself.
+
 A proxy can be upgradeable and swap out the address pointing to the implementation contract for a new one.
 This can be thought of as changing the contract's runtime code.
+The code for running an upgrade is left to be handled by the implementation contract (for UUPS proxies).
 
-An important thing to note is that upgradeable contracts can't rely on a constructor for initializing variables
-as the constructor is only run once during deployment and isn't stored as part of the deployed bytecode / runtime code.
-When deploying a proxy, the proxy's constructor is run (and storage variables in the proxy contract can be set here), 
-however, a proxy won't be able to call the implementation contract's constructor or be affected by it.
+Generally, upgradeable contracts can't rely on a constructor for initializing variables.
+If the implementation contains a constructor, its code is only run once during deployment (in the implementation contract's context and not in the proxy's context).
+The constructor isn't part of the deployed bytecode / runtime code and generally doesn't affect a proxy (often deployed at a later time).
 
 This is why it is useful to have functions that are internal and/or public secured by the `initializer`
-modifier (found in `InitializableUDS.sol`). These functions are then only callable during a proxy contract's deployment (in the constructor).
-In contrast to OpenZeppelin's `initializer`, these functions won't ever be callable on the implementation contract
-and can be used to "re-initialize"!
-Though one should not forget to run all initializing functions, as, for example, a contract's upgradeability could be lost, if
+modifier (found in `InitializableUDS.sol`). These functions are then only callable during a proxy contract's deployment and before any new upgrade has completed.
+In contrast to OpenZeppelin's `initializer`, these functions won't ever be callable on the implementation contract and can be run again, allowing "re-initialization" (as long as they are run during an upgrade).
+Forgetting to run all initializing functions can be dangerous. 
+For example, a contract's upgradeability could be lost, if
 `UUPSUpgrade`'s `_authorizeUpgrade` is secured by the `onlyOwner` modifier, but `OwnableUDS`' `__Ownable__init` was never called.
 
 ## Caveats
