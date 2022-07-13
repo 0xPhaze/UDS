@@ -2,6 +2,7 @@
 
 A collection of upgradeable contracts compatible with diamond storage.
 
+Install with [Foundry](https://github.com/foundry-rs/foundry)
 ```sh
 forge install 0xPhaze/UDS
 ```

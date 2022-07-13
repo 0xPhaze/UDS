@@ -20,8 +20,9 @@ struct OwnableDS {
 
 error CallerNotOwner();
 
-/// @notice Ownable compatible with diamond storage
+/// @title Ownable (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
+/// @dev Requires `__Ownable_init` to be called in proxy
 abstract contract OwnableUDS is InitializableUDS {
     event OwnerChanged(address oldOwner, address newOwner);
 
@@ -44,7 +45,7 @@ abstract contract OwnableUDS is InitializableUDS {
     /* ------------- modifier ------------- */
 
     modifier onlyOwner() {
-        if (msg.sender != owner()) revert CallerNotOwner();
+        if (msg.sender != s().owner) revert CallerNotOwner();
         _;
     }
 }

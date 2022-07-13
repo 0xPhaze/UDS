@@ -3,13 +3,12 @@ pragma solidity ^0.8.0;
 
 import {Test, stdError} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "../src/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
-
-import "../ERC20DripUDS.sol";
 import {MockERC20DripUDS} from "./mocks/MockERC20DripUDS.sol";
-
 import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
+
+import "../src/tokens/ERC20DripUDS.sol";
 
 contract TestERC20DripUDS is Test {
     address bob = address(0xb0b);
@@ -22,7 +21,7 @@ contract TestERC20DripUDS is Test {
     uint256 rate = 1e18;
 
     function setUp() public {
-        logic = new MockERC20DripUDS(rate);
+        logic = new MockERC20DripUDS(rate, block.timestamp, block.timestamp + 1000 days);
 
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20DripUDS(address(new ERC1967Proxy(address(logic), initCalldata)));
@@ -138,6 +137,41 @@ contract TestERC20DripUDS is Test {
         assertEq(token.virtualBalanceOf(alice), 0);
     }
 
+    /* ------------- endDate() ------------- */
+
+    function test_endDate() public {
+        token.increaseMultiplier(alice, 1_000);
+
+        skip(100 days);
+
+        assertEq(token.balanceOf(alice), 100_000e18);
+        assertEq(token.virtualBalanceOf(alice), 100_000e18);
+
+        vm.prank(alice);
+        token.claimVirtualBalance();
+
+        // skip to end date
+        skip(900 days);
+
+        assertEq(token.balanceOf(alice), 1_000_000e18);
+        assertEq(token.virtualBalanceOf(alice), 900_000e18);
+
+        // waiting any longer doesn't give more due to dripEndDate
+        skip(900 days);
+
+        assertEq(token.balanceOf(alice), 1_000_000e18);
+        assertEq(token.virtualBalanceOf(alice), 900_000e18);
+
+        // claim all balance past end date
+        vm.prank(alice);
+        token.claimVirtualBalance();
+
+        skip(100 days);
+
+        assertEq(token.balanceOf(alice), 1_000_000e18);
+        assertEq(token.virtualBalanceOf(alice), 0);
+    }
+
     /* ------------- transfer() ------------- */
 
     function test_transfer() public {
@@ -209,12 +243,12 @@ contract TestERC20DripUDS is Test {
     }
 }
 
-// // all solmate ERC20 tests should pass
-// contract TestERC20UDS is ERC20Test {
-//     function setUp() public override {
-//         logic = MockERC20UDS(address(new MockERC20DripUDS(0e18)));
+// all solmate ERC20 tests should pass
+contract TestERC20UDS is ERC20Test {
+    function setUp() public override {
+        logic = MockERC20UDS(address(new MockERC20DripUDS(1e18, block.timestamp, block.timestamp + 1000 days)));
 
-//         bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
-//         token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
-//     }
-// }
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
+        token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+    }
+}

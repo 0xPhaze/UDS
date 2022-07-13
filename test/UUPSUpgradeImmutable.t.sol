@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {LibERC1967ProxyWithImmutableArgs} from "../proxy/ERC1967ProxyWithImmutableArgs.sol";
+import {LibERC1967ProxyWithImmutableArgs} from "../src/proxy/ERC1967ProxyWithImmutableArgs.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 contract MockERC1967ProxyWithImmutableArgs {
@@ -77,7 +77,9 @@ contract TestImmutableArgs is Test {
 
         Logic proxy1 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1));
         Logic proxy2 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2));
-        Logic proxy3 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3));
+        Logic proxy3 = Logic(
+            LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3)
+        );
 
         assertEq(proxy1.arg1(), arg1);
 
@@ -100,7 +102,9 @@ contract TestImmutableArgs is Test {
 
         Logic proxy1 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1));
         Logic proxy2 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2));
-        Logic proxy3 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3));
+        Logic proxy3 = Logic(
+            LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3)
+        );
 
         bytes32 arg1_;
         bytes32 arg2_;
@@ -140,11 +144,8 @@ contract TestImmutableArgs is Test {
         {
             Logic proxy1 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1));
 
-            (bytes32 fnArg1_, bytes32 fnArg2_, bytes32 fnArg3_, bytes32 arg1_, , ) = proxy1.bytes32Fn(
-                fnArg1,
-                fnArg2,
-                fnArg3
-            );
+            (bytes32 fnArg1_, bytes32 fnArg2_, bytes32 fnArg3_, bytes32 arg1_, , ) = proxy1
+                .bytes32Fn(fnArg1, fnArg2, fnArg3);
 
             assertEq(fnArg1_, fnArg1);
             assertEq(fnArg2_, fnArg2);
@@ -155,11 +156,14 @@ contract TestImmutableArgs is Test {
         {
             Logic proxy2 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2));
 
-            (bytes32 fnArg1_, bytes32 fnArg2_, bytes32 fnArg3_, bytes32 arg1_, bytes32 arg2_, ) = proxy2.bytes32Fn(
-                fnArg1,
-                fnArg2,
-                fnArg3
-            );
+            (
+                bytes32 fnArg1_,
+                bytes32 fnArg2_,
+                bytes32 fnArg3_,
+                bytes32 arg1_,
+                bytes32 arg2_,
+
+            ) = proxy2.bytes32Fn(fnArg1, fnArg2, fnArg3);
 
             assertEq(fnArg1_, fnArg1);
             assertEq(fnArg2_, fnArg2);
@@ -169,10 +173,18 @@ contract TestImmutableArgs is Test {
         }
 
         {
-            Logic proxy3 = Logic(LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3));
+            Logic proxy3 = Logic(
+                LibERC1967ProxyWithImmutableArgs.deploy(initCalldata, arg1, arg2, arg3)
+            );
 
-            (bytes32 fnArg1_, bytes32 fnArg2_, bytes32 fnArg3_, bytes32 arg1_, bytes32 arg2_, bytes32 arg3_) = proxy3
-                .bytes32Fn(fnArg1, fnArg2, fnArg3);
+            (
+                bytes32 fnArg1_,
+                bytes32 fnArg2_,
+                bytes32 fnArg3_,
+                bytes32 arg1_,
+                bytes32 arg2_,
+                bytes32 arg3_
+            ) = proxy3.bytes32Fn(fnArg1, fnArg2, fnArg3);
 
             assertEq(fnArg1_, fnArg1);
             assertEq(fnArg2_, fnArg2);

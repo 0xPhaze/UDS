@@ -8,17 +8,17 @@ import {InitializableUDS} from "./InitializableUDS.sol";
 // keccak256("diamond.storage.access.control") == 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd
 bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
 
-struct RoleData {
-    bytes32 adminRole;
-    mapping(address => bool) members;
+function s() pure returns (AccessControlDS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL } // prettier-ignore
 }
 
 struct AccessControlDS {
     mapping(bytes32 => RoleData) roles;
 }
 
-function s() pure returns (AccessControlDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL } // prettier-ignore
+struct RoleData {
+    bytes32 adminRole;
+    mapping(address => bool) members;
 }
 
 // ------------- errors
@@ -26,9 +26,10 @@ function s() pure returns (AccessControlDS storage diamondStorage) {
 error NotAuthorized();
 error RenounceForCallerOnly();
 
-/// @notice AccessControl compatible with diamond storage
+/// @title AccessControl (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
-/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/)
+/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
+/// @dev Requires `__AccessControl_init` to be called in proxy
 abstract contract AccessControlUDS is InitializableUDS {
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
@@ -79,19 +80,15 @@ abstract contract AccessControlUDS is InitializableUDS {
     /* ------------- internal ------------- */
 
     function _grantRole(bytes32 role, address account) internal virtual {
-        if (!hasRole(role, account)) {
-            s().roles[role].members[account] = true;
+        s().roles[role].members[account] = true;
 
-            emit RoleGranted(role, account, msg.sender);
-        }
+        emit RoleGranted(role, account, msg.sender);
     }
 
     function _revokeRole(bytes32 role, address account) internal virtual {
-        if (hasRole(role, account)) {
-            s().roles[role].members[account] = false;
+        s().roles[role].members[account] = false;
 
-            emit RoleRevoked(role, account, msg.sender);
-        }
+        emit RoleRevoked(role, account, msg.sender);
     }
 
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {

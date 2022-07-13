@@ -21,7 +21,7 @@ error NotAuthorized();
 error LengthMismatch();
 error UnsafeRecipient();
 
-/// @notice ERC1155 compatible with diamond storage
+/// @title ERC1155 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
 abstract contract ERC1155UDS {

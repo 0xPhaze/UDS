@@ -2,22 +2,33 @@
 pragma solidity ^0.8.0;
 
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
-import "../../ERC20DripUDS.sol";
+import "../../src/tokens/ERC20DripUDS.sol";
 
 contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
-    uint256 internal immutable dripRate;
-    uint256 internal immutable _dripStart = block.timestamp;
+    uint256 immutable rate;
+    uint256 immutable start;
+    uint256 immutable end;
 
-    constructor(uint256 rate) {
-        dripRate = rate;
+    constructor(
+        uint256 rate_,
+        uint256 start_,
+        uint256 end_
+    ) {
+        rate = rate_;
+        start = start_;
+        end = end_;
     }
 
     function dripDailyRate() public view override returns (uint256) {
-        return dripRate;
+        return rate;
     }
 
-    function dripStart() public view override returns (uint256) {
-        return _dripStart;
+    function dripStartDate() public view override returns (uint256) {
+        return start;
+    }
+
+    function dripEndDate() public view override returns (uint256) {
+        return end;
     }
 
     function init(

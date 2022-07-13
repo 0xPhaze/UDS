@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "./InitializableUDS.sol";
-import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
+import {InitializableUDS} from "../auth/InitializableUDS.sol";
+import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
@@ -22,7 +22,7 @@ struct ERC20DS {
     mapping(address => mapping(address => uint256)) allowance;
 }
 
-/// @notice ERC20 compatible with diamond storage
+/// @title ERC20 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {

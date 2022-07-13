@@ -19,9 +19,11 @@ struct EIP2612DS {
 error InvalidSigner();
 error DeadlineExpired();
 
-/// @notice EIP712Permit compatible with diamond storage
+/// @title EIP712Permit (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
+/// @dev `DOMAIN_SEPARATOR` needs to be re-computed every time
+/// @dev for use with a proxy due to `address(this)`
 abstract contract EIP712PermitUDS {
     /* ------------- public ------------- */
 

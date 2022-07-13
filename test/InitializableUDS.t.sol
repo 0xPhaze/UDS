@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "../src/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "../InitializableUDS.sol";
+import "../src/auth/InitializableUDS.sol";
 
 contract Logic is MockUUPSUpgrade, InitializableUDS {
     uint256 public initializedCount;
@@ -75,14 +75,20 @@ contract TestInitializableUDS is Test {
 
     /// call initializerRestricted during upgrade
     function test_upgradeToAndCallInitializerRestricted() public {
-        proxy.upgradeToAndCall(address(logicV2), abi.encodePacked(Logic.initializerRestricted.selector));
+        proxy.upgradeToAndCall(
+            address(logicV2),
+            abi.encodePacked(Logic.initializerRestricted.selector)
+        );
 
         assertEq(proxy.version(), 2);
         assertEq(proxy.implementation(), address(logicV2));
         assertEq(proxy.initializedCount(), 1);
 
         // switch back to v1
-        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(Logic.initializerRestricted.selector));
+        proxy.upgradeToAndCall(
+            address(logicV1),
+            abi.encodePacked(Logic.initializerRestricted.selector)
+        );
 
         assertEq(proxy.version(), 1);
         assertEq(proxy.implementation(), address(logicV1));

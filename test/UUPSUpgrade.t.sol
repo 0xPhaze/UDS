@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "../proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "../src/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 contract LogicV1 is MockUUPSUpgrade(1) {

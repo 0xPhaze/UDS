@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "./InitializableUDS.sol";
-import {EIP712PermitUDS} from "./EIP712PermitUDS.sol";
+import {InitializableUDS} from "../auth/InitializableUDS.sol";
+import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
@@ -33,7 +33,7 @@ error TransferToZeroAddress();
 error TransferFromIncorrectOwner();
 error CallerNotOwnerNorApproved();
 
-/// @notice ERC721 compatible with diamond storage
+/// @title ERC721 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC721UDS is InitializableUDS, EIP712PermitUDS {

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {s as erc1967DS} from "../../proxy/ERC1967Proxy.sol";
-import {UUPSUpgrade} from "../../proxy/UUPSUpgrade.sol";
+import {s as erc1967DS} from "../../src/proxy/ERC1967Proxy.sol";
+import {UUPSUpgrade} from "../../src/proxy/UUPSUpgrade.sol";
 
 contract MockUUPSUpgrade is UUPSUpgrade {
     uint256 public immutable version;

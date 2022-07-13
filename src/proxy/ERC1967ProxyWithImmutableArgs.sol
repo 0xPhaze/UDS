@@ -20,12 +20,12 @@ library LibERC1967ProxyWithImmutableArgs {
             hex"3652600160f81b60203601526000806021360160007f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc545af43d6000803e8080156073573d6000f35b3d6000fdfea164736f6c634300080d000a360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
             constructorArgs
         );
+
         assembly {
             addr := create(0, add(bytecode, 0x20), mload(bytecode))
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
         }
+
+        if (addr.code.length == 0) revert();
     }
 
     /// @notice deploys an ERC1967 proxy with 2 immutable args
@@ -48,12 +48,12 @@ library LibERC1967ProxyWithImmutableArgs {
             hex"6020360152600260f81b60403601526000806041360160007f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc545af43d6000803e8080156099573d6000f35b3d6000fdfea164736f6c634300080d000a360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
             constructorArgs
         );
+
         assembly {
             addr := create(0, add(bytecode, 0x20), mload(bytecode))
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
         }
+
+        if (addr.code.length == 0) revert();
     }
 
     /// @notice deploys an ERC1967 proxy with 3 immutable args
@@ -80,12 +80,12 @@ library LibERC1967ProxyWithImmutableArgs {
             hex"6040360152600360f81b60603601526000806061360160007f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc545af43d6000803e80801560bf573d6000f35b3d6000fdfea164736f6c634300080d000a360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
             constructorArgs
         );
+
         assembly {
             addr := create(0, add(bytecode, 0x20), mload(bytecode))
-            if iszero(extcodesize(addr)) {
-                revert(0, 0)
-            }
         }
+
+        if (addr.code.length == 0) revert();
     }
 
     /// @notice Loads the first immutable arg from extra calldata
