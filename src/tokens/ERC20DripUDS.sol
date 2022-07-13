@@ -61,6 +61,10 @@ abstract contract ERC20DripUDS is ERC20UDS {
 
     /* ------------- internal ------------- */
 
+    function _getDripMultiplier(address owner) internal view returns (uint256) {
+        return s().dripData[owner].multiplier;
+    }
+
     function _virtualBalanceOf(address owner) internal view virtual returns (uint256) {
         DripData storage dripData = s().dripData[owner];
 
