@@ -70,7 +70,7 @@ contract TestERC20DripUDS is Test {
 
     /* ------------- increaseMultiplier() ------------- */
 
-    function test_increaseMultiplier() public {
+    function test_increaseDripMultiplier() public {
         token.increaseMultiplier(alice, 1_000);
 
         assertEq(token.balanceOf(alice), 0);

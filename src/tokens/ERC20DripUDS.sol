@@ -26,7 +26,7 @@ struct ERC20DripDS {
 /// @title ERC20Drip (Upgradeable Diamond Storage, ERC20 compliant)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
-/// @author Inspired by DRIP20 (https://github.com/0xBeans/DRIP20)
+/// @author Named after DRIP20 (https://github.com/0xBeans/DRIP20)
 /// @notice Allows for directly "dripping" ERC20 tokens into a user's wallet
 /// @notice at a rate of dripDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any balance update
@@ -100,13 +100,13 @@ abstract contract ERC20DripUDS is ERC20UDS {
         }
     }
 
-    function _increaseMultiplier(address owner, uint216 quantity) internal {
+    function _increaseDripMultiplier(address owner, uint216 quantity) internal {
         _claimVirtualBalance(owner);
 
         s().dripData[owner].multiplier += uint216(quantity);
     }
 
-    function _decreaseMultiplier(address owner, uint216 quantity) internal {
+    function _decreaseDripMultiplier(address owner, uint216 quantity) internal {
         _claimVirtualBalance(owner);
 
         s().dripData[owner].multiplier -= uint216(quantity);

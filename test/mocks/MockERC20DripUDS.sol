@@ -60,11 +60,11 @@ contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
     }
 
     function increaseMultiplier(address owner, uint216 quantity) public {
-        _increaseMultiplier(owner, quantity);
+        _increaseDripMultiplier(owner, quantity);
     }
 
     function decreaseMultiplier(address owner, uint216 quantity) public {
-        _decreaseMultiplier(owner, quantity);
+        _decreaseDripMultiplier(owner, quantity);
     }
 
     function claimVirtualBalance() public {

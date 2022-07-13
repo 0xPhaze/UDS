@@ -4,6 +4,7 @@
 		{
             "type": "shell",
 			"command": "forge test -vvv ",
+			// "command": "forge test  -vvv --match-contract Drip",
 			"group": {
 				"kind": "test",
 				"isDefault": true
