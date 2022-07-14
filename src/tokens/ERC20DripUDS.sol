@@ -32,12 +32,11 @@ struct ERC20DripDS {
 /// @notice Tokens are automatically claimed before any balance update
 abstract contract ERC20DripUDS is ERC20UDS {
     /* ------------- public ------------- */
-
-    function dripDailyRate() public view virtual returns (uint256);
-
     function dripStartDate() public view virtual returns (uint256);
 
     function dripEndDate() public view virtual returns (uint256);
+
+    function dripDailyRate() public view virtual returns (uint256);
 
     function balanceOf(address owner) public view virtual override returns (uint256) {
         return super.balanceOf(owner) + _virtualBalanceOf(owner);
