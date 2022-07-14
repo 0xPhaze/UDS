@@ -12,10 +12,10 @@ abstract contract MockUUPSUpgradeWithImmutableArgs is MockUUPSUpgrade {
     }
 
     function arg2() public pure returns (bytes32) {
-        return LibERC1967ProxyWithImmutableArgs.getArgBytes32(1);
+        return LibERC1967ProxyWithImmutableArgs.getArgBytes32(32);
     }
 
     function arg3() public pure returns (bytes32) {
-        return LibERC1967ProxyWithImmutableArgs.getArgBytes32(2);
+        return LibERC1967ProxyWithImmutableArgs.getArgBytes32(64);
     }
 }
