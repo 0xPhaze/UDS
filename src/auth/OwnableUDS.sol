@@ -26,8 +26,6 @@ error CallerNotOwner();
 abstract contract OwnableUDS is InitializableUDS {
     event OwnerChanged(address oldOwner, address newOwner);
 
-    function init() external virtual;
-
     function __Ownable_init() internal initializer {
         s().owner = msg.sender;
     }
