@@ -98,16 +98,6 @@ library LibERC1967ProxyWithImmutableArgs {
         }
     }
 
-    /// @notice Reads an immutable arg with type address
-    /// @param argOffset The offset of the arg in the packed data
-    /// @return arg The arg value
-    function getArgAddress(uint256 argOffset) internal pure returns (address arg) {
-        uint256 offset = getImmutableArgsOffset();
-        assembly {
-            arg := shr(0x60, calldataload(add(offset, argOffset)))
-        }
-    }
-
     /// @notice Reads an immutable arg with type uint256
     /// @param argOffset The offset of the arg in the packed data
     /// @return arg The arg value
@@ -115,26 +105,6 @@ library LibERC1967ProxyWithImmutableArgs {
         uint256 offset = getImmutableArgsOffset();
         assembly {
             arg := calldataload(add(offset, argOffset))
-        }
-    }
-
-    /// @notice Reads an immutable arg with type uint64
-    /// @param argOffset The offset of the arg in the packed data
-    /// @return arg The arg value
-    function getArgUint64(uint256 argOffset) internal pure returns (uint64 arg) {
-        uint256 offset = getImmutableArgsOffset();
-        assembly {
-            arg := shr(0xc0, calldataload(add(offset, argOffset)))
-        }
-    }
-
-    /// @notice Reads an immutable arg with type uint8
-    /// @param argOffset The offset of the arg in the packed data
-    /// @return arg The arg value
-    function getArgUint8(uint256 argOffset) internal pure returns (uint8 arg) {
-        uint256 offset = getImmutableArgsOffset();
-        assembly {
-            arg := shr(0xf8, calldataload(add(offset, argOffset)))
         }
     }
 
