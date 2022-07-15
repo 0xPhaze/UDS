@@ -88,6 +88,17 @@ library LibERC1967ProxyWithImmutableArgs {
         if (addr.code.length == 0) revert();
     }
 
+    /// @notice Reads an immutable arg with type uint256
+    /// @param argOffset The offset of the arg in the packed data
+    /// @param argLen The bytes length of the arg in the packed data
+    /// @return arg The arg value
+    function getArg(uint256 argOffset, uint256 argLen) internal pure returns (uint256 arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(sub(256, shl(3, argLen)), calldataload(add(offset, argOffset)))
+        }
+    }
+
     /// @notice Reads an immutable arg with type bytes32
     /// @param argOffset The offset of the arg in the packed data
     /// @return arg The arg value
@@ -98,6 +109,16 @@ library LibERC1967ProxyWithImmutableArgs {
         }
     }
 
+    /// @notice Reads an immutable arg with type address
+    /// @param argOffset The offset of the arg in the packed data
+    /// @return arg The arg value
+    function getArgAddress(uint256 argOffset) internal pure returns (address arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(96, calldataload(add(offset, argOffset)))
+        }
+    }
+
     /// @notice Reads an immutable arg with type uint256
     /// @param argOffset The offset of the arg in the packed data
     /// @return arg The arg value
@@ -105,6 +126,46 @@ library LibERC1967ProxyWithImmutableArgs {
         uint256 offset = getImmutableArgsOffset();
         assembly {
             arg := calldataload(add(offset, argOffset))
+        }
+    }
+
+    /// @notice Reads an immutable arg with type uint128
+    /// @param argOffset The offset of the arg in the packed data
+    /// @return arg The arg value
+    function getArgUint128(uint256 argOffset) internal pure returns (uint128 arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(128, calldataload(add(offset, argOffset)))
+        }
+    }
+
+    /// @notice Reads an immutable arg with type uint64
+    /// @param argOffset The offset of the arg in the packed data
+    /// @return arg The arg value
+    function getArgUint64(uint256 argOffset) internal pure returns (uint64 arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(192, calldataload(add(offset, argOffset)))
+        }
+    }
+
+    /// @notice Reads an immutable arg with type uint40
+    /// @param argOffset The offset of the arg in the packed data
+    /// @return arg The arg value
+    function getArgUint40(uint256 argOffset) internal pure returns (uint40 arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(216, calldataload(add(offset, argOffset)))
+        }
+    }
+
+    /// @notice Reads an immutable arg with type uint8
+    /// @param argOffset The offset of the arg in the packed data
+    /// @return arg The arg value
+    function getArgUint8(uint256 argOffset) internal pure returns (uint8 arg) {
+        uint256 offset = getImmutableArgsOffset();
+        assembly {
+            arg := shr(248, calldataload(add(offset, argOffset)))
         }
     }
 
