@@ -21,7 +21,7 @@ contract TestERC20DripUDS is Test {
     uint256 rate = 1e18;
 
     function setUp() public {
-        logic = new MockERC20DripUDS(rate, block.timestamp, block.timestamp + 1000 days);
+        logic = new MockERC20DripUDS(rate, block.timestamp + 1000 days);
 
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20DripUDS(address(new ERC1967Proxy(address(logic), initCalldata)));
@@ -246,7 +246,7 @@ contract TestERC20DripUDS is Test {
 // all solmate ERC20 tests should pass
 contract TestERC20UDS is ERC20Test {
     function setUp() public override {
-        logic = MockERC20UDS(address(new MockERC20DripUDS(1e18, block.timestamp, block.timestamp + 1000 days)));
+        logic = MockERC20UDS(address(new MockERC20DripUDS(1e18, block.timestamp + 1000 days)));
 
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));

@@ -6,25 +6,15 @@ import "../../src/tokens/ERC20DripUDS.sol";
 
 contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
     uint256 immutable rate;
-    uint256 immutable start;
     uint256 immutable end;
 
-    constructor(
-        uint256 rate_,
-        uint256 start_,
-        uint256 end_
-    ) {
+    constructor(uint256 rate_, uint256 end_) {
         rate = rate_;
-        start = start_;
         end = end_;
     }
 
     function dripDailyRate() public view override returns (uint256) {
         return rate;
-    }
-
-    function dripStartDate() public view override returns (uint256) {
-        return start;
     }
 
     function dripEndDate() public view override returns (uint256) {
