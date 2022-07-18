@@ -64,6 +64,17 @@ library utils {
         }
     }
 
+    function scrambleStorage(uint256 offset, uint256 numSlots) public {
+        bytes32 rand;
+        for (uint256 slot; slot < numSlots; slot++) {
+            rand = keccak256(abi.encodePacked(offset + slot));
+
+            assembly {
+                sstore(add(slot, offset), rand)
+            }
+        }
+    }
+
     function mstore(
         uint256 offset,
         bytes32 val,

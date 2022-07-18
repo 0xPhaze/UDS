@@ -41,7 +41,7 @@ contract TestERC20DripUDS is Test {
 
     /* ------------- getMultiplier() ------------- */
 
-    function test_multiplier() public {
+    function test_getMultiplier() public {
         token.increaseMultiplier(alice, 0);
 
         assertEq(token.getMultiplier(alice), 0);
@@ -70,7 +70,7 @@ contract TestERC20DripUDS is Test {
 
     /* ------------- increaseMultiplier() ------------- */
 
-    function test_increaseDripMultiplier() public {
+    function test_increaseRewardMultiplier() public {
         token.increaseMultiplier(alice, 1_000);
 
         assertEq(token.balanceOf(alice), 0);
@@ -156,7 +156,7 @@ contract TestERC20DripUDS is Test {
         assertEq(token.balanceOf(alice), 1_000_000e18);
         assertEq(token.virtualBalanceOf(alice), 900_000e18);
 
-        // waiting any longer doesn't give more due to dripEndDate
+        // waiting any longer doesn't give more due to rewardEndDate
         skip(900 days);
 
         assertEq(token.balanceOf(alice), 1_000_000e18);

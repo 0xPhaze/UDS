@@ -13,12 +13,12 @@ contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
         end = end_;
     }
 
-    function dripDailyRate() public view override returns (uint256) {
-        return rate;
+    function rewardEndDate() public view override returns (uint256) {
+        return end;
     }
 
-    function dripEndDate() public view override returns (uint256) {
-        return end;
+    function rewardDailyRate() public view override returns (uint256) {
+        return rate;
     }
 
     function init(
@@ -32,11 +32,11 @@ contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
     /* ------------- view ------------- */
 
     function getMultiplier(address owner) public view returns (uint256) {
-        return s().dripData[owner].multiplier;
+        return _getRewardMultiplier(owner);
     }
 
     function getLastClaimed(address owner) public view returns (uint256) {
-        return s().dripData[owner].lastClaimed;
+        return _getLastClaimed(owner);
     }
 
     /* ------------- public ------------- */
@@ -50,11 +50,11 @@ contract MockERC20DripUDS is MockUUPSUpgrade(1), ERC20DripUDS {
     }
 
     function increaseMultiplier(address owner, uint216 quantity) public {
-        _increaseDripMultiplier(owner, quantity);
+        _increaseRewardMultiplier(owner, quantity);
     }
 
     function decreaseMultiplier(address owner, uint216 quantity) public {
-        _decreaseDripMultiplier(owner, quantity);
+        _decreaseRewardMultiplier(owner, quantity);
     }
 
     function claimVirtualBalance() public {

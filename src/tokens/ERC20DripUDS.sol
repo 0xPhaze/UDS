@@ -1,41 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "../auth/InitializableUDS.sol";
-import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
-import {ERC20UDS, s as erc20DS} from "./ERC20UDS.sol";
-
-// ------------- storage
-
-// keccak256("diamond.storage.erc20.drip") == 0x8c757391584fa5c5dc065e485ac4f0a50a060fb8660a0046bb8d8210b4088636;
-bytes32 constant DIAMOND_STORAGE_ERC20_DRIP = 0x8c757391584fa5c5dc065e485ac4f0a50a060fb8660a0046bb8d8210b4088636;
-
-function s() pure returns (ERC20DripDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC20_DRIP } // prettier-ignore
-}
-
-struct DripData {
-    uint216 multiplier;
-    uint40 lastClaimed;
-}
-
-struct ERC20DripDS {
-    mapping(address => DripData) dripData;
-}
+import {ERC20RewardsUDS} from "./ERC20RewardsUDS.sol";
+import {ERC20UDS} from "./ERC20UDS.sol";
 
 /// @title ERC20Drip (Upgradeable Diamond Storage, ERC20 compliant)
 /// @author phaze (https://github.com/0xPhaze/UDS)
-/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @author Named after DRIP20 (https://github.com/0xBeans/DRIP20)
 /// @notice Allows for directly "dripping" ERC20 tokens into a user's wallet
-/// @notice at a rate of dripDailyRate() * multiplier[user] per day
+/// @notice at a rate of rewardDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any balance update
-abstract contract ERC20DripUDS is ERC20UDS {
+abstract contract ERC20DripUDS is ERC20RewardsUDS {
+    /* ------------- virtual ------------- */
+
+    function rewardEndDate() public view virtual override returns (uint256);
+
+    function rewardDailyRate() public view virtual override returns (uint256);
+
     /* ------------- public ------------- */
-
-    function dripEndDate() public view virtual returns (uint256);
-
-    function dripDailyRate() public view virtual returns (uint256);
 
     function balanceOf(address owner) public view virtual override returns (uint256) {
         return ERC20UDS.balanceOf(owner) + _virtualBalanceOf(owner);
@@ -55,60 +37,5 @@ abstract contract ERC20DripUDS is ERC20UDS {
         _claimVirtualBalance(from);
 
         return ERC20UDS.transferFrom(from, to, amount);
-    }
-
-    /* ------------- internal ------------- */
-
-    function _getDripMultiplier(address owner) internal view returns (uint256) {
-        return s().dripData[owner].multiplier;
-    }
-
-    function _virtualBalanceOf(address owner) internal view virtual returns (uint256) {
-        DripData storage dripData = s().dripData[owner];
-
-        return _calculateDripBalance(dripData.multiplier, dripData.lastClaimed);
-    }
-
-    function _calculateDripBalance(uint256 multiplier, uint256 lastClaimed) internal view virtual returns (uint256) {
-        if (multiplier == 0) return 0;
-
-        uint256 end = dripEndDate();
-
-        uint256 timestamp = block.timestamp;
-
-        if (lastClaimed > end) return 0;
-        else if (timestamp > end) timestamp = end;
-
-        // if multiplier > 0 then lastClaimed > 0
-        return ((timestamp - lastClaimed) * multiplier * dripDailyRate()) / 1 days;
-    }
-
-    function _claimVirtualBalance(address owner) internal virtual {
-        DripData storage dripData = s().dripData[owner];
-
-        uint256 multiplier = dripData.multiplier;
-        uint256 lastClaimed = dripData.lastClaimed;
-
-        if (multiplier != 0 || lastClaimed == 0) {
-            if (multiplier != 0) {
-                uint256 amount = _calculateDripBalance(multiplier, lastClaimed);
-
-                _mint(owner, amount);
-            }
-
-            s().dripData[owner].lastClaimed = uint40(block.timestamp);
-        }
-    }
-
-    function _increaseDripMultiplier(address owner, uint216 quantity) internal {
-        _claimVirtualBalance(owner);
-
-        s().dripData[owner].multiplier += uint216(quantity);
-    }
-
-    function _decreaseDripMultiplier(address owner, uint216 quantity) internal {
-        _claimVirtualBalance(owner);
-
-        s().dripData[owner].multiplier -= uint216(quantity);
     }
 }

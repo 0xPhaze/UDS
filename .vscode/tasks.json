@@ -3,9 +3,8 @@
 	"tasks": [
 		{
             "type": "shell",
-			"command": "forge test -vvv",
+			"command": "forge test -vvv ",
 			// "command": "forge test -m yul -vvv",
-			// "command": "forge test --debug yul --match-contract Yul",
 			"group": {
 				"kind": "test",
 				"isDefault": true
