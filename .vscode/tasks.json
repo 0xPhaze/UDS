@@ -4,8 +4,8 @@
 		{
             "type": "shell",
 			"command": "forge test -vvv",
-			// "command": "forge test -vvv -m getArg",
-			// "command": "forge test  -vvv --match-contract Drip",
+			// "command": "forge test -m yul -vvv",
+			// "command": "forge test --debug yul --match-contract Yul",
 			"group": {
 				"kind": "test",
 				"isDefault": true

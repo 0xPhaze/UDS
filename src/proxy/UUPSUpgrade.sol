@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC1967, DIAMOND_STORAGE_ERC1967_UPGRADE, ERC1822} from "./ERC1967Proxy.sol";
+import {ERC1967, ERC1967_PROXY_STORAGE_SLOT, ERC1822} from "./ERC1967Proxy.sol";
 
 // ------------- errors
 
@@ -22,8 +22,8 @@ abstract contract UUPSUpgrade is ERC1967, ERC1822 {
 
     /* ------------- view ------------- */
 
-    function proxiableUUID() external view override notDelegated returns (bytes32) {
-        return DIAMOND_STORAGE_ERC1967_UPGRADE;
+    function proxiableUUID() external view virtual override notDelegated returns (bytes32) {
+        return ERC1967_PROXY_STORAGE_SLOT;
     }
 
     /* ------------- virtual ------------- */

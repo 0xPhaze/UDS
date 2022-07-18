@@ -200,7 +200,7 @@ library LibERC1967ProxyWithImmutableArgs {
 //
 //             let success := delegatecall(
 //                 gas(),
-//                 sload(DIAMOND_STORAGE_ERC1967_UPGRADE),
+//                 sload(ERC1967_PROXY_STORAGE_SLOT),
 //                 0,
 //                 add(calldatasize(), 0x61),
 //                 0,
