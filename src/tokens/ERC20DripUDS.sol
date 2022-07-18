@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC20RewardsUDS} from "./ERC20RewardsUDS.sol";
+import {ERC20RewardUDS} from "./ERC20RewardUDS.sol";
 import {ERC20UDS} from "./ERC20UDS.sol";
 
 /// @title ERC20Drip (Upgradeable Diamond Storage, ERC20 compliant)
@@ -10,7 +10,7 @@ import {ERC20UDS} from "./ERC20UDS.sol";
 /// @notice Allows for directly "dripping" ERC20 tokens into a user's wallet
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any balance update
-abstract contract ERC20DripUDS is ERC20RewardsUDS {
+abstract contract ERC20DripUDS is ERC20RewardUDS {
     /* ------------- virtual ------------- */
 
     function rewardEndDate() public view virtual override returns (uint256);

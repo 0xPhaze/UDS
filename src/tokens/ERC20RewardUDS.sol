@@ -5,11 +5,11 @@ import {ERC20UDS, s as erc20DS} from "./ERC20UDS.sol";
 
 // ------------- storage
 
-// keccak256("diamond.storage.erc20.rewards") == 0x7fcf40016a26e7c450db40574e528b524d07399a88624d686bf104c8c643048e;
-bytes32 constant DIAMOND_STORAGE_ERC20_REWARDS = 0x7fcf40016a26e7c450db40574e528b524d07399a88624d686bf104c8c643048e;
+// keccak256("diamond.storage.erc20.reward") == 0x2bf76f1229f14879252da90846a528ce52c56d0ade153f3ef6c5b45141fb99c9;
+bytes32 constant DIAMOND_STORAGE_ERC20_Reward = 0x2bf76f1229f14879252da90846a528ce52c56d0ade153f3ef6c5b45141fb99c9;
 
-function s() pure returns (ERC20RewardsDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC20_REWARDS } // prettier-ignore
+function s() pure returns (ERC20RewardDS storage diamondStorage) {
+    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC20_Reward } // prettier-ignore
 }
 
 struct UserData {
@@ -17,16 +17,16 @@ struct UserData {
     uint40 lastClaimed;
 }
 
-struct ERC20RewardsDS {
+struct ERC20RewardDS {
     mapping(address => UserData) userData;
 }
 
-/// @title ERC20Rewards (Upgradeable Diamond Storage, ERC20 compliant)
+/// @title ERC20Reward (Upgradeable Diamond Storage, ERC20 compliant)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @notice Allows for directly "rewardping" ERC20 tokens into a user's wallet
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any balance update
-abstract contract ERC20RewardsUDS is ERC20UDS {
+abstract contract ERC20RewardUDS is ERC20UDS {
     /* ------------- virtual ------------- */
 
     function rewardEndDate() public view virtual returns (uint256);
@@ -46,10 +46,10 @@ abstract contract ERC20RewardsUDS is ERC20UDS {
     function _virtualBalanceOf(address owner) internal view virtual returns (uint256) {
         UserData storage userData = s().userData[owner];
 
-        return _calculateRewards(userData.multiplier, userData.lastClaimed);
+        return _calculateReward(userData.multiplier, userData.lastClaimed);
     }
 
-    function _calculateRewards(uint256 multiplier, uint256 lastClaimed) internal view virtual returns (uint256) {
+    function _calculateReward(uint256 multiplier, uint256 lastClaimed) internal view virtual returns (uint256) {
         if (multiplier == 0) return 0;
 
         uint256 end = rewardEndDate();
@@ -71,7 +71,7 @@ abstract contract ERC20RewardsUDS is ERC20UDS {
 
         if (multiplier != 0 || lastClaimed == 0) {
             if (multiplier != 0) {
-                uint256 amount = _calculateRewards(multiplier, lastClaimed);
+                uint256 amount = _calculateReward(multiplier, lastClaimed);
 
                 _mint(owner, amount);
             }
