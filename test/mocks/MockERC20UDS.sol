@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
-import "../../src/tokens/ERC20UDS.sol";
+import "/tokens/ERC20UDS.sol";
 
 contract MockERC20UDS is MockUUPSUpgrade(1), ERC20UDS {
     function init(

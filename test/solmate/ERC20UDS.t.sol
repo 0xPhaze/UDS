@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "../../src/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)

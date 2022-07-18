@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "../src/proxy/ERC1967Proxy.sol";
+import "/proxy/ERC1967Proxy.sol";
 
 contract LogicV1 is MockUUPSUpgrade(1) {
     uint256 public data = 0x1337;

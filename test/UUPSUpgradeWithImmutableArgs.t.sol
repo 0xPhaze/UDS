@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {Test, console} from "forge-std/Test.sol";
 import {utils} from "./utils/utils.sol";
 
-import {LibERC1967ProxyWithImmutableArgs} from "../src/proxy/ERC1967ProxyWithImmutableArgs.sol";
+import {LibERC1967ProxyWithImmutableArgs} from "/proxy/ERC1967ProxyWithImmutableArgs.sol";
 import {MockUUPSUpgradeWithImmutableArgs} from "./mocks/MockUUPSUpgradeWithImmutableArgs.sol";
 
 contract Logic is MockUUPSUpgradeWithImmutableArgs(1) {

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
-import "../../src/tokens/ERC1155UDS.sol";
+import "/tokens/ERC1155UDS.sol";
 
 contract MockERC1155UDS is MockUUPSUpgrade(1), ERC1155UDS {
     function uri(uint256) public pure virtual override returns (string memory) {}
