@@ -4,7 +4,6 @@
 		{
             "type": "shell",
 			"command": "forge test -vvv ",
-			// "command": "forge test -m yul -vvv",
 			"group": {
 				"kind": "test",
 				"isDefault": true

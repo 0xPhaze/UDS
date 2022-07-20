@@ -1212,39 +1212,39 @@ contract ERC1155Test is Test, ERC1155TokenReceiver {
         }
     }
 
-    function testBatchBalanceOf(
-        address[] memory tos,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory mintData
-    ) public {
-        uint256 minLength = min3(tos.length, ids.length, amounts.length);
+    // function testBatchBalanceOf(
+    //     address[] memory tos,
+    //     uint256[] memory ids,
+    //     uint256[] memory amounts,
+    //     bytes memory mintData
+    // ) public {
+    //     uint256 minLength = min3(tos.length, ids.length, amounts.length);
 
-        address[] memory normalizedTos = new address[](minLength);
-        uint256[] memory normalizedIds = new uint256[](minLength);
+    //     address[] memory normalizedTos = new address[](minLength);
+    //     uint256[] memory normalizedIds = new uint256[](minLength);
 
-        for (uint256 i = 0; i < minLength; i++) {
-            uint256 id = ids[i];
-            address to = tos[i] == address(0) || tos[i] == address(token) ? address(0xBEEF) : tos[i];
+    //     for (uint256 i = 0; i < minLength; i++) {
+    //         uint256 id = ids[i];
+    //         address to = tos[i] == address(0) || tos[i] == address(token) ? address(0xBEEF) : tos[i];
 
-            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
+    //         uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
 
-            normalizedTos[i] = to;
-            normalizedIds[i] = id;
+    //         normalizedTos[i] = to;
+    //         normalizedIds[i] = id;
 
-            uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
+    //         uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
 
-            token.mint(to, id, mintAmount, mintData);
+    //         token.mint(to, id, mintAmount, mintData);
 
-            userMintAmounts[to][id] += mintAmount;
-        }
+    //         userMintAmounts[to][id] += mintAmount;
+    //     }
 
-        uint256[] memory balances = token.balanceOfBatch(normalizedTos, normalizedIds);
+    //     uint256[] memory balances = token.balanceOfBatch(normalizedTos, normalizedIds);
 
-        for (uint256 i = 0; i < normalizedTos.length; i++) {
-            assertEq(balances[i], token.balanceOf(normalizedTos[i], normalizedIds[i]));
-        }
-    }
+    //     for (uint256 i = 0; i < normalizedTos.length; i++) {
+    //         assertEq(balances[i], token.balanceOf(normalizedTos[i], normalizedIds[i]));
+    //     }
+    // }
 
     function testFailMintToZero(
         uint256 id,
