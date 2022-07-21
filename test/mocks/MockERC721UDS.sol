@@ -6,7 +6,7 @@ import "/tokens/ERC721UDS.sol";
 
 contract MockERC721UDS is MockUUPSUpgrade(1), ERC721UDS {
     function init(string memory _name, string memory _symbol) external initializer {
-        __ERC721UDS_init(_name, _symbol);
+        __ERC721_init(_name, _symbol);
     }
 
     function tokenURI(uint256) public pure virtual override returns (string memory) {}

@@ -10,6 +10,7 @@ typechain
 json
 
 out
+broadcast
 
 #Hardhat files
 cache

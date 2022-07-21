@@ -31,7 +31,7 @@ abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
 
     /* ------------- init ------------- */
 
-    function __ERC20UDS_init(
+    function __ERC20_init(
         string memory _name,
         string memory _symbol,
         uint8 _decimals

@@ -10,7 +10,7 @@ contract MockERC20UDS is MockUUPSUpgrade(1), ERC20UDS {
         string memory _symbol,
         uint8 _decimals
     ) external initializer {
-        __ERC20UDS_init(_name, _symbol, _decimals);
+        __ERC20_init(_name, _symbol, _decimals);
     }
 
     function burn(address from, uint256 value) public virtual {

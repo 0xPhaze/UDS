@@ -2,11 +2,6 @@
 
 A collection of upgradeable contracts compatible with diamond storage.
 
-Install with [Foundry](https://github.com/foundry-rs/foundry)
-```sh
-forge install 0xPhaze/UDS
-```
-
 ## Contracts
 ```ml
 src
@@ -20,20 +15,88 @@ src
 │   ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967 proxy, supports up to 3 immutable args"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
 └── tokens
-    ├── ERC1155UDS.sol - "Solmate's ERC1155"
-    ├── ERC20DripUDS.sol - "ERC20 with dripping abilities"
     ├── ERC20UDS.sol - "Solmate's ERC20"
+    ├── ERC20DripUDS.sol - "ERC20 with dripping abilities"
+    ├── ERC20RewardsUDS.sol - "ERC20 with fixed reward accrual"
+    ├── ERC1155UDS.sol - "Solmate's ERC1155"
     └── ERC721UDS.sol - "Solmate's ERC721"
 ```
 
 
+## Installation
+
+Install with [Foundry](https://github.com/foundry-rs/foundry)
+```sh
+forge install 0xPhaze/UDS
+```
+
+## Deploying an Upgradeable Contract
+
+### Implementation
+
+The implementation contract, needs inherit from [UUPSUpgrade](./src/UUPSUpgrade.sol)
+and the `_authorizeUpgrade` function must be overriden (and protected).
+
+**Example of an upgradeable ERC721**
+
+```solidity
+import {ERC721UDS} from "UDS/tokens/ERC721UDS.sol";
+import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
+import {InitializableUDS} from "UDS/auth/InitializableUDS.sol";
+
+import {UUPSUpgrade} from "/UUPSUpgrade.sol";
+
+contract UpgradeableERC721 is UUPSUpgrade, ERC721UDS, InitializableUDS, OwnableUDS {
+    function init() public initializer {
+        __Ownable_init();
+        __ERC721_init("My NFT", "NFT");
+    }
+
+    function tokenURI(uint256) public pure override returns (string memory) {
+        return ...
+    }
+
+    function mint(address to, uint256 tokenId) public onlyOwner {
+        _mint(to, tokenId);
+    }
+
+    function _authorizeUpgrade() internal override onlyOwner {}
+}
+```
+
+The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [InitializableUDS](./src/auth/InitializableUDS.sol).
+To see a full example
+
+### Deploying the Proxy Contract
+
+```solidity
+import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+
+address proxyAddress = new ERC1967Proxy(implementation, initCalldata);
+```
+
+### Upgrading a Proxy Contract
+
+```solidity
+import {UUPSUpgrade} from "/proxy/UUPSUpgrade.sol";
+
+UUPSUpgrade(deployedProxy).upgradeToAndCall(implementation, initCalldata);
+```
+
+A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
+can be found here [Deploy](./script/Deploy.s.sol) and here [Upgrade](./script/Upgrade.s.sol).
+
+
+## Benefits
+
 Benefits over using Openzeppelin's upgradeable contracts:
 - No worrying about calculating storage gaps or adding/removing inheritance, because of diamond storage
+- Simplified dependencies and contracts
 - "Re-initialize" proxies (calling init on an already deployed proxy) is possible
 - Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
 
 
-## What is diamond storage?
+## What is Diamond Storage?
 
 [Diamond Storage](https://medium.com/1milliondevs/new-storage-layout-for-proxy-contracts-and-diamonds-98d01d0eadb)
 keeps contract storage data in structs at arbitrary locations as opposed to in sequence.
@@ -44,7 +107,7 @@ The free function `s()` returns a reference to the struct's storage location, wh
 read/write any state.
 
 
-## What is a proxy?
+## What is a Proxy?
 
 A proxy contract delegates all calls to an implementation contract.
 This means that it runs the code/logic of the implementation contract is executed in the context of the proxy contract.

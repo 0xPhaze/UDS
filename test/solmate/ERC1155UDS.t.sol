@@ -127,14 +127,6 @@ contract ERC1155Test is Test, ERC1155TokenReceiver {
         return a > b ? b : a;
     }
 
-    function assertEq(uint256[] memory a, uint256[] memory b) internal virtual {
-        require(a.length == b.length, "LENGTH_MISMATCH");
-
-        for (uint256 i = 0; i < a.length; i++) {
-            assertEq(a[i], b[i]);
-        }
-    }
-
     function setUp() public {
         logic = new MockERC1155UDS();
         token = MockERC1155UDS(address(new ERC1967Proxy(address(logic), "")));
