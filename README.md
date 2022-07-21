@@ -42,9 +42,8 @@ and the `_authorizeUpgrade` function must be overriden (and protected).
 ```solidity
 import {ERC721UDS} from "UDS/tokens/ERC721UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
+import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 import {InitializableUDS} from "UDS/auth/InitializableUDS.sol";
-
-import {UUPSUpgrade} from "/UUPSUpgrade.sol";
 
 contract UpgradeableERC721 is UUPSUpgrade, ERC721UDS, InitializableUDS, OwnableUDS {
     function init() public initializer {
@@ -71,6 +70,10 @@ To see a full example
 
 ```solidity
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+
+address implementation = ...;
+
+bytes memory initCalldata = abi.encodeWithSelector(init.selector, param1, param2);
 
 address proxyAddress = new ERC1967Proxy(implementation, initCalldata);
 ```
