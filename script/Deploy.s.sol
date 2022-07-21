@@ -36,7 +36,8 @@ contract Deploy is Script {
         address implementation = address(new MyNFTUpgradeableV1());
 
         // call the init function upon deployment
-        bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV1.init.selector);
+        bytes memory initParameters = abi.encode(/* parameter1, parameter2 */); // prettier-ignore
+        bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV1.init.selector, initParameters);
 
         // creates the proxy contract and
         // calls MyNFTUpgradeableV1.init() in the context of the proxy
