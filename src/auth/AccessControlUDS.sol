@@ -39,8 +39,10 @@ abstract contract AccessControlUDS is InitializableUDS {
 
     /* ------------- init ------------- */
 
-    function __AccessControl_init() external initializer {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    function __AccessControl_init() internal initializer {
+        s().roles[DEFAULT_ADMIN_ROLE].members[msg.sender] = true;
+
+        emit RoleGranted(DEFAULT_ADMIN_ROLE, msg.sender, msg.sender);
     }
 
     /* ------------- view ------------- */
@@ -64,35 +66,29 @@ abstract contract AccessControlUDS is InitializableUDS {
     function grantRole(bytes32 role, address account) public virtual {
         if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
 
-        _grantRole(role, account);
-    }
-
-    function revokeRole(bytes32 role, address account) public virtual {
-        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
-
-        _revokeRole(role, account);
-    }
-
-    function renounceRole(bytes32 role) public virtual {
-        _revokeRole(role, msg.sender);
-    }
-
-    /* ------------- internal ------------- */
-
-    function _grantRole(bytes32 role, address account) internal virtual {
         s().roles[role].members[account] = true;
 
         emit RoleGranted(role, account, msg.sender);
     }
 
-    function _revokeRole(bytes32 role, address account) internal virtual {
+    function revokeRole(bytes32 role, address account) public virtual {
+        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
+
         s().roles[role].members[account] = false;
 
         emit RoleRevoked(role, account, msg.sender);
     }
 
-    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
+    function renounceRole(bytes32 role) public virtual {
+        s().roles[role].members[msg.sender] = false;
+
+        emit RoleRevoked(role, msg.sender, msg.sender);
+    }
+
+    function setRoleAdmin(bytes32 role, bytes32 adminRole) public virtual {
         bytes32 previousAdminRole = getRoleAdmin(role);
+
+        if (!hasRole(previousAdminRole, msg.sender)) revert NotAuthorized();
 
         s().roles[role].adminRole = adminRole;
 
