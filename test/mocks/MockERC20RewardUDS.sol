@@ -2,10 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
-import {MockERC20RewardUDS} from "./MockERC20RewardUDS.sol";
-import "/tokens/ERC20DripUDS.sol";
+import "/tokens/ERC20RewardUDS.sol";
 
-contract MockERC20DripUDS is MockUUPSUpgrade, ERC20DripUDS {
+contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
     uint256 immutable rate;
     uint256 immutable end;
 

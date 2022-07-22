@@ -3,7 +3,8 @@
 	"tasks": [
 		{
             "type": "shell",
-			"command": "forge test -vvv ",
+			// "command": "forge test -vvv",
+			"command": "forge test -vvv --match-contract Access",
 			"group": {
 				"kind": "test",
 				"isDefault": true

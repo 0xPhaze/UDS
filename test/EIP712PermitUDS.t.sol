@@ -12,7 +12,7 @@ bytes32 constant PERMIT_TYPEHASH = keccak256(
     "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
 );
 
-contract MockEIP712Permit is MockUUPSUpgrade(1), EIP712PermitUDS {
+contract MockEIP712Permit is MockUUPSUpgrade, EIP712PermitUDS {
     function usePermit(
         address owner,
         address spender,
@@ -36,6 +36,10 @@ contract TestEIP712PermitUDS is Test {
 
     function setUp() public {
         permit = new MockEIP712Permit();
+    }
+
+    function test_setUp() public {
+        assertEq(DIAMOND_STORAGE_EIP_712_PERMIT, keccak256("diamond.storage.eip.712.permit"));
     }
 
     /* ------------- upgradeTo() ------------- */

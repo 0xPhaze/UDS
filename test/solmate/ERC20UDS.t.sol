@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
+import {DIAMOND_STORAGE_ERC20} from "/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
 contract ERC20Test is Test {
@@ -22,7 +23,11 @@ contract ERC20Test is Test {
 
         // make sure that storage data is not
         // located in sequential storage slot
-        token.scrambleStorage();
+        token.scrambleStorage(0, 100);
+    }
+
+    function test_setUp() public {
+        assertEq(DIAMOND_STORAGE_ERC20, keccak256("diamond.storage.erc20"));
     }
 
     function testInvariantMetadata() public {

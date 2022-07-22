@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
-import {ERC1155TokenReceiver} from "/tokens/ERC1155UDS.sol";
+import {ERC1155TokenReceiver, DIAMOND_STORAGE_ERC1155} from "/tokens/ERC1155UDS.sol";
 import {MockERC1155UDS} from "../mocks/MockERC1155UDS.sol";
 
 contract ERC1155Recipient is ERC1155TokenReceiver {
@@ -130,6 +130,10 @@ contract ERC1155Test is Test, ERC1155TokenReceiver {
     function setUp() public {
         logic = new MockERC1155UDS();
         token = MockERC1155UDS(address(new ERC1967Proxy(address(logic), "")));
+    }
+
+    function test_setUp() public {
+        assertEq(DIAMOND_STORAGE_ERC1155, keccak256("diamond.storage.erc1155"));
     }
 
     function testMintToEOA() public {

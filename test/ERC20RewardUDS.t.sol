@@ -5,26 +5,26 @@ import {Test, stdError} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
-import {MockERC20DripUDS} from "./mocks/MockERC20DripUDS.sol";
+import {MockERC20RewardUDS} from "./mocks/MockERC20RewardUDS.sol";
 import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
-import "/tokens/ERC20DripUDS.sol";
+import "/tokens/ERC20RewardUDS.sol";
 
-contract TestERC20DripUDS is Test {
+contract TestERC20RewardUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
     address tester = address(this);
 
-    MockERC20DripUDS token;
-    MockERC20DripUDS logic;
+    MockERC20RewardUDS token;
+    MockERC20RewardUDS logic;
 
     uint256 rate = 1e18;
 
     function setUp() public {
-        logic = new MockERC20DripUDS(rate, block.timestamp + 1000 days);
+        logic = new MockERC20RewardUDS(rate, block.timestamp + 1000 days);
 
-        bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
-        token = MockERC20DripUDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20RewardUDS.init.selector, "Token", "TKN", 18);
+        token = MockERC20RewardUDS(address(new ERC1967Proxy(address(logic), initCalldata)));
     }
 
     /* ------------- setUp() ------------- */
@@ -37,6 +37,8 @@ contract TestERC20DripUDS is Test {
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
         assertEq(token.decimals(), 18);
+
+        assertEq(DIAMOND_STORAGE_ERC20_REWARD, keccak256("diamond.storage.erc20.reward"));
     }
 
     /* ------------- getMultiplier() ------------- */
@@ -78,7 +80,7 @@ contract TestERC20DripUDS is Test {
 
         skip(100 days);
 
-        assertEq(token.balanceOf(alice), 100_000e18);
+        assertEq(token.balanceOf(alice), 0);
         assertEq(token.virtualBalanceOf(alice), 100_000e18);
 
         // increasing claims for the user
@@ -86,10 +88,10 @@ contract TestERC20DripUDS is Test {
 
         skip(200 days);
 
-        assertEq(token.balanceOf(alice), 500_000e18);
+        assertEq(token.balanceOf(alice), 100_000e18);
         assertEq(token.virtualBalanceOf(alice), 400_000e18);
 
-        token.decreaseMultiplier(alice, 1_000);
+        token.decreaseMultiplier(alice, 2_000);
     }
 
     /* ------------- claimVirtualBalance() ------------- */
@@ -109,7 +111,7 @@ contract TestERC20DripUDS is Test {
 
         // alice should have 100_000 tokens at her disposal
         // virtual balance is counted in balanceOf
-        assertEq(token.balanceOf(alice), 100_000e18);
+        assertEq(token.balanceOf(alice), 0);
         assertEq(token.virtualBalanceOf(alice), 100_000e18);
 
         // claim virtual balance to balance
@@ -122,7 +124,7 @@ contract TestERC20DripUDS is Test {
         skip(100 days);
 
         // another 100 days
-        assertEq(token.balanceOf(alice), 200_000e18);
+        assertEq(token.balanceOf(alice), 100_000e18);
         assertEq(token.virtualBalanceOf(alice), 100_000e18);
 
         // claim again
@@ -144,7 +146,7 @@ contract TestERC20DripUDS is Test {
 
         skip(100 days);
 
-        assertEq(token.balanceOf(alice), 100_000e18);
+        assertEq(token.balanceOf(alice), 0);
         assertEq(token.virtualBalanceOf(alice), 100_000e18);
 
         vm.prank(alice);
@@ -153,13 +155,13 @@ contract TestERC20DripUDS is Test {
         // skip to end date
         skip(900 days);
 
-        assertEq(token.balanceOf(alice), 1_000_000e18);
+        assertEq(token.balanceOf(alice), 100_000e18);
         assertEq(token.virtualBalanceOf(alice), 900_000e18);
 
         // waiting any longer doesn't give more due to rewardEndDate
         skip(900 days);
 
-        assertEq(token.balanceOf(alice), 1_000_000e18);
+        assertEq(token.balanceOf(alice), 100_000e18);
         assertEq(token.virtualBalanceOf(alice), 900_000e18);
 
         // claim all balance past end date
@@ -171,84 +173,14 @@ contract TestERC20DripUDS is Test {
         assertEq(token.balanceOf(alice), 1_000_000e18);
         assertEq(token.virtualBalanceOf(alice), 0);
     }
-
-    /* ------------- transfer() ------------- */
-
-    function test_transfer() public {
-        vm.prank(alice);
-        token.approve(tester, type(uint256).max);
-
-        token.increaseMultiplier(alice, 1_000);
-
-        skip(100 days);
-
-        // alice should have 100_000 tokens at her disposal
-        assertEq(token.balanceOf(alice), 100_000e18);
-
-        vm.prank(alice);
-        token.transfer(bob, 20_000e18);
-
-        assertEq(token.balanceOf(alice), 80_000e18);
-        assertEq(token.balanceOf(bob), 20_000e18);
-
-        assertEq(token.virtualBalanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(bob), 0);
-
-        // further claiming virtual tokens should have no effect
-        vm.prank(alice);
-        token.claimVirtualBalance();
-
-        assertEq(token.balanceOf(alice), 80_000e18);
-        assertEq(token.balanceOf(bob), 20_000e18);
-
-        vm.prank(alice);
-        token.transfer(bob, 80_000e18);
-
-        assertEq(token.balanceOf(alice), 0);
-        assertEq(token.balanceOf(bob), 100_000e18);
-    }
-
-    /* ------------- transferFrom() ------------- */
-
-    function test_transferFrom() public {
-        vm.prank(alice);
-        token.approve(tester, type(uint256).max);
-
-        token.increaseMultiplier(alice, 1_000);
-
-        skip(100 days);
-
-        // alice should have 100_000 tokens at her disposal
-        assertEq(token.balanceOf(alice), 100_000e18);
-
-        token.transferFrom(alice, bob, 20_000e18);
-
-        assertEq(token.balanceOf(alice), 80_000e18);
-        assertEq(token.balanceOf(bob), 20_000e18);
-
-        assertEq(token.virtualBalanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(bob), 0);
-
-        // further claiming virtual tokens should have no effect
-        vm.prank(alice);
-        token.claimVirtualBalance();
-
-        assertEq(token.balanceOf(alice), 80_000e18);
-        assertEq(token.balanceOf(bob), 20_000e18);
-
-        token.transferFrom(alice, bob, 80_000e18);
-
-        assertEq(token.balanceOf(alice), 0);
-        assertEq(token.balanceOf(bob), 100_000e18);
-    }
 }
 
 // all solmate ERC20 tests should pass
 contract TestERC20UDS is ERC20Test {
     function setUp() public override {
-        logic = MockERC20UDS(address(new MockERC20DripUDS(1e18, block.timestamp + 1000 days)));
+        logic = MockERC20UDS(address(new MockERC20RewardUDS(1e18, block.timestamp + 1000 days)));
 
-        bytes memory initCalldata = abi.encodeWithSelector(MockERC20DripUDS.init.selector, "Token", "TKN", 18);
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20RewardUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
     }
 }

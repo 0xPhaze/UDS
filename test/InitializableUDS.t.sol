@@ -8,10 +8,13 @@ import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 import "/auth/InitializableUDS.sol";
 
-contract Logic is MockUUPSUpgrade, InitializableUDS {
+contract MockInitializable is MockUUPSUpgrade, InitializableUDS {
     uint256 public initializedCount;
+    uint256 public immutable version;
 
-    constructor(uint256 version) MockUUPSUpgrade(version) {}
+    constructor(uint256 version_) {
+        version = version_;
+    }
 
     function initializerRestricted() public initializer {
         ++initializedCount;
@@ -23,15 +26,15 @@ contract TestInitializableUDS is Test {
     address alice = address(0xbabe);
     address tester = address(this);
 
-    Logic proxy;
-    Logic logicV1;
-    Logic logicV2;
+    MockInitializable proxy;
+    MockInitializable logicV1;
+    MockInitializable logicV2;
 
     function setUp() public {
-        logicV1 = new Logic(1);
-        logicV2 = new Logic(2);
+        logicV1 = new MockInitializable(1);
+        logicV2 = new MockInitializable(2);
 
-        proxy = Logic(address(new ERC1967Proxy(address(logicV1), "")));
+        proxy = MockInitializable(address(new ERC1967Proxy(address(logicV1), "")));
     }
 
     /* ------------- setUp() ------------- */
@@ -50,42 +53,58 @@ contract TestInitializableUDS is Test {
 
     /* ------------- initializerRestricted() ------------- */
 
-    /// make sure initializerRestricted function can't be called
-    function test_initializerRestricted_fail() public {
-        vm.expectRevert(AlreadyInitialized.selector);
-        proxy.initializerRestricted();
-
-        vm.expectRevert(ProxyCallRequired.selector);
-        logicV1.initializerRestricted();
-
-        vm.expectRevert(ProxyCallRequired.selector);
-        logicV2.initializerRestricted();
-
-        proxy.upgradeToAndCall(address(logicV2), "");
-
-        vm.expectRevert(AlreadyInitialized.selector);
-        proxy.initializerRestricted();
-
-        vm.expectRevert(ProxyCallRequired.selector);
-        logicV1.initializerRestricted();
-
-        vm.expectRevert(ProxyCallRequired.selector);
-        logicV2.initializerRestricted();
-    }
-
-    /// call initializerRestricted during upgrade
-    function test_upgradeToAndCallInitializerRestricted() public {
-        proxy.upgradeToAndCall(address(logicV2), abi.encodePacked(Logic.initializerRestricted.selector));
+    /// call initializerRestricted during deployment
+    function test_deployAndCall_initializerRestricted() public {
+        proxy = MockInitializable(
+            address(
+                new ERC1967Proxy(address(logicV2), abi.encodePacked(MockInitializable.initializerRestricted.selector))
+            )
+        );
 
         assertEq(proxy.version(), 2);
         assertEq(proxy.implementation(), address(logicV2));
         assertEq(proxy.initializedCount(), 1);
 
         // switch back to v1
-        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(Logic.initializerRestricted.selector));
+        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(MockInitializable.initializerRestricted.selector));
 
         assertEq(proxy.version(), 1);
         assertEq(proxy.implementation(), address(logicV1));
         assertEq(proxy.initializedCount(), 2);
+    }
+
+    /// call initializerRestricted during upgrade
+    function test_upgradeToAndCall_initializerRestricted() public {
+        proxy.upgradeToAndCall(address(logicV2), abi.encodePacked(MockInitializable.initializerRestricted.selector));
+
+        assertEq(proxy.version(), 2);
+        assertEq(proxy.implementation(), address(logicV2));
+        assertEq(proxy.initializedCount(), 1);
+
+        // switch back to v1
+        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(MockInitializable.initializerRestricted.selector));
+
+        assertEq(proxy.version(), 1);
+        assertEq(proxy.implementation(), address(logicV1));
+        assertEq(proxy.initializedCount(), 2);
+    }
+
+    /// make sure initializerRestricted function can't be called
+    function test_initializerRestricted_fail_AlreadyInitialized() public {
+        vm.expectRevert(AlreadyInitialized.selector);
+        proxy.initializerRestricted();
+
+        proxy.upgradeToAndCall(address(logicV2), "");
+
+        vm.expectRevert(AlreadyInitialized.selector);
+        proxy.initializerRestricted();
+    }
+
+    function test_initializerRestricted_fail_ProxyCallRequired() public {
+        vm.expectRevert(ProxyCallRequired.selector);
+        logicV1.initializerRestricted();
+
+        vm.expectRevert(ProxyCallRequired.selector);
+        logicV2.initializerRestricted();
     }
 }

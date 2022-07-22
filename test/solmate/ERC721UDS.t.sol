@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
-import {ERC721TokenReceiver} from "/tokens/ERC721UDS.sol";
+import {ERC721TokenReceiver, DIAMOND_STORAGE_ERC721} from "/tokens/ERC721UDS.sol";
 import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
@@ -62,6 +62,12 @@ contract ERC721Test is Test {
 
         logic = new MockERC721UDS();
         token = MockERC721UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+
+        token.scrambleStorage(0, 100);
+    }
+
+    function test_setUp() public {
+        assertEq(DIAMOND_STORAGE_ERC721, keccak256("diamond.storage.erc721"));
     }
 
     function invariantMetadata() public {

@@ -8,14 +8,12 @@ import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 import "/auth/OwnableUDS.sol";
 
-contract Logic is MockUUPSUpgrade, InitializableUDS, OwnableUDS {
-    constructor(uint256 version) MockUUPSUpgrade(version) {}
-
-    function init() public initializer {
+contract MockOwnable is MockUUPSUpgrade, OwnableUDS {
+    function init() public {
         __Ownable_init();
     }
 
-    function _authorizeUpgrade() internal override onlyOwner {}
+    function ownerRestricted() public onlyOwner {}
 }
 
 contract TestOwnableUDS is Test {
@@ -23,51 +21,55 @@ contract TestOwnableUDS is Test {
     address alice = address(0xbabe);
     address tester = address(this);
 
-    Logic proxy;
-
-    Logic logicV1;
-    Logic logicV2;
+    MockOwnable proxy;
+    MockOwnable logic;
 
     function setUp() public {
-        logicV1 = new Logic(1);
-        logicV2 = new Logic(2);
+        logic = new MockOwnable();
 
-        bytes memory initCalldata = abi.encodePacked(Logic.init.selector);
-        proxy = Logic(address(new ERC1967Proxy(address(logicV1), initCalldata)));
+        bytes memory initCalldata = abi.encodePacked(MockOwnable.init.selector);
+
+        proxy = MockOwnable(address(new ERC1967Proxy(address(logic), initCalldata)));
     }
 
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        // make sure that s().owner is not
-        // located in sequential storage slot
-        proxy.scrambleStorage();
+        proxy.scrambleStorage(0, 100);
 
         assertEq(proxy.owner(), tester);
+
+        assertEq(DIAMOND_STORAGE_OWNABLE, keccak256("diamond.storage.ownable"));
     }
 
-    /* ------------- upgradeTo() ------------- */
+    /* ------------- ownerRestricted() ------------- */
 
-    function test_upgradeTo() public {
+    function test_ownerRestricted() public {
+        proxy.ownerRestricted();
+
         // test upgrade to new version
-        proxy.upgradeTo(address(logicV2));
-
+        proxy.upgradeToAndCall(address(new MockOwnable()), "");
         // make sure owner stays the same
         assertEq(proxy.owner(), tester);
 
-        // test upgrade to new version
-        proxy.upgradeTo(address(logicV1));
+        proxy.ownerRestricted();
     }
 
-    /// don't call init during proxy deployment
-    /// this makes the proxy non-upgradeable
-    /// because owner is not set
-    function test_upgradeTo_fail_CallerNotOwner() public {
-        proxy = Logic(address(new ERC1967Proxy(address(logicV1), "")));
-        assertEq(proxy.owner(), address(0));
+    function test_ownerRestricted_fail_CallerNotOwner() public {
+        vm.prank(alice);
+        vm.expectRevert(CallerNotOwner.selector);
+
+        proxy.ownerRestricted();
+    }
+
+    function test_ownerRestricted_fail_CallerNotOwner_uninitialized() public {
+        proxy = MockOwnable(address(new ERC1967Proxy(address(logic), "")));
 
         vm.expectRevert(CallerNotOwner.selector);
-        proxy.upgradeTo(address(logicV2));
+
+        proxy.ownerRestricted();
+
+        assertEq(proxy.owner(), address(0));
     }
 
     /* ------------- transferOwnership() ------------- */
@@ -77,12 +79,15 @@ contract TestOwnableUDS is Test {
 
         assertEq(proxy.owner(), alice);
 
-        // can't upgrade anymore because of owner restriction
-        vm.expectRevert(CallerNotOwner.selector);
-        proxy.upgradeTo(address(logicV2));
-
-        // alice is able to upgrade
         vm.prank(alice);
-        proxy.upgradeTo(address(logicV2));
+
+        proxy.ownerRestricted();
+    }
+
+    function test_transferOwnership_fail_CallerNotOwner() public {
+        vm.prank(alice);
+        vm.expectRevert(CallerNotOwner.selector);
+
+        proxy.transferOwnership(alice);
     }
 }

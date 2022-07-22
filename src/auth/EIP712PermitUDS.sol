@@ -57,10 +57,10 @@ abstract contract EIP712PermitUDS {
     ) internal virtual returns (bool) {
         if (deadline < block.timestamp) revert DeadlineExpired();
 
-        uint256 nonce = s().nonces[owner]++;
-
         unchecked {
-            address recoveredAddress = ecrecover(
+            uint256 nonce = s().nonces[owner]++;
+
+            address recovered = ecrecover(
                 keccak256(
                     abi.encodePacked(
                         "\x19\x01",
@@ -84,7 +84,7 @@ abstract contract EIP712PermitUDS {
                 s_
             );
 
-            if (recoveredAddress == address(0) || recoveredAddress != owner) revert InvalidSigner();
+            if (recovered == address(0) || recovered != owner) revert InvalidSigner();
         }
 
         return true;
