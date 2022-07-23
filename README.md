@@ -48,7 +48,7 @@ import {InitializableUDS} from "UDS/auth/InitializableUDS.sol";
 contract UpgradeableERC20 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC20UDS {
     function init() public initializer {
         __Ownable_init();
-        __ERC721_init("My ERC20", "TKN", 18);
+        __ERC20_init("My Token", "TKN", 18);
         _mint(msg.sender, 1_000_000e18);
     }
 
