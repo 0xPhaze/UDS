@@ -8,7 +8,7 @@ src
 ├── auth
 │   ├── AccessControlUDS.sol - "OpenZeppelin's Access Control"
 │   ├── EIP712PermitUDS.sol - "EIP712 Permit"
-│   ├── InitializableUDS.sol - "contains `initializer` modifier for upgradeable contracts"
+│   ├── Initializable.sol - "contains `initializer` modifier for upgradeable contracts"
 │   └── OwnableUDS.sol - "Ownable"
 ├── proxy
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
@@ -43,9 +43,9 @@ and the `_authorizeUpgrade` function must be overriden (and protected).
 import {ERC20UDS} from "UDS/tokens/ERC20UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
-import {InitializableUDS} from "UDS/auth/InitializableUDS.sol";
+import {Initializable} from "UDS/auth/Initializable.sol";
 
-contract UpgradeableERC20 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC20UDS {
+contract UpgradeableERC20 is UUPSUpgrade, Initializable, OwnableUDS, ERC20UDS {
     function init() public initializer {
         __Ownable_init();
         __ERC20_init("My Token", "TKN", 18);
@@ -56,7 +56,7 @@ contract UpgradeableERC20 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC20UDS
 }
 ```
 
-The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [InitializableUDS](./src/auth/InitializableUDS.sol).
+The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [Initializable](./src/auth/Initializable.sol).
 
 ### Deploying the Proxy Contract
 
@@ -126,7 +126,7 @@ If the implementation contains a constructor, its code is only run once during d
 The constructor isn't part of the deployed bytecode / runtime code and generally doesn't affect a proxy (often deployed at a later time).
 
 This is why it is useful to have functions that are internal and/or public secured by the `initializer`
-modifier (found in `InitializableUDS.sol`). These functions are then only callable during a proxy contract's deployment and before any new upgrade has completed.
+modifier (found in `Initializable.sol`). These functions are then only callable during a proxy contract's deployment and before any new upgrade has completed.
 In contrast to OpenZeppelin's `initializer`, these functions won't ever be callable on the implementation contract and can be run again, allowing "re-initialization" (as long as they are run during an upgrade).
 Forgetting to run all initializing functions can be dangerous. 
 For example, a contract's upgradeability could be lost, if

@@ -6,9 +6,9 @@ import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "/auth/InitializableUDS.sol";
+import "/auth/Initializable.sol";
 
-contract MockInitializable is MockUUPSUpgrade, InitializableUDS {
+contract MockInitializable is MockUUPSUpgrade, Initializable {
     uint256 public initializedCount;
     uint256 public immutable version;
 
@@ -21,7 +21,7 @@ contract MockInitializable is MockUUPSUpgrade, InitializableUDS {
     }
 }
 
-contract TestInitializableUDS is Test {
+contract TestInitializable is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
     address tester = address(this);

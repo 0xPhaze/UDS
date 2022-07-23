@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "../auth/InitializableUDS.sol";
+import {Initializable} from "../auth/Initializable.sol";
 import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
@@ -25,7 +25,7 @@ struct ERC20DS {
 /// @title ERC20 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
-abstract contract ERC20UDS is InitializableUDS, EIP712PermitUDS {
+abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "./InitializableUDS.sol";
+import {Initializable} from "./Initializable.sol";
 
 // ------------- storage
 
@@ -30,7 +30,7 @@ error RenounceForCallerOnly();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
 /// @dev Requires `__AccessControl_init` to be called in proxy
-abstract contract AccessControlUDS is InitializableUDS {
+abstract contract AccessControlUDS is Initializable {
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);

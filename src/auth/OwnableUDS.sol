@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {InitializableUDS} from "./InitializableUDS.sol";
+import {Initializable} from "./Initializable.sol";
 
 // ------------- storage
 
@@ -23,7 +23,7 @@ error CallerNotOwner();
 /// @title Ownable (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @dev Requires `__Ownable_init` to be called in proxy
-abstract contract OwnableUDS is InitializableUDS {
+abstract contract OwnableUDS is Initializable {
     event OwnerChanged(address oldOwner, address newOwner);
 
     function __Ownable_init() internal initializer {

@@ -13,7 +13,7 @@ error AlreadyInitialized();
 /// @dev functions using the `initializer` modifier are only callable through a proxy
 /// @dev and only before a proxy upgrade migration has completed
 /// @dev (only when `upgradeToAndCall`'s `initCalldata` is being executed)
-abstract contract InitializableUDS is ERC1822 {
+abstract contract Initializable is ERC1822 {
     address private immutable __implementation = address(this);
 
     /* ------------- modifier ------------- */

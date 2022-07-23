@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import {ERC721UDS} from "/tokens/ERC721UDS.sol";
 import {OwnableUDS} from "/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "/proxy/UUPSUpgrade.sol";
-import {InitializableUDS} from "/auth/InitializableUDS.sol";
+import {Initializable} from "/auth/Initializable.sol";
 
-contract MyNFTUpgradeableV1 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC721UDS {
+contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public initializer {
         __Ownable_init();
         __ERC721_init("My NFT V1", "NFT V1");
@@ -23,7 +23,7 @@ contract MyNFTUpgradeableV1 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC721
     function _authorizeUpgrade() internal override onlyOwner {}
 }
 
-contract MyNFTUpgradeableV2 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC721UDS {
+contract MyNFTUpgradeableV2 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public initializer {
         __Ownable_init();
         __ERC721_init("My NFT V2", "NFT V2");
