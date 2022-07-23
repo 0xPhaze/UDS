@@ -40,23 +40,16 @@ and the `_authorizeUpgrade` function must be overriden (and protected).
 **Example of an upgradeable ERC721**
 
 ```solidity
-import {ERC721UDS} from "UDS/tokens/ERC721UDS.sol";
+import {ERC20UDS} from "UDS/tokens/ERC20UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 import {InitializableUDS} from "UDS/auth/InitializableUDS.sol";
 
-contract UpgradeableERC721 is UUPSUpgrade, ERC721UDS, InitializableUDS, OwnableUDS {
+contract UpgradeableERC20 is UUPSUpgrade, InitializableUDS, OwnableUDS, ERC20UDS {
     function init() public initializer {
         __Ownable_init();
-        __ERC721_init("My NFT", "NFT");
-    }
-
-    function tokenURI(uint256) public pure override returns (string memory) {
-        return ...
-    }
-
-    function mint(address to, uint256 tokenId) public onlyOwner {
-        _mint(to, tokenId);
+        __ERC721_init("My ERC20", "TKN", 18);
+        _mint(msg.sender, 1_000_000e18);
     }
 
     function _authorizeUpgrade() internal override onlyOwner {}
@@ -64,15 +57,16 @@ contract UpgradeableERC721 is UUPSUpgrade, ERC721UDS, InitializableUDS, OwnableU
 ```
 
 The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [InitializableUDS](./src/auth/InitializableUDS.sol).
-To see a full example
 
 ### Deploying the Proxy Contract
 
+Import `ERC1967Proxy`.
 ```solidity
-import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
+```
 
-address implementation = ...;
-
+To deploy a proxy contract, run
+```solidity
 bytes memory initCalldata = abi.encodeWithSelector(init.selector, param1, param2);
 
 address proxyAddress = new ERC1967Proxy(implementation, initCalldata);
@@ -80,9 +74,13 @@ address proxyAddress = new ERC1967Proxy(implementation, initCalldata);
 
 ### Upgrading a Proxy Contract
 
+Import `UUPSUpgrade`.
 ```solidity
-import {UUPSUpgrade} from "/proxy/UUPSUpgrade.sol";
+import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
+```
 
+To update a proxy contract, run
+```solidity
 UUPSUpgrade(deployedProxy).upgradeToAndCall(implementation, initCalldata);
 ```
 
