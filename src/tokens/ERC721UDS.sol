@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import {Initializable} from "../auth/Initializable.sol";
@@ -36,6 +36,7 @@ error CallerNotOwnerNorApproved();
 /// @title ERC721 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
+/// @notice Integrates EIP712Permit
 abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
     event Approval(address indexed owner, address indexed spender, uint256 indexed id);
@@ -169,6 +170,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     ) public virtual {
         if (_usePermit(owner, operator, 1, deadline, v, r, s_)) {
             s().isApprovedForAll[owner][operator] = true;
+
             emit ApprovalForAll(owner, operator, true);
         }
     }

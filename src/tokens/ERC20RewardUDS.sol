@@ -23,9 +23,9 @@ struct ERC20RewardDS {
 
 /// @title ERC20Reward (Upgradeable Diamond Storage, ERC20 compliant)
 /// @author phaze (https://github.com/0xPhaze/UDS)
-/// @notice Allows for directly "rewardping" ERC20 tokens into a user's wallet
+/// @notice Allows for ERC20 reward acctual
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
-/// @notice Tokens are automatically claimed before any balance update
+/// @notice Tokens are automatically claimed before any multiplier update
 abstract contract ERC20RewardUDS is ERC20UDS {
     /* ------------- virtual ------------- */
 
