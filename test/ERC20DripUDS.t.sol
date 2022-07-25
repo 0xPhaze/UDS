@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 import {Test, stdError} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import {MockERC20DripUDS} from "./mocks/MockERC20DripUDS.sol";
 import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
-import "/tokens/ERC20DripUDS.sol";
+import "UDS/tokens/ERC20DripUDS.sol";
 
 contract TestERC20DripUDS is Test {
     address bob = address(0xb0b);

@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "/auth/OwnableUDS.sol";
+import "UDS/auth/OwnableUDS.sol";
 
 contract MockOwnable is MockUUPSUpgrade, OwnableUDS {
     function init() public {

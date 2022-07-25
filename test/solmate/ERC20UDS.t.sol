@@ -3,9 +3,9 @@ pragma solidity ^0.8.10;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
-import {DIAMOND_STORAGE_ERC20} from "/tokens/ERC20UDS.sol";
+import {DIAMOND_STORAGE_ERC20} from "UDS/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
 contract ERC20Test is Test {

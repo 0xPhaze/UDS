@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC1967_PROXY_STORAGE_SLOT} from "/proxy/ERC1967Proxy.sol";
-import {UUPSUpgrade} from "/proxy/UUPSUpgrade.sol";
+import {ERC1967_PROXY_STORAGE_SLOT} from "UDS/proxy/ERC1967Proxy.sol";
+import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 
 contract MockUUPSUpgrade is UUPSUpgrade {
     function implementation() public view returns (address impl) {

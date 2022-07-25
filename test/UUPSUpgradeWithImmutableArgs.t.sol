@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {LibERC1967ProxyWithImmutableArgs} from "/proxy/LibERC1967ProxyWithImmutableArgs.sol";
+import {LibERC1967ProxyWithImmutableArgs} from "UDS/proxy/LibERC1967ProxyWithImmutableArgs.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 // ---------------------------------------------------------------------

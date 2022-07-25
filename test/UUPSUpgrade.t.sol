@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "/proxy/ERC1967Proxy.sol";
+import "UDS/proxy/ERC1967Proxy.sol";
 
 // ---------------------------------------------------------------------
 // Mock Logic

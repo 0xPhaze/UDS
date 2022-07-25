@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC1967Proxy} from "/proxy/ERC1967Proxy.sol";
+import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "/auth/EIP712PermitUDS.sol";
+import "UDS/auth/EIP712PermitUDS.sol";
 
 bytes32 constant PERMIT_TYPEHASH = keccak256(
     "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
-import "/tokens/ERC721UDS.sol";
+import "UDS/tokens/ERC721UDS.sol";
 
 contract MockERC721UDS is MockUUPSUpgrade, ERC721UDS {
     function init(string memory _name, string memory _symbol) external initializer {
