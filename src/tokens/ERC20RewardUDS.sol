@@ -23,7 +23,7 @@ struct ERC20RewardDS {
 
 /// @title ERC20Reward (Upgradeable Diamond Storage, ERC20 compliant)
 /// @author phaze (https://github.com/0xPhaze/UDS)
-/// @notice Allows for ERC20 reward acctual
+/// @notice Allows for ERC20 reward accrual
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any multiplier update
 abstract contract ERC20RewardUDS is ERC20UDS {
@@ -32,6 +32,10 @@ abstract contract ERC20RewardUDS is ERC20UDS {
     function rewardEndDate() public view virtual returns (uint256);
 
     function rewardDailyRate() public view virtual returns (uint256);
+
+    function totalBalanceOf(address owner) public view virtual returns (uint256) {
+        return ERC20UDS.balanceOf(owner) + _virtualBalanceOf(owner);
+    }
 
     /* ------------- internal ------------- */
 
@@ -83,12 +87,12 @@ abstract contract ERC20RewardUDS is ERC20UDS {
     function _increaseRewardMultiplier(address owner, uint216 quantity) internal {
         _claimVirtualBalance(owner);
 
-        s().userData[owner].multiplier += uint216(quantity);
+        s().userData[owner].multiplier += quantity;
     }
 
     function _decreaseRewardMultiplier(address owner, uint216 quantity) internal {
         _claimVirtualBalance(owner);
 
-        s().userData[owner].multiplier -= uint216(quantity);
+        s().userData[owner].multiplier -= quantity;
     }
 }
