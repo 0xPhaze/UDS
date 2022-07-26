@@ -100,7 +100,6 @@ contract TestUUPSUpgrade is Test {
         assertEq(MockUUPSUpgradeV1(proxy).data(), 0);
         assertEq(MockUUPSUpgradeV1(proxy).initializedCount(), 0);
 
-        assertEq(UPGRADED_EVENT_SIG, keccak256("Upgraded(address)"));
         assertEq(ERC1967_PROXY_STORAGE_SLOT, bytes32(uint256(keccak256("eip1967.proxy.implementation")) - 1));
     }
 

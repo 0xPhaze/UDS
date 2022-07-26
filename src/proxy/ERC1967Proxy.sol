@@ -19,56 +19,30 @@ struct ERC1967UpgradeDS {
 error InvalidUUID();
 error NotAContract();
 
-// keccak256("Upgraded(address)")
-bytes32 constant UPGRADED_EVENT_SIG = 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b;
-
 /// @notice ERC1967
 /// @author phaze (https://github.com/0xPhaze/UDS)
 abstract contract ERC1967 {
     event Upgraded(address indexed implementation);
 
     function _upgradeToAndCall(address logic, bytes memory data) internal {
-        assembly {
-            /// if (logic.code.length == 0) revert NotAContract();
-            if iszero(extcodesize(logic)) {
-                mstore(0, 0x09ee12d5) // NotAContract.selector
-                revert(28, 4)
-            }
+        if (logic.code.length == 0) revert NotAContract();
 
-            /// if (ERC1822(logic).proxiableUUID() != ERC1967_PROXY_STORAGE_SLOT) revert InvalidUUID();
-            mstore(0, 0x52d1902d) // proxiableUUID.selector
+        if (ERC1822(logic).proxiableUUID() != ERC1967_PROXY_STORAGE_SLOT) revert InvalidUUID();
 
-            let success := call(gas(), logic, 0, 28, 4, 0, 32)
+        if (data.length != 0) {
+            (bool success, ) = logic.delegatecall(data);
 
-            if iszero(success) {
-                revert(0, 0)
-            }
-
-            if iszero(eq(ERC1967_PROXY_STORAGE_SLOT, mload(0))) {
-                mstore(0, 0x03ed501d) // InvalidUUID.selector
-                revert(28, 4)
-            }
-
-            /// emit Upgraded(logic);
-            log2(0, 0, UPGRADED_EVENT_SIG, logic)
-
-            let data_size := mload(data)
-
-            /// if (data.length != 0)
-            if data_size {
-                /// (bool success, bytes memory returndata) = logic.delegatecall(data);
-                success := delegatecall(gas(), logic, add(data, 0x20), data_size, 0, 0)
-
-                /// if (!success) revert(returndata);
-                if iszero(success) {
+            if (!success) {
+                assembly {
                     returndatacopy(0, 0, returndatasize())
                     revert(0, returndatasize())
                 }
             }
-
-            /// s().implementation = logic;
-            sstore(ERC1967_PROXY_STORAGE_SLOT, logic)
         }
+
+        emit Upgraded(logic);
+
+        s().implementation = logic;
     }
 }
 
