@@ -45,10 +45,11 @@ contract TestAccessControlUDS is Test {
     /* ------------- hasRole() ------------- */
 
     function test_hasRole(bytes32 role, address user) public {
-        vm.assume(user != tester);
+        proxy.renounceRole(0x00);
 
         assertFalse(proxy.hasRole(role, user));
 
+        vm.prank(user);
         vm.expectRevert(NotAuthorized.selector);
 
         proxy.roleRestricted(role);
@@ -71,7 +72,7 @@ contract TestAccessControlUDS is Test {
         bytes32 role,
         address user
     ) public {
-        vm.assume(user != tester);
+        proxy.renounceRole(0x00);
 
         vm.prank(caller);
         vm.expectRevert(NotAuthorized.selector);
@@ -90,6 +91,7 @@ contract TestAccessControlUDS is Test {
 
         assertFalse(proxy.hasRole(role, user));
 
+        vm.prank(user);
         vm.expectRevert(NotAuthorized.selector);
 
         proxy.roleRestricted(role);
@@ -110,7 +112,6 @@ contract TestAccessControlUDS is Test {
         address user
     ) public {
         proxy.grantRole(adminRole1, user);
-
         proxy.setRoleAdmin(role, adminRole1);
 
         assertTrue(proxy.hasRole(adminRole1, user));
@@ -127,26 +128,11 @@ contract TestAccessControlUDS is Test {
         bytes32 role,
         bytes32 adminRole
     ) public {
-        vm.assume(user != tester);
+        proxy.renounceRole(0x00);
 
         vm.prank(user);
         vm.expectRevert(NotAuthorized.selector);
 
         proxy.setRoleAdmin(role, adminRole);
-    }
-
-    function test_setRoleAdmin_fail_NotAuthorized2(
-        bytes32 role,
-        bytes32 adminRole1,
-        bytes32 adminRole2,
-        address user
-    ) public {
-        proxy.grantRole(adminRole1, user);
-
-        proxy.setRoleAdmin(role, adminRole1);
-
-        vm.expectRevert(NotAuthorized.selector);
-
-        proxy.setRoleAdmin(role, adminRole2);
     }
 }

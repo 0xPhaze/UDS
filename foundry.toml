@@ -3,4 +3,4 @@ solc = "0.8.13"
 bytecode_hash = "none"
 optimizer_runs = 1000000
 
-# fuzz_runs = 10_000
+# fuzz_runs = 30_000
