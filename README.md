@@ -12,7 +12,6 @@ src
 │   └── OwnableUDS.sol - "Ownable"
 ├── proxy
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
-│   ├── ERC1967ProxyWithImmutableArgs.sol - "ERC1967 proxy, supports up to 3 immutable args"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
