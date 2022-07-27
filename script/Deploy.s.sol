@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
-import {MyNFTUpgradeableV1} from "./MyNFT.sol";
+import {MyNFTUpgradeableV1} from "./ExampleNFT.sol";
 
 import "forge-std/Script.sol";
 
