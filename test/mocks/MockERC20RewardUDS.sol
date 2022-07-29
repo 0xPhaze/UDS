@@ -59,7 +59,7 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
         _decreaseRewardMultiplier(owner, quantity);
     }
 
-    function claimVirtualBalance() public {
-        _claimVirtualBalance(msg.sender);
+    function claimReward() public {
+        _claimReward(msg.sender);
     }
 }

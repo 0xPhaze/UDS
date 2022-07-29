@@ -36,10 +36,10 @@ abstract contract ERC20RewardUDS is ERC20UDS {
     /* ------------- view ------------- */
 
     function totalBalanceOf(address owner) public view virtual returns (uint256) {
-        return ERC20UDS.balanceOf(owner) + virtualBalanceOf(owner);
+        return ERC20UDS.balanceOf(owner) + pendingReward(owner);
     }
 
-    function virtualBalanceOf(address owner) public view returns (uint256) {
+    function pendingReward(address owner) public view returns (uint256) {
         UserData storage userData = s().userData[owner];
 
         return _calculateReward(userData.multiplier, userData.lastClaimed);
@@ -58,11 +58,11 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         else if (timestamp > end) timestamp = end;
 
         // if multiplier > 0 then lastClaimed > 0
-        // because _claimVirtualBalance must have been called
+        // because _claimReward must have been called
         return ((timestamp - lastClaimed) * multiplier * rewardDailyRate()) / 1 days;
     }
 
-    function _claimVirtualBalance(address owner) internal virtual {
+    function _claimReward(address owner) internal virtual {
         UserData storage userData = s().userData[owner];
 
         uint256 multiplier = userData.multiplier;
@@ -80,13 +80,13 @@ abstract contract ERC20RewardUDS is ERC20UDS {
     }
 
     function _increaseRewardMultiplier(address owner, uint216 quantity) internal {
-        _claimVirtualBalance(owner);
+        _claimReward(owner);
 
         s().userData[owner].multiplier += quantity;
     }
 
     function _decreaseRewardMultiplier(address owner, uint216 quantity) internal {
-        _claimVirtualBalance(owner);
+        _claimReward(owner);
 
         s().userData[owner].multiplier -= quantity;
     }

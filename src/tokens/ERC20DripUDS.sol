@@ -20,13 +20,13 @@ abstract contract ERC20DripUDS is ERC20RewardUDS {
 
     /* ------------- public ------------- */
 
-    /// @dev overrides balanceOf, adding unclaimed 'virtual' balance
+    /// @dev overrides balanceOf, adding unclaimed balance
     function balanceOf(address owner) public view virtual override returns (uint256) {
-        return ERC20UDS.balanceOf(owner) + virtualBalanceOf(owner);
+        return ERC20UDS.balanceOf(owner) + pendingReward(owner);
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
-        _claimVirtualBalance(msg.sender);
+        _claimReward(msg.sender);
 
         return ERC20UDS.transfer(to, amount);
     }
@@ -36,7 +36,7 @@ abstract contract ERC20DripUDS is ERC20RewardUDS {
         address to,
         uint256 amount
     ) public virtual override returns (bool) {
-        _claimVirtualBalance(from);
+        _claimReward(from);
 
         return ERC20UDS.transferFrom(from, to, amount);
     }

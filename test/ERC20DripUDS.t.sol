@@ -74,12 +74,12 @@ contract TestERC20DripUDS is Test {
         token.increaseMultiplier(alice, 1_000);
 
         assertEq(token.balanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
 
         skip(100 days);
 
         assertEq(token.balanceOf(alice), 100_000e18);
-        assertEq(token.virtualBalanceOf(alice), 100_000e18);
+        assertEq(token.pendingReward(alice), 100_000e18);
 
         // increasing claims for the user
         token.increaseMultiplier(alice, 1_000);
@@ -87,54 +87,54 @@ contract TestERC20DripUDS is Test {
         skip(200 days);
 
         assertEq(token.balanceOf(alice), 500_000e18);
-        assertEq(token.virtualBalanceOf(alice), 400_000e18);
+        assertEq(token.pendingReward(alice), 400_000e18);
 
         token.decreaseMultiplier(alice, 1_000);
     }
 
-    /* ------------- claimVirtualBalance() ------------- */
+    /* ------------- claimReward() ------------- */
 
-    function test_claimVirtualBalance() public {
+    function test_claimReward() public {
         token.increaseMultiplier(alice, 1_000);
 
         assertEq(token.balanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
 
-        token.claimVirtualBalance();
+        token.claimReward();
 
         assertEq(token.balanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
 
         skip(100 days);
 
         // alice should have 100_000 tokens at her disposal
         // virtual balance is counted in balanceOf
         assertEq(token.balanceOf(alice), 100_000e18);
-        assertEq(token.virtualBalanceOf(alice), 100_000e18);
+        assertEq(token.pendingReward(alice), 100_000e18);
 
         // claim virtual balance to balance
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         assertEq(token.balanceOf(alice), 100_000e18);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
 
         skip(100 days);
 
         // another 100 days
         assertEq(token.balanceOf(alice), 200_000e18);
-        assertEq(token.virtualBalanceOf(alice), 100_000e18);
+        assertEq(token.pendingReward(alice), 100_000e18);
 
         // claim again
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         // claiming twice doesn't change
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         assertEq(token.balanceOf(alice), 200_000e18);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
     }
 
     /* ------------- endDate() ------------- */
@@ -145,31 +145,31 @@ contract TestERC20DripUDS is Test {
         skip(100 days);
 
         assertEq(token.balanceOf(alice), 100_000e18);
-        assertEq(token.virtualBalanceOf(alice), 100_000e18);
+        assertEq(token.pendingReward(alice), 100_000e18);
 
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         // skip to end date
         skip(900 days);
 
         assertEq(token.balanceOf(alice), 1_000_000e18);
-        assertEq(token.virtualBalanceOf(alice), 900_000e18);
+        assertEq(token.pendingReward(alice), 900_000e18);
 
         // waiting any longer doesn't give more due to rewardEndDate
         skip(900 days);
 
         assertEq(token.balanceOf(alice), 1_000_000e18);
-        assertEq(token.virtualBalanceOf(alice), 900_000e18);
+        assertEq(token.pendingReward(alice), 900_000e18);
 
         // claim all balance past end date
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         skip(100 days);
 
         assertEq(token.balanceOf(alice), 1_000_000e18);
-        assertEq(token.virtualBalanceOf(alice), 0);
+        assertEq(token.pendingReward(alice), 0);
     }
 
     /* ------------- transfer() ------------- */
@@ -191,12 +191,12 @@ contract TestERC20DripUDS is Test {
         assertEq(token.balanceOf(alice), 80_000e18);
         assertEq(token.balanceOf(bob), 20_000e18);
 
-        assertEq(token.virtualBalanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(bob), 0);
+        assertEq(token.pendingReward(alice), 0);
+        assertEq(token.pendingReward(bob), 0);
 
         // further claiming virtual tokens should have no effect
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         assertEq(token.balanceOf(alice), 80_000e18);
         assertEq(token.balanceOf(bob), 20_000e18);
@@ -226,12 +226,12 @@ contract TestERC20DripUDS is Test {
         assertEq(token.balanceOf(alice), 80_000e18);
         assertEq(token.balanceOf(bob), 20_000e18);
 
-        assertEq(token.virtualBalanceOf(alice), 0);
-        assertEq(token.virtualBalanceOf(bob), 0);
+        assertEq(token.pendingReward(alice), 0);
+        assertEq(token.pendingReward(bob), 0);
 
         // further claiming virtual tokens should have no effect
         vm.prank(alice);
-        token.claimVirtualBalance();
+        token.claimReward();
 
         assertEq(token.balanceOf(alice), 80_000e18);
         assertEq(token.balanceOf(bob), 20_000e18);
