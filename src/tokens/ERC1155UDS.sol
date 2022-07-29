@@ -25,6 +25,9 @@ error UnsafeRecipient();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
 abstract contract ERC1155UDS {
+    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+    event URI(string value, uint256 indexed id);
+
     event TransferSingle(
         address indexed operator,
         address indexed from,
@@ -41,12 +44,11 @@ abstract contract ERC1155UDS {
         uint256[] amounts
     );
 
-    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
-    event URI(string value, uint256 indexed id);
-
-    /* ------------- view ------------- */
+    /* ------------- virtual ------------- */
 
     function uri(uint256 id) public view virtual returns (string memory);
+
+    /* ------------- view ------------- */
 
     function balanceOf(address owner, uint256 id) public view virtual returns (uint256) {
         return s().balanceOf[owner][id];

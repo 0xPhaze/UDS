@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {MockUUPSUpgrade} from "./MockUUPSUpgrade.sol";
 import {MockERC20RewardUDS} from "./MockERC20RewardUDS.sol";
 
+import "UDS/tokens/ERC20RewardUDS.sol";
 import "UDS/tokens/ERC20DripUDS.sol";
 
 contract MockERC20DripUDS is MockUUPSUpgrade, ERC20DripUDS {
@@ -15,13 +16,7 @@ contract MockERC20DripUDS is MockUUPSUpgrade, ERC20DripUDS {
         end = end_;
     }
 
-    function rewardEndDate() public view override returns (uint256) {
-        return end;
-    }
-
-    function rewardDailyRate() public view override returns (uint256) {
-        return rate;
-    }
+    /* ------------- init ------------- */
 
     function init(
         string memory _name,
@@ -33,12 +28,20 @@ contract MockERC20DripUDS is MockUUPSUpgrade, ERC20DripUDS {
 
     /* ------------- view ------------- */
 
+    function rewardEndDate() public view override returns (uint256) {
+        return end;
+    }
+
+    function rewardDailyRate() public view override returns (uint256) {
+        return rate;
+    }
+
     function getMultiplier(address owner) public view returns (uint256) {
-        return _getRewardMultiplier(owner);
+        return s().userData[owner].multiplier;
     }
 
     function getLastClaimed(address owner) public view returns (uint256) {
-        return _getLastClaimed(owner);
+        return s().userData[owner].lastClaimed;
     }
 
     /* ------------- public ------------- */
@@ -61,9 +64,5 @@ contract MockERC20DripUDS is MockUUPSUpgrade, ERC20DripUDS {
 
     function claimVirtualBalance() public {
         _claimVirtualBalance(msg.sender);
-    }
-
-    function virtualBalanceOf(address owner) public view returns (uint256) {
-        return _virtualBalanceOf(owner);
     }
 }

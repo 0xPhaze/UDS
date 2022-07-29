@@ -13,13 +13,7 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
         end = end_;
     }
 
-    function rewardEndDate() public view override returns (uint256) {
-        return end;
-    }
-
-    function rewardDailyRate() public view override returns (uint256) {
-        return rate;
-    }
+    /* ------------- init ------------- */
 
     function init(
         string memory _name,
@@ -31,12 +25,20 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
 
     /* ------------- view ------------- */
 
+    function rewardEndDate() public view override returns (uint256) {
+        return end;
+    }
+
+    function rewardDailyRate() public view override returns (uint256) {
+        return rate;
+    }
+
     function getMultiplier(address owner) public view returns (uint256) {
-        return _getRewardMultiplier(owner);
+        return s().userData[owner].multiplier;
     }
 
     function getLastClaimed(address owner) public view returns (uint256) {
-        return _getLastClaimed(owner);
+        return s().userData[owner].lastClaimed;
     }
 
     /* ------------- public ------------- */
@@ -59,9 +61,5 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
 
     function claimVirtualBalance() public {
         _claimVirtualBalance(msg.sender);
-    }
-
-    function virtualBalanceOf(address owner) public view returns (uint256) {
-        return _virtualBalanceOf(owner);
     }
 }
