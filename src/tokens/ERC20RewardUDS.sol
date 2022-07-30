@@ -48,8 +48,6 @@ abstract contract ERC20RewardUDS is ERC20UDS {
     /* ------------- internal ------------- */
 
     function _calculateReward(uint256 multiplier, uint256 lastClaimed) internal view virtual returns (uint256) {
-        if (multiplier == 0) return 0;
-
         uint256 end = rewardEndDate();
 
         uint256 timestamp = block.timestamp;
@@ -69,6 +67,8 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         uint256 lastClaimed = userData.lastClaimed;
 
         if (multiplier != 0 || lastClaimed == 0) {
+            // only forego minting if multiplier == 0
+            // checking for amount == 0 can lead to failed transactions
             if (multiplier != 0) {
                 uint256 amount = _calculateReward(multiplier, lastClaimed);
 

@@ -9,8 +9,8 @@ import {DIAMOND_STORAGE_ERC20} from "UDS/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
 contract ERC20Test is Test {
+    address logic;
     MockERC20UDS token;
-    MockERC20UDS logic;
 
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
@@ -18,8 +18,8 @@ contract ERC20Test is Test {
     function setUp() public virtual {
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
 
-        logic = new MockERC20UDS();
-        token = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+        logic = address(new MockERC20UDS());
+        token = MockERC20UDS(address(new ERC1967Proxy(logic, initCalldata)));
 
         // make sure that storage data is not
         // located in sequential storage slot
@@ -228,7 +228,7 @@ contract ERC20Test is Test {
         uint8 decimals
     ) public {
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, name, symbol, decimals);
-        MockERC20UDS tkn = MockERC20UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+        MockERC20UDS tkn = MockERC20UDS(address(new ERC1967Proxy(logic, initCalldata)));
 
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);

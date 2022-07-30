@@ -38,56 +38,67 @@ contract TestOwnableUDS is Test {
         proxy.scrambleStorage(0, 100);
 
         assertEq(proxy.owner(), tester);
-
         assertEq(DIAMOND_STORAGE_OWNABLE, keccak256("diamond.storage.ownable"));
     }
 
     /* ------------- ownerRestricted() ------------- */
 
+    /// call ownerRestricted as owner
     function test_ownerRestricted() public {
         proxy.ownerRestricted();
 
-        // test upgrade to new version
+        // make sure owner stays after an upgrade
         proxy.upgradeToAndCall(address(new MockOwnable()), "");
-        // make sure owner stays the same
+
         assertEq(proxy.owner(), tester);
 
         proxy.ownerRestricted();
     }
 
-    function test_ownerRestricted_fail_CallerNotOwner() public {
-        vm.prank(alice);
+    /// call ownerRestricted as non-owner
+    function test_ownerRestricted_fail_CallerNotOwner(address caller) public {
+        vm.assume(caller != tester);
+
+        vm.prank(caller);
         vm.expectRevert(CallerNotOwner.selector);
 
         proxy.ownerRestricted();
     }
 
-    function test_ownerRestricted_fail_CallerNotOwner_uninitialized() public {
+    /// don't call init on deployment, ownable should be 0
+    function test_ownerRestricted_fail_CallerNotOwner_uninitialized(address caller) public {
+        vm.assume(caller != address(0));
+
         proxy = MockOwnable(address(new ERC1967Proxy(address(logic), "")));
 
+        assertEq(proxy.owner(), address(0));
+
+        vm.prank(caller);
         vm.expectRevert(CallerNotOwner.selector);
 
         proxy.ownerRestricted();
-
-        assertEq(proxy.owner(), address(0));
     }
 
     /* ------------- transferOwnership() ------------- */
 
-    function test_transferOwnership() public {
-        proxy.transferOwnership(alice);
+    /// transfer ownership and make sure they can call ownerRestricted
+    function test_transferOwnership(address newOwner) public {
+        proxy.transferOwnership(newOwner);
 
-        assertEq(proxy.owner(), alice);
+        assertEq(proxy.owner(), newOwner);
 
-        vm.prank(alice);
+        vm.prank(newOwner);
 
         proxy.ownerRestricted();
     }
 
-    function test_transferOwnership_fail_CallerNotOwner() public {
-        vm.prank(alice);
+    /// transferOwnership should only be callable by owner
+    function test_transferOwnership_fail_CallerNotOwner(address caller) public {
+        vm.assume(caller != tester);
+
+        vm.prank(caller);
         vm.expectRevert(CallerNotOwner.selector);
 
-        proxy.transferOwnership(alice);
+        proxy.transferOwnership(caller);
     }
 }

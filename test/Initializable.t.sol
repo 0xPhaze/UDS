@@ -64,13 +64,6 @@ contract TestInitializable is Test {
         assertEq(proxy.version(), 2);
         assertEq(proxy.implementation(), address(logicV2));
         assertEq(proxy.initializedCount(), 1);
-
-        // switch back to v1
-        proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(MockInitializable.initializerRestricted.selector));
-
-        assertEq(proxy.version(), 1);
-        assertEq(proxy.implementation(), address(logicV1));
-        assertEq(proxy.initializedCount(), 2);
     }
 
     /// call initializerRestricted during upgrade
@@ -81,7 +74,7 @@ contract TestInitializable is Test {
         assertEq(proxy.implementation(), address(logicV2));
         assertEq(proxy.initializedCount(), 1);
 
-        // switch back to v1
+        // test for another upgrade
         proxy.upgradeToAndCall(address(logicV1), abi.encodePacked(MockInitializable.initializerRestricted.selector));
 
         assertEq(proxy.version(), 1);
@@ -89,17 +82,19 @@ contract TestInitializable is Test {
         assertEq(proxy.initializedCount(), 2);
     }
 
-    /// make sure initializerRestricted function can't be called
+    /// make sure initializerRestricted function can't be called outside of upgrade
     function test_initializerRestricted_fail_AlreadyInitialized() public {
         vm.expectRevert(AlreadyInitialized.selector);
         proxy.initializerRestricted();
 
+        // test after another upgrade
         proxy.upgradeToAndCall(address(logicV2), "");
 
         vm.expectRevert(AlreadyInitialized.selector);
         proxy.initializerRestricted();
     }
 
+    /// make sure initializerRestricted function can't be called in logic contract
     function test_initializerRestricted_fail_ProxyCallRequired() public {
         vm.expectRevert(ProxyCallRequired.selector);
         logicV1.initializerRestricted();
