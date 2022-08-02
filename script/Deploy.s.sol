@@ -35,14 +35,27 @@ contract Deploy is Script {
         // deploys the implementation contract
         address implementation = address(new MyNFTUpgradeableV1());
 
-        // call the init function upon deployment
+        // insert parameters if the init function has any
         bytes memory initParameters = abi.encode(/* parameter1, parameter2 */); // prettier-ignore
+        // encode calldata for init call
         bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV1.init.selector, initParameters);
 
-        // creates the proxy contract and
-        // calls MyNFTUpgradeableV1.init() in the context of the proxy
-        new ERC1967Proxy(implementation, initCalldata);
+        // deploys the proxy contract and calls MyNFTUpgradeableV1.init() in the context of the proxy
+        address proxy = address(new ERC1967Proxy(implementation, initCalldata));
+
+        integrationTest(MyNFTUpgradeableV1(proxy));
+
+        console.log("proxy:", proxy);
+        console.log("implementation:", implementation);
 
         vm.stopBroadcast();
+    }
+
+    /// @notice the script will fail if these conditions aren't met
+    function integrationTest(MyNFTUpgradeableV1 proxy) internal view {
+        require(proxy.owner() == msg.sender);
+
+        require(keccak256(abi.encode(proxy.name())) == keccak256(abi.encode("Non-fungible Contract")));
+        require(keccak256(abi.encode(proxy.symbol())) == keccak256(abi.encode("NFT")));
     }
 }

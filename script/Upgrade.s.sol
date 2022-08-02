@@ -14,25 +14,29 @@ ETHERSCAN_KEY=NZSD...
 PRIVATE_KEY=0x1234...
 ```
 
-2. run script
+2. insert address of deployed proxy for `DEPLOYED_PROXY_ADDRESS` in script below
+
+3. run script
 
 ```sh
 source .env && forge script script/Upgrade.s.sol:Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
-3. (optional) if verification failed
+4. (optional) if verification failed
 ```sh
 source .env && forge script script/Upgrade.s.sol:Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
 */
 
+// insert deployed proxy address here!
+address constant DEPLOYED_PROXY_ADDRESS = address(0x1234);
+
 contract Upgrade is Script {
     function run() external {
-        vm.startBroadcast();
+        require(DEPLOYED_PROXY_ADDRESS != address(0x1234), "insert your deployed proxy address in the script");
 
-        // insert deployed address here!
-        address deployedProxy = address(0x1234);
+        vm.startBroadcast();
 
         // deploys the new implementation contract
         address implementation = address(new MyNFTUpgradeableV2());
@@ -41,8 +45,20 @@ contract Upgrade is Script {
         bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV2.init.selector);
 
         // calls upgradeTo and MyNFTUpgradeableV2.init() in the context of the proxy
-        MyNFTUpgradeableV2(deployedProxy).upgradeToAndCall(implementation, initCalldata);
+        MyNFTUpgradeableV2(DEPLOYED_PROXY_ADDRESS).upgradeToAndCall(implementation, initCalldata);
+
+        integrationTest(MyNFTUpgradeableV2(DEPLOYED_PROXY_ADDRESS));
+
+        console.log("new implementation:", implementation);
 
         vm.stopBroadcast();
+    }
+
+    /// @notice the script will fail if these conditions aren't met
+    function integrationTest(MyNFTUpgradeableV2 proxy) internal view {
+        require(proxy.owner() == msg.sender);
+
+        require(keccak256(abi.encode(proxy.name())) == keccak256(abi.encode("Non-fungible Contract V2")));
+        require(keccak256(abi.encode(proxy.symbol())) == keccak256(abi.encode("NFTV2")));
     }
 }

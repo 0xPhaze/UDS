@@ -9,7 +9,7 @@ import {Initializable} from "UDS/auth/Initializable.sol";
 contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public initializer {
         __Ownable_init();
-        __ERC721_init("My NFT V1", "NFT V1");
+        __ERC721_init("Non-fungible Contract", "NFT");
     }
 
     function tokenURI(uint256) public pure override returns (string memory) {
@@ -26,7 +26,7 @@ contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS
 contract MyNFTUpgradeableV2 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public initializer {
         __Ownable_init();
-        __ERC721_init("My NFT V2", "NFT V2");
+        __ERC721_init("Non-fungible Contract V2", "NFTV2");
     }
 
     function tokenURI(uint256) public pure override returns (string memory) {
