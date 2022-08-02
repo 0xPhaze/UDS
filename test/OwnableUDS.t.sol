@@ -21,15 +21,15 @@ contract TestOwnableUDS is Test {
     address alice = address(0xbabe);
     address tester = address(this);
 
+    address logic;
     MockOwnable proxy;
-    MockOwnable logic;
 
     function setUp() public {
-        logic = new MockOwnable();
+        logic = address(new MockOwnable());
 
         bytes memory initCalldata = abi.encodePacked(MockOwnable.init.selector);
 
-        proxy = MockOwnable(address(new ERC1967Proxy(address(logic), initCalldata)));
+        proxy = MockOwnable(address(new ERC1967Proxy(logic, initCalldata)));
     }
 
     /* ------------- setUp() ------------- */
@@ -69,7 +69,7 @@ contract TestOwnableUDS is Test {
     function test_ownerRestricted_fail_CallerNotOwner_uninitialized(address caller) public {
         vm.assume(caller != address(0));
 
-        proxy = MockOwnable(address(new ERC1967Proxy(address(logic), "")));
+        proxy = MockOwnable(address(new ERC1967Proxy(logic, "")));
 
         assertEq(proxy.owner(), address(0));
 

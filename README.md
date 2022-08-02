@@ -6,10 +6,12 @@ A collection of upgradeable contracts compatible with diamond storage.
 ```ml
 src
 ├── auth
-│   ├── AccessControlUDS.sol - "OpenZeppelin's Access Control"
-│   ├── EIP712PermitUDS.sol - "EIP712 Permit"
-│   ├── Initializable.sol - "contains `initializer` modifier for upgradeable contracts"
-│   └── OwnableUDS.sol - "Ownable"
+│   ├── AccessControlUDS.sol - "OpenZeppelin style access-control"
+│   ├── EIP712PermitUDS.sol - "EIP712 permit"
+│   ├── Initializable.sol - "Allow initializing functions for upgradeable contracts"
+│   ├── OwnableUDS.sol - "Ownable"
+│   ├── PausableUDS.sol - "Make contracts pausable"
+│   └── ReentrancyGuardUDS.sol - "Prevent reentrancies"
 ├── proxy
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
