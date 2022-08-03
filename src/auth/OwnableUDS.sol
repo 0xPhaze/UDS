@@ -5,11 +5,11 @@ import {Initializable} from "./Initializable.sol";
 
 // ------------- storage
 
-// keccak256("diamond.storage.ownable") == 0x87917b04fc43108fc3d291ac961b425fe1ddcf80087b2cb7e3c48f3e9233ea33;
-bytes32 constant DIAMOND_STORAGE_OWNABLE = 0x87917b04fc43108fc3d291ac961b425fe1ddcf80087b2cb7e3c48f3e9233ea33;
+bytes32 constant DIAMOND_STORAGE_OWNABLE = keccak256("diamond.storage.ownable");
 
 function s() pure returns (OwnableDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_OWNABLE } // prettier-ignore
+    bytes32 slot = DIAMOND_STORAGE_OWNABLE;
+    assembly { diamondStorage.slot := slot } // prettier-ignore
 }
 
 struct OwnableDS {

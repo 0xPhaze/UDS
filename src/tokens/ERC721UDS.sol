@@ -6,11 +6,11 @@ import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
-// keccak256("diamond.storage.erc721") == 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
-bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
+bytes32 constant DIAMOND_STORAGE_ERC721 = keccak256("diamond.storage.erc721");
 
 function s() pure returns (ERC721DS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC721 } // prettier-ignore
+    bytes32 slot = DIAMOND_STORAGE_ERC721;
+    assembly { diamondStorage.slot := slot } // prettier-ignore
 }
 
 struct ERC721DS {

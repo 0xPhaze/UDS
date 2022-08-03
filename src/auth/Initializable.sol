@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC1822, s as erc1967DS} from "../proxy/ERC1967Proxy.sol";
+import {s as erc1967DS} from "../proxy/ERC1967Proxy.sol";
 
 // ------------- errors
 

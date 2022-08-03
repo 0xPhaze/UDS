@@ -5,11 +5,11 @@ import {Initializable} from "./Initializable.sol";
 
 // ------------- storage
 
-// keccak256("diamond.storage.access.control") == 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd
-bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
+bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = keccak256("diamond.storage.access.control");
 
 function s() pure returns (AccessControlDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ACCESS_CONTROL } // prettier-ignore
+    bytes32 slot = DIAMOND_STORAGE_ACCESS_CONTROL;
+    assembly { diamondStorage.slot := slot } // prettier-ignore
 }
 
 struct AccessControlDS {

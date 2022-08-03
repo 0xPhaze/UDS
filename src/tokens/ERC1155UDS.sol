@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-// keccak256("diamond.storage.erc1155") == 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
-bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
+bytes32 constant DIAMOND_STORAGE_ERC1155 = keccak256("diamond.storage.erc1155");
 
 function s() pure returns (ERC1155DS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC1155 } // prettier-ignore
+    bytes32 slot = DIAMOND_STORAGE_ERC1155;
+    assembly { diamondStorage.slot := slot } // prettier-ignore
 }
 
 struct ERC1155DS {

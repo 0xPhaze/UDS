@@ -5,11 +5,11 @@ import {ERC20UDS, s as erc20DS} from "./ERC20UDS.sol";
 
 // ------------- storage
 
-// keccak256("diamond.storage.erc20.reward") == 0x2bf76f1229f14879252da90846a528ce52c56d0ade153f3ef6c5b45141fb99c9;
-bytes32 constant DIAMOND_STORAGE_ERC20_REWARD = 0x2bf76f1229f14879252da90846a528ce52c56d0ade153f3ef6c5b45141fb99c9;
+bytes32 constant DIAMOND_STORAGE_ERC20_REWARD = keccak256("diamond.storage.erc20.reward");
 
 function s() pure returns (ERC20RewardDS storage diamondStorage) {
-    assembly { diamondStorage.slot := DIAMOND_STORAGE_ERC20_REWARD } // prettier-ignore
+    bytes32 slot = DIAMOND_STORAGE_ERC20_REWARD;
+    assembly { diamondStorage.slot := slot } // prettier-ignore
 }
 
 struct UserData {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC1967, ERC1967_PROXY_STORAGE_SLOT, ERC1822} from "./ERC1967Proxy.sol";
+import {ERC1967, ERC1967_PROXY_STORAGE_SLOT} from "./ERC1967Proxy.sol";
 
 // ------------- errors
 
@@ -10,7 +10,7 @@ error DelegateCallNotAllowed();
 
 /// @notice Minimal UUPSUpgrade
 /// @author phaze (https://github.com/0xPhaze/UDS)
-abstract contract UUPSUpgrade is ERC1967, ERC1822 {
+abstract contract UUPSUpgrade is ERC1967 {
     address private immutable __implementation = address(this);
 
     /* ------------- external ------------- */
@@ -22,7 +22,7 @@ abstract contract UUPSUpgrade is ERC1967, ERC1822 {
 
     /* ------------- view ------------- */
 
-    function proxiableUUID() external view virtual override notDelegated returns (bytes32) {
+    function proxiableUUID() external view virtual notDelegated returns (bytes32) {
         return ERC1967_PROXY_STORAGE_SLOT;
     }
 
