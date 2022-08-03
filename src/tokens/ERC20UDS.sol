@@ -27,7 +27,7 @@ struct ERC20DS {
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 amount);
-    event Approval(address indexed owner, address indexed spender, uint256 amount);
+    event Approval(address indexed owner, address indexed operator, uint256 amount);
 
     /* ------------- init ------------- */
 
@@ -63,16 +63,16 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
         return s().balanceOf[owner];
     }
 
-    function allowance(address operator, address owner) public view virtual returns (uint256) {
-        return s().allowance[operator][owner];
+    function allowance(address owner, address operator) public view virtual returns (uint256) {
+        return s().allowance[owner][operator];
     }
 
     /* ------------- public ------------- */
 
-    function approve(address spender, uint256 amount) public virtual returns (bool) {
-        s().allowance[msg.sender][spender] = amount;
+    function approve(address operator, uint256 amount) public virtual returns (bool) {
+        s().allowance[msg.sender][operator] = amount;
 
-        emit Approval(msg.sender, spender, amount);
+        emit Approval(msg.sender, operator, amount);
 
         return true;
     }
@@ -112,17 +112,17 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
     // EIP-2612 permit
     function permit(
         address owner,
-        address spender,
+        address operator,
         uint256 value,
         uint256 deadline,
         uint8 v,
         bytes32 r,
         bytes32 s_
     ) public virtual {
-        if (_usePermit(owner, spender, value, deadline, v, r, s_)) {
-            s().allowance[owner][spender] = value;
+        if (_usePermit(owner, operator, value, deadline, v, r, s_)) {
+            s().allowance[owner][operator] = value;
 
-            emit Approval(owner, spender, value);
+            emit Approval(owner, operator, value);
         }
     }
 

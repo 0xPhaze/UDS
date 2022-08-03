@@ -39,7 +39,7 @@ error CallerNotOwnerNorApproved();
 /// @notice Integrates EIP712Permit
 abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
-    event Approval(address indexed owner, address indexed spender, uint256 indexed id);
+    event Approval(address indexed owner, address indexed operator, uint256 indexed id);
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
     /* ------------- init ------------- */
@@ -77,8 +77,8 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         return s().getApproved[id];
     }
 
-    function isApprovedForAll(address operator, address owner) public view returns (bool) {
-        return s().isApprovedForAll[operator][owner];
+    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+        return s().isApprovedForAll[owner][operator];
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
@@ -90,14 +90,14 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 
     /* ------------- public ------------- */
 
-    function approve(address spender, uint256 id) public virtual {
+    function approve(address operator, uint256 id) public virtual {
         address owner = s().ownerOf[id];
 
         if (msg.sender != owner && !s().isApprovedForAll[owner][msg.sender]) revert CallerNotOwnerNorApproved();
 
-        s().getApproved[id] = spender;
+        s().getApproved[id] = operator;
 
-        emit Approval(owner, spender, id);
+        emit Approval(owner, operator, id);
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
