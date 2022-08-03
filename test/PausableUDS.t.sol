@@ -9,10 +9,6 @@ import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import "UDS/auth/PausableUDS.sol";
 
 contract MockPausable is MockUUPSUpgrade, PausableUDS {
-    function init() public {
-        _unpause(); // not necessary to init
-    }
-
     function isPaused() public view returns (bool) {
         return s().paused == 2;
     }
@@ -39,9 +35,7 @@ contract TestPausableUDS is Test {
     function setUp() public {
         logic = address(new MockPausable());
 
-        bytes memory initCalldata = abi.encodePacked(MockPausable.init.selector);
-
-        proxy = MockPausable(address(new ERC1967Proxy(logic, initCalldata)));
+        proxy = MockPausable(address(new ERC1967Proxy(logic, "")));
     }
 
     /* ------------- setUp() ------------- */
