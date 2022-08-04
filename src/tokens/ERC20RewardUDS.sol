@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC20UDS, s as erc20DS} from "./ERC20UDS.sol";
+import {ERC20UDS, s as erc20ds} from "./ERC20UDS.sol";
 
 // ------------- storage
 
