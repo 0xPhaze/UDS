@@ -21,7 +21,7 @@ struct ERC20RewardDS {
     mapping(address => UserData) userData;
 }
 
-/// @title ERC20Reward (Upgradeable Diamond Storage, ERC20 compliant)
+/// @title ERC20Reward (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @notice Allows for ERC20 reward accrual
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
