@@ -17,7 +17,7 @@ src
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
-    ├── ERC20DripUDS.sol - "ERC20 with dripping abilities"
+    ├── ERC20BurnableUDS.sol - "Burnable ERC20"
     ├── ERC20RewardsUDS.sol - "ERC20 with fixed reward accrual"
     ├── ERC1155UDS.sol - "Solmate's ERC1155"
     └── ERC721UDS.sol - "Solmate's ERC721"
