@@ -39,13 +39,17 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         return ERC20UDS.balanceOf(owner) + pendingReward(owner);
     }
 
-    function pendingReward(address owner) public view returns (uint256) {
+    function pendingReward(address owner) public view virtual returns (uint256) {
         UserData storage userData = s().userData[owner];
 
         return _calculateReward(userData.multiplier, userData.lastClaimed);
     }
 
     /* ------------- internal ------------- */
+
+    function _getRewardMultiplier(address owner) internal view virtual returns (uint256) {
+        return s().userData[owner].multiplier;
+    }
 
     function _calculateReward(uint256 multiplier, uint256 lastClaimed) internal view virtual returns (uint256) {
         uint256 end = rewardEndDate();
@@ -69,6 +73,7 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         if (multiplier != 0 || lastClaimed == 0) {
             // only forego minting if multiplier == 0
             // checking for amount == 0 can lead to failed transactions
+            // due to too little gas being supplied through estimation
             if (multiplier != 0) {
                 uint256 amount = _calculateReward(multiplier, lastClaimed);
 
@@ -79,13 +84,13 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         }
     }
 
-    function _increaseRewardMultiplier(address owner, uint216 quantity) internal {
+    function _increaseRewardMultiplier(address owner, uint216 quantity) internal virtual {
         _claimReward(owner);
 
         s().userData[owner].multiplier += quantity;
     }
 
-    function _decreaseRewardMultiplier(address owner, uint216 quantity) internal {
+    function _decreaseRewardMultiplier(address owner, uint216 quantity) internal virtual {
         _claimReward(owner);
 
         s().userData[owner].multiplier -= quantity;

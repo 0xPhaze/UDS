@@ -33,12 +33,12 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
         return rate;
     }
 
-    function getMultiplier(address owner) public view returns (uint256) {
-        return s().userData[owner].multiplier;
+    function getMultiplier(address user) public view returns (uint256) {
+        return _getRewardMultiplier(user);
     }
 
-    function getLastClaimed(address owner) public view returns (uint256) {
-        return s().userData[owner].lastClaimed;
+    function getLastClaimed(address user) public view returns (uint256) {
+        return s().userData[user].lastClaimed;
     }
 
     /* ------------- public ------------- */
@@ -51,12 +51,12 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
         _mint(to, quantity);
     }
 
-    function increaseMultiplier(address owner, uint216 quantity) public {
-        _increaseRewardMultiplier(owner, quantity);
+    function increaseMultiplier(address user, uint216 quantity) public {
+        _increaseRewardMultiplier(user, quantity);
     }
 
-    function decreaseMultiplier(address owner, uint216 quantity) public {
-        _decreaseRewardMultiplier(owner, quantity);
+    function decreaseMultiplier(address user, uint216 quantity) public {
+        _decreaseRewardMultiplier(user, quantity);
     }
 
     function claimReward() public {
