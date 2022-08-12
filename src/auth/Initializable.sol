@@ -22,6 +22,7 @@ abstract contract Initializable {
 
     modifier initializer() {
         if (address(this).code.length != 0) revert AlreadyInitialized();
+        if (address(this) == __implementation) revert ProxyCallRequired();
         _;
     }
 
