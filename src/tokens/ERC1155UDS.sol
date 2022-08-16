@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
+
 // ------------- storage
 
 bytes32 constant DIAMOND_STORAGE_ERC1155 = keccak256("diamond.storage.erc1155");
@@ -24,7 +26,7 @@ error UnsafeRecipient();
 /// @title ERC1155 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
-abstract contract ERC1155UDS {
+abstract contract ERC1155UDS is EIP712PermitUDS {
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
     event URI(string value, uint256 indexed id);
 
@@ -145,6 +147,22 @@ abstract contract ERC1155UDS {
                 : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) !=
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector
         ) revert UnsafeRecipient();
+    }
+
+    // EIP-4494 permit; differs from the current EIP
+    function permit(
+        address owner,
+        address operator,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s_
+    ) public virtual {
+        _usePermit(owner, operator, 1, deadline, v, r, s_);
+
+        s().isApprovedForAll[owner][operator] = true;
+
+        emit ApprovalForAll(owner, operator, true);
     }
 
     /* ------------- internal ------------- */
