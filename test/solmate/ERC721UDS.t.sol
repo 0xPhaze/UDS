@@ -70,11 +70,6 @@ contract ERC721Test is Test {
         assertEq(DIAMOND_STORAGE_ERC721, keccak256("diamond.storage.erc721"));
     }
 
-    function invariantMetadata() public {
-        assertEq(token.name(), "Token");
-        assertEq(token.symbol(), "TKN");
-    }
-
     function testMint() public {
         token.mint(address(0xBEEF), 1337);
 
