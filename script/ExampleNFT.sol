@@ -24,8 +24,7 @@ contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS
 }
 
 contract MyNFTUpgradeableV2 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
-    function init() public initializer {
-        __Ownable_init();
+    function init() public reinitializer {
         __ERC721_init("Non-fungible Contract V2", "NFTV2");
     }
 

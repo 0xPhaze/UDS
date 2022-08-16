@@ -19,10 +19,11 @@ src
 │   └── Context.sol - "Allows overrides for meta-transactions"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
-    ├── ERC20BurnableUDS.sol - "Burnable ERC20"
-    ├── ERC20RewardsUDS.sol - "ERC20 with fixed reward accrual"
     ├── ERC1155UDS.sol - "Solmate's ERC1155"
-    └── ERC721UDS.sol - "Solmate's ERC721"
+    ├── ERC721UDS.sol - "Solmate's ERC721"
+    └── extensions
+        ├── ERC20BurnableUDS.sol - "Burnable ERC20"
+        └── ERC20RewardsUDS.sol - "ERC20 with fixed reward accrual"
 ```
 
 
