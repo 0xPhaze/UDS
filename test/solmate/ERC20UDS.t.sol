@@ -8,7 +8,7 @@ import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
 import {DIAMOND_STORAGE_ERC20} from "UDS/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract ERC20Test is Test {
+contract TestERC20 is Test {
     address logic;
     MockERC20UDS token;
 
@@ -26,7 +26,7 @@ contract ERC20Test is Test {
         token.scrambleStorage(0, 100);
     }
 
-    function test_setUp() public {
+    function testSetUp() public {
         assertEq(DIAMOND_STORAGE_ERC20, keccak256("diamond.storage.erc20"));
     }
 

@@ -108,7 +108,7 @@ contract WrongReturnDataERC1155Recipient is ERC1155TokenReceiver {
 contract NonERC1155Recipient {}
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract ERC1155Test is Test, ERC1155TokenReceiver {
+contract TESTERC1155 is Test, ERC1155TokenReceiver {
     MockERC1155UDS token;
     MockERC1155UDS logic;
 

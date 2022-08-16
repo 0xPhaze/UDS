@@ -53,7 +53,7 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 contract NonERC721Recipient {}
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract ERC721Test is Test {
+contract TESTERC721 is Test {
     MockERC721UDS token;
     MockERC721UDS logic;
 
@@ -66,8 +66,13 @@ contract ERC721Test is Test {
         token.scrambleStorage(0, 100);
     }
 
-    function test_setUp() public {
+    function testSetUp() public {
         assertEq(DIAMOND_STORAGE_ERC721, keccak256("diamond.storage.erc721"));
+    }
+
+    function testInvariantMetadata() public {
+        assertEq(token.name(), "Token");
+        assertEq(token.symbol(), "TKN");
     }
 
     function testMint() public {

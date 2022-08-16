@@ -6,7 +6,7 @@ import {Test, stdError} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import {MockERC20RewardUDS} from "./mocks/MockERC20RewardUDS.sol";
-import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
+import {TestERC20, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
 import "UDS/tokens/extensions/ERC20RewardUDS.sol";
 
@@ -178,7 +178,7 @@ contract TestERC20RewardUDS is Test {
 }
 
 // all solmate ERC20 tests should pass
-contract TestERC20UDS is ERC20Test {
+contract TestERC20UDS is TestERC20 {
     function setUp() public override {
         logic = address(new MockERC20RewardUDS(1e18, block.timestamp + 1000 days));
 
