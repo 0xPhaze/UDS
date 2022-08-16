@@ -22,23 +22,13 @@ abstract contract UUPSUpgrade is ERC1967 {
 
     /* ------------- view ------------- */
 
-    function proxiableUUID() external view virtual notDelegated returns (bytes32) {
+    function proxiableUUID() external view virtual returns (bytes32) {
+        if (address(this) != __implementation) revert DelegateCallNotAllowed();
+
         return ERC1967_PROXY_STORAGE_SLOT;
     }
 
     /* ------------- virtual ------------- */
 
     function _authorizeUpgrade() internal virtual;
-
-    /* ------------- modifier ------------- */
-
-    modifier onlyProxy() {
-        if (address(this) == __implementation) revert OnlyProxyCallAllowed();
-        _;
-    }
-
-    modifier notDelegated() {
-        if (address(this) != __implementation) revert DelegateCallNotAllowed();
-        _;
-    }
 }
