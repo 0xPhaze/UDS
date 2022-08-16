@@ -119,11 +119,11 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
         bytes32 r,
         bytes32 s_
     ) public virtual {
-        if (_usePermit(owner, operator, value, deadline, v, r, s_)) {
-            s().allowance[owner][operator] = value;
+        _usePermit(owner, operator, value, deadline, v, r, s_);
 
-            emit Approval(owner, operator, value);
-        }
+        s().allowance[owner][operator] = value;
+
+        emit Approval(owner, operator, value);
     }
 
     /* ------------- internal ------------- */

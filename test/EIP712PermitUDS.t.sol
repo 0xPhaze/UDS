@@ -21,8 +21,8 @@ contract MockEIP712Permit is MockUUPSUpgrade, EIP712PermitUDS {
         uint8 v_,
         bytes32 r_,
         bytes32 s_
-    ) public returns (bool) {
-        return _usePermit(owner, spender, value, deadline, v_, r_, s_);
+    ) public {
+        _usePermit(owner, spender, value, deadline, v_, r_, s_);
     }
 }
 
@@ -59,9 +59,8 @@ contract TestEIP712PermitUDS is Test {
             )
         );
 
-        bool success = permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
+        permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
 
-        assertTrue(success);
         assertEq(permit.nonces(owner), 1);
     }
 

@@ -54,7 +54,7 @@ abstract contract EIP712PermitUDS {
         uint8 v_,
         bytes32 r_,
         bytes32 s_
-    ) internal virtual returns (bool) {
+    ) internal virtual {
         if (deadline < block.timestamp) revert DeadlineExpired();
 
         unchecked {
@@ -86,7 +86,5 @@ abstract contract EIP712PermitUDS {
 
             if (recovered == address(0) || recovered != owner) revert InvalidSigner();
         }
-
-        return true;
     }
 }

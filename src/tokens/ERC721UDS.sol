@@ -170,11 +170,11 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         bytes32 r,
         bytes32 s_
     ) public virtual {
-        if (_usePermit(owner, operator, 1, deadline, v, r, s_)) {
-            s().isApprovedForAll[owner][operator] = true;
+        _usePermit(owner, operator, 1, deadline, v, r, s_);
 
-            emit ApprovalForAll(owner, operator, true);
-        }
+        s().isApprovedForAll[owner][operator] = true;
+
+        emit ApprovalForAll(owner, operator, true);
     }
 
     /* ------------- internal ------------- */
