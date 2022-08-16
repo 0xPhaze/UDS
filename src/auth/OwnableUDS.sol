@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Initializable} from "./Initializable.sol";
+import {Context} from "../utils/Context.sol";
+import {Initializable} from "../utils/Initializable.sol";
 
 // ------------- storage
 
@@ -23,11 +24,11 @@ error CallerNotOwner();
 /// @title Ownable (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @dev Requires `__Ownable_init` to be called in proxy
-abstract contract OwnableUDS is Initializable {
+abstract contract OwnableUDS is Context, Initializable {
     event OwnerChanged(address oldOwner, address newOwner);
 
     function __Ownable_init() internal initializer {
-        s().owner = msg.sender;
+        s().owner = _msgSender();
     }
 
     /* ------------- external ------------- */
@@ -39,13 +40,13 @@ abstract contract OwnableUDS is Initializable {
     function transferOwnership(address newOwner) external onlyOwner {
         s().owner = newOwner;
 
-        emit OwnerChanged(msg.sender, newOwner);
+        emit OwnerChanged(_msgSender(), newOwner);
     }
 
     /* ------------- modifier ------------- */
 
     modifier onlyOwner() {
-        if (msg.sender != s().owner) revert CallerNotOwner();
+        if (_msgSender() != s().owner) revert CallerNotOwner();
         _;
     }
 }

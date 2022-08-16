@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Initializable} from "../auth/Initializable.sol";
+import {Context} from "../utils/Context.sol";
+import {Initializable} from "../utils/Initializable.sol";
 import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
@@ -37,7 +38,7 @@ error CallerNotOwnerNorApproved();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @notice Integrates EIP712Permit
-abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
+abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
     event Approval(address indexed owner, address indexed operator, uint256 indexed id);
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
@@ -93,7 +94,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     function approve(address operator, uint256 id) public virtual {
         address owner = s().ownerOf[id];
 
-        if (msg.sender != owner && !s().isApprovedForAll[owner][msg.sender]) revert CallerNotOwnerNorApproved();
+        if (_msgSender() != owner && !s().isApprovedForAll[owner][_msgSender()]) revert CallerNotOwnerNorApproved();
 
         s().getApproved[id] = operator;
 
@@ -101,9 +102,9 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        s().isApprovedForAll[msg.sender][operator] = approved;
+        s().isApprovedForAll[_msgSender()][operator] = approved;
 
-        emit ApprovalForAll(msg.sender, operator, approved);
+        emit ApprovalForAll(_msgSender(), operator, approved);
     }
 
     function transferFrom(
@@ -114,9 +115,9 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         if (to == address(0)) revert TransferToZeroAddress();
         if (from != s().ownerOf[id]) revert TransferFromIncorrectOwner();
 
-        bool isApprovedOrOwner = (msg.sender == from ||
-            s().isApprovedForAll[from][msg.sender] ||
-            s().getApproved[id] == msg.sender);
+        bool isApprovedOrOwner = (_msgSender() == from ||
+            s().isApprovedForAll[from][_msgSender()] ||
+            s().getApproved[id] == _msgSender());
 
         if (!isApprovedOrOwner) revert CallerNotOwnerNorApproved();
 
@@ -141,7 +142,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") !=
+            ERC721TokenReceiver(to).onERC721Received(_msgSender(), from, id, "") !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -156,7 +157,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) !=
+            ERC721TokenReceiver(to).onERC721Received(_msgSender(), from, id, data) !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -212,7 +213,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") !=
+            ERC721TokenReceiver(to).onERC721Received(_msgSender(), address(0), id, "") !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -226,7 +227,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) !=
+            ERC721TokenReceiver(to).onERC721Received(_msgSender(), address(0), id, data) !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }

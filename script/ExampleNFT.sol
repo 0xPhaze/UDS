@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {ERC721UDS} from "UDS/tokens/ERC721UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
-import {Initializable} from "UDS/auth/Initializable.sol";
+import {Initializable} from "UDS/utils/Initializable.sol";
 
 contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public initializer {

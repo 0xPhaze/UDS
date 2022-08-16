@@ -6,7 +6,7 @@ import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
-import "UDS/auth/Initializable.sol";
+import "UDS/utils/Initializable.sol";
 
 contract MockInitializable is MockUUPSUpgrade, Initializable {
     uint256 public initializedCount;

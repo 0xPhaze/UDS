@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Initializable} from "./Initializable.sol";
+import {Context} from "../utils/Context.sol";
+import {Initializable} from "../utils/Initializable.sol";
 
 // ------------- storage
 
@@ -30,7 +31,7 @@ error RenounceForCallerOnly();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
 /// @dev Requires `__AccessControl_init` to be called in proxy
-abstract contract AccessControlUDS is Initializable {
+abstract contract AccessControlUDS is Context, Initializable {
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
@@ -40,9 +41,9 @@ abstract contract AccessControlUDS is Initializable {
     /* ------------- init ------------- */
 
     function __AccessControl_init() internal initializer {
-        s().roles[DEFAULT_ADMIN_ROLE].members[msg.sender] = true;
+        s().roles[DEFAULT_ADMIN_ROLE].members[_msgSender()] = true;
 
-        emit RoleGranted(DEFAULT_ADMIN_ROLE, msg.sender, msg.sender);
+        emit RoleGranted(DEFAULT_ADMIN_ROLE, _msgSender(), _msgSender());
     }
 
     /* ------------- view ------------- */
@@ -64,31 +65,31 @@ abstract contract AccessControlUDS is Initializable {
     /* ------------- public ------------- */
 
     function grantRole(bytes32 role, address account) public virtual {
-        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
+        if (!hasRole(getRoleAdmin(role), _msgSender())) revert NotAuthorized();
 
         s().roles[role].members[account] = true;
 
-        emit RoleGranted(role, account, msg.sender);
+        emit RoleGranted(role, account, _msgSender());
     }
 
     function revokeRole(bytes32 role, address account) public virtual {
-        if (!hasRole(getRoleAdmin(role), msg.sender)) revert NotAuthorized();
+        if (!hasRole(getRoleAdmin(role), _msgSender())) revert NotAuthorized();
 
         s().roles[role].members[account] = false;
 
-        emit RoleRevoked(role, account, msg.sender);
+        emit RoleRevoked(role, account, _msgSender());
     }
 
     function renounceRole(bytes32 role) public virtual {
-        s().roles[role].members[msg.sender] = false;
+        s().roles[role].members[_msgSender()] = false;
 
-        emit RoleRevoked(role, msg.sender, msg.sender);
+        emit RoleRevoked(role, _msgSender(), _msgSender());
     }
 
     function setRoleAdmin(bytes32 role, bytes32 adminRole) public virtual {
         bytes32 previousAdminRole = getRoleAdmin(role);
 
-        if (!hasRole(previousAdminRole, msg.sender)) revert NotAuthorized();
+        if (!hasRole(previousAdminRole, _msgSender())) revert NotAuthorized();
 
         s().roles[role].adminRole = adminRole;
 
@@ -98,7 +99,7 @@ abstract contract AccessControlUDS is Initializable {
     /* ------------- modifier ------------- */
 
     modifier onlyRole(bytes32 role) {
-        if (!hasRole(role, msg.sender)) revert NotAuthorized();
+        if (!hasRole(role, _msgSender())) revert NotAuthorized();
         _;
     }
 }

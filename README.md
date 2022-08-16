@@ -8,13 +8,15 @@ src
 ├── auth
 │   ├── AccessControlUDS.sol - "OpenZeppelin style access-control"
 │   ├── EIP712PermitUDS.sol - "EIP712 permit"
-│   ├── Initializable.sol - "Allow initializing functions for upgradeable contracts"
 │   ├── OwnableUDS.sol - "Ownable"
 │   ├── PausableUDS.sol - "Make contracts pausable"
 │   └── ReentrancyGuardUDS.sol - "Prevent reentrancies"
 ├── proxy
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
+├── utils
+│   ├── Initializable.sol - "Allow initializing functions for upgradeable contracts"
+│   └── Context.sol - "Allows overrides for meta-transactions"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
     ├── ERC20BurnableUDS.sol - "Burnable ERC20"
@@ -44,7 +46,7 @@ and the `_authorizeUpgrade` function must be overriden (and protected).
 import {ERC20UDS} from "UDS/tokens/ERC20UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
-import {Initializable} from "UDS/auth/Initializable.sol";
+import {Initializable} from "UDS/utils/Initializable.sol";
 
 contract UpgradeableERC20 is UUPSUpgrade, Initializable, OwnableUDS, ERC20UDS {
     function init() public initializer {
@@ -57,7 +59,7 @@ contract UpgradeableERC20 is UUPSUpgrade, Initializable, OwnableUDS, ERC20UDS {
 }
 ```
 
-The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [Initializable](./src/auth/Initializable.sol).
+The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [Initializable](./src/utils/Initializable.sol).
 
 ### Deploying the Proxy Contract
 
