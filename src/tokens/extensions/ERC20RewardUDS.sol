@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC20UDS, s as erc20ds} from "./ERC20UDS.sol";
+import {ERC20UDS, s as erc20ds} from "../ERC20UDS.sol";
 
 // ------------- storage
 
@@ -59,7 +59,7 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         if (lastClaimed > end) return 0;
         else if (timestamp > end) timestamp = end;
 
-        // if multiplier > 0 then lastClaimed > 0
+        // If multiplier > 0 then lastClaimed > 0
         // because _claimReward must have been called
         return ((timestamp - lastClaimed) * multiplier * rewardDailyRate()) / 1 days;
     }
@@ -71,9 +71,11 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         uint256 lastClaimed = userData.lastClaimed;
 
         if (multiplier != 0 || lastClaimed == 0) {
-            // only forego minting if multiplier == 0
+            // Only forego minting if multiplier == 0
             // checking for amount == 0 can lead to failed transactions
-            // due to too little gas being supplied through estimation
+            // due to too little gas being supplied through estimation.
+            // This is under the assumption that _increaseRewardMultiplier
+            // is unlikely to be called twice in a row.
             if (multiplier != 0) {
                 uint256 amount = _calculateReward(multiplier, lastClaimed);
 

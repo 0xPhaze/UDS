@@ -8,7 +8,7 @@ import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import {MockERC20RewardUDS} from "./mocks/MockERC20RewardUDS.sol";
 import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
-import "UDS/tokens/ERC20RewardUDS.sol";
+import "UDS/tokens/extensions/ERC20RewardUDS.sol";
 
 contract TestERC20RewardUDS is Test {
     address bob = address(0xb0b);
@@ -102,7 +102,6 @@ contract TestERC20RewardUDS is Test {
         assertEq(token.balanceOf(alice), 500_000e18);
         assertEq(token.pendingReward(alice), 0);
     }
-
 
     /* ------------- claimReward() ------------- */
 

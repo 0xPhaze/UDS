@@ -7,7 +7,7 @@ import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import {ERC20Test, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
-import "UDS/tokens/ERC20BurnableUDS.sol";
+import "UDS/tokens/extensions/ERC20BurnableUDS.sol";
 
 contract MockERC20BurnableUDS is MockERC20UDS, ERC20BurnableUDS {}
 
