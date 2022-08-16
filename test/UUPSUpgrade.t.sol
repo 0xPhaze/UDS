@@ -50,7 +50,9 @@ contract MockUUPSUpgradeV2 is MockUUPSUpgrade {
     }
 }
 
-contract LogicNonexistentUUID {}
+contract LogicNonexistentUUID {
+    bytes32 public placeholder;
+}
 
 contract LogicInvalidUUID {
     bytes32 public proxiableUUID = 0x0000000000000000000000000000000000000000000000000000000000001234;
