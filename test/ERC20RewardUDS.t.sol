@@ -50,27 +50,34 @@ contract TestERC20RewardUDS is Test {
         assertEq(token.getMultiplier(alice), 150_000e18);
     }
 
+    function test_increaseMultiplier(uint216 amountIn) public {
+        token.increaseMultiplier(alice, amountIn);
+        assertEq(token.getMultiplier(alice), amountIn);
+    }
+
     /* ------------- decreaseMultiplier() ------------- */
 
     function test_decreaseMultiplier(uint216 amountIn, uint216 amountOut) public {
-        (amountIn, amountOut) = amountIn < amountOut ? (amountOut, amountIn) : (amountIn, amountOut);
+        test_increaseMultiplier(amountIn);
 
-        token.increaseMultiplier(alice, amountIn);
+        if (amountIn >= amountOut) {
+            token.decreaseMultiplier(alice, amountOut);
 
-        token.decreaseMultiplier(alice, amountOut);
+            assertEq(token.getMultiplier(alice), amountIn - amountOut);
+        } else {
+            vm.expectRevert(stdError.arithmeticError);
 
-        assertEq(token.getMultiplier(alice), amountIn - amountOut);
+            token.decreaseMultiplier(alice, amountOut);
+        }
     }
 
-    function test_decreaseMultiplier_fail_Underflow(uint216 amountIn, uint216 amountOut) public {
-        vm.assume(amountIn != amountOut);
+    /* ------------- resetMultiplier() ------------- */
 
-        (amountIn, amountOut) = amountIn > amountOut ? (amountOut, amountIn) : (amountIn, amountOut);
+    function test_resetMultiplier(uint216 amountIn) public {
+        test_increaseMultiplier(amountIn);
 
-        token.increaseMultiplier(alice, amountIn);
-
-        vm.expectRevert(stdError.arithmeticError);
-        token.decreaseMultiplier(alice, amountOut);
+        token.resetMultiplier(alice);
+        assertEq(token.getMultiplier(alice), 0);
     }
 
     /* ------------- pendingReward() ------------- */
