@@ -50,7 +50,7 @@ import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 import {Initializable} from "UDS/utils/Initializable.sol";
 
 contract UpgradeableERC20 is UUPSUpgrade, Initializable, OwnableUDS, ERC20UDS {
-    function init() public initializer {
+    function init() external initializer {
         __Ownable_init();
         __ERC20_init("My Token", "TKN", 18);
         _mint(msg.sender, 1_000_000e18);
@@ -64,41 +64,39 @@ The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [Initializable](./s
 
 ### Deploying the Proxy Contract
 
-Import `ERC1967Proxy`.
 ```solidity
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
-```
 
-To deploy a proxy contract, run
-```solidity
 bytes memory initCalldata = abi.encodeWithSelector(init.selector, param1, param2);
 
-address proxyAddress = new ERC1967Proxy(implementation, initCalldata);
+address proxyAddress = new ERC1967Proxy(implementationAddress, initCalldata);
 ```
 
 ### Upgrading a Proxy Contract
 
-Import `UUPSUpgrade`.
 ```solidity
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
-```
 
-To update a proxy contract, run
-```solidity
-UUPSUpgrade(deployedProxy).upgradeToAndCall(implementation, initCalldata);
+UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCalldata);
 ```
 
 A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
 can be found here [Deploy](./script/Deploy.s.sol) and here [Upgrade](./script/Upgrade.s.sol).
 
-
 ## Benefits
 
 Benefits over using Openzeppelin's upgradeable contracts:
-- No worrying about calculating storage gaps or adding/removing inheritance, because of diamond storage
-- Simplified dependencies and contracts
-- "Re-initialize" proxies (calling init on an already deployed proxy) is possible
+- No storage collision through adding/removing inheritance or incorrectly adjusted [storage gaps](https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps), because of diamond storage
 - Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
+- Minimal bloat (simplified dependencies and contracts)
+
+## Layout changes
+
+Although, re-ordering contract storage slots through adding inheritance or
+changing inheritance order won't cause storage collisions,
+changes in the internal layout of contract storage still can.
+The contracts contain the private `_layout` variable that can
+act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout` (TODO: add scripts for diff-checking).
 
 
 ## What is Diamond Storage?
