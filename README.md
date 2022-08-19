@@ -83,20 +83,32 @@ UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCalldata)
 A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
 can be found here [Deploy](./script/Deploy.s.sol) and here [Upgrade](./script/Upgrade.s.sol).
 
-## Benefits
-
-Benefits over using Openzeppelin's upgradeable contracts:
-- No storage collision through adding/removing inheritance or incorrectly adjusted [storage gaps](https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps), because of diamond storage
-- Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
-- Minimal bloat (simplified dependencies and contracts)
-
 ## Layout changes
 
 Although, re-ordering contract storage slots through adding inheritance or
 changing inheritance order won't cause storage collisions,
 changes in the internal layout of contract storage still can.
 The contracts contain the private `_layout` variable that can
-act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout` (TODO: add scripts for diff-checking).
+act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout`.
+
+To take a snapshot of a storage layout, run
+```sh
+./storage-inspect.sh generate ERC20UDS
+```
+
+To check storage layout compatibility with an existing storage layout snapshot, run
+```sh
+./storage-inspect.sh check ERC20UDS
+```
+
+Note that renaming contracts will trigger a positive find.
+
+## Benefits
+
+Benefits over using Openzeppelin's upgradeable contracts:
+- No storage collision through adding/removing inheritance or incorrectly adjusted [storage gaps](https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps), because of diamond storage
+- Removes possibility of an [uninitialized implementation](https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a)
+- Minimal bloat (simplified dependencies and contracts)
 
 
 ## What is Diamond Storage?
