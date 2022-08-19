@@ -27,6 +27,8 @@ struct ERC20DS {
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 abstract contract ERC20UDS is Context, Initializable, EIP712PermitUDS {
+    ERC20DS private _layout; // storage layout for upgrade compatibility checks
+
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed operator, uint256 amount);
 

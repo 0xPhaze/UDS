@@ -25,6 +25,8 @@ error DeadlineExpired();
 /// @dev `DOMAIN_SEPARATOR` needs to be re-computed every time
 /// @dev for use with a proxy due to `address(this)`
 abstract contract EIP712PermitUDS {
+    EIP2612DS private _layout; // storage layout for upgrade compatibility checks
+
     /* ------------- public ------------- */
 
     function nonces(address owner) public view returns (uint256) {

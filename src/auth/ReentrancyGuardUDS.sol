@@ -21,6 +21,8 @@ error ReentrancyNotPermitted();
 /// @title Reentrancy Guard (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 contract ReentrancyGuardUDS {
+    ReentrancyGuardDS private _layout; // storage layout for upgrade compatibility checks
+
     /* ------------- modifier ------------- */
 
     modifier nonReentrant() {

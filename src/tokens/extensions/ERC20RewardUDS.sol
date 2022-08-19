@@ -27,6 +27,8 @@ struct ERC20RewardDS {
 /// @notice at a rate of rewardDailyRate() * multiplier[user] per day
 /// @notice Tokens are automatically claimed before any multiplier update
 abstract contract ERC20RewardUDS is ERC20UDS {
+    ERC20RewardDS private _layout; // storage layout for upgrade compatibility checks
+
     /* ------------- virtual ------------- */
 
     function rewardEndDate() public view virtual returns (uint256);

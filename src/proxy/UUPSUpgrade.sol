@@ -8,7 +8,7 @@ import {ERC1967, ERC1967_PROXY_STORAGE_SLOT} from "./ERC1967Proxy.sol";
 error OnlyProxyCallAllowed();
 error DelegateCallNotAllowed();
 
-/// @notice Minimal UUPSUpgrade
+/// @title Minimal UUPSUpgrade
 /// @author phaze (https://github.com/0xPhaze/UDS)
 abstract contract UUPSUpgrade is ERC1967 {
     address private immutable __implementation = address(this);

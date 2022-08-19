@@ -25,6 +25,8 @@ error CallerNotOwner();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @dev Requires `__Ownable_init` to be called in proxy
 abstract contract OwnableUDS is Context, Initializable {
+    OwnableDS private _layout; // storage layout for upgrade compatibility checks
+
     event OwnerChanged(address oldOwner, address newOwner);
 
     function __Ownable_init() internal initializer {

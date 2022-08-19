@@ -32,6 +32,8 @@ error RenounceForCallerOnly();
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
 /// @dev Requires `__AccessControl_init` to be called in proxy
 abstract contract AccessControlUDS is Context, Initializable {
+    AccessControlDS private _layout; // storage layout for upgrade compatibility checks
+
     event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
