@@ -59,8 +59,8 @@ contract MockERC20RewardUDS is MockUUPSUpgrade, ERC20RewardUDS {
         _decreaseRewardMultiplier(user, quantity);
     }
 
-    function resetMultiplier(address user) public {
-        _resetRewardMultiplier(user);
+    function setMultiplier(address user, uint216 quantity) public {
+        _setRewardMultiplier(user, quantity);
     }
 
     function claimReward() public {

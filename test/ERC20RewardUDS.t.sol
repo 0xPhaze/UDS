@@ -71,13 +71,13 @@ contract TestERC20RewardUDS is Test {
         }
     }
 
-    /* ------------- resetMultiplier() ------------- */
+    /* ------------- setMultiplier() ------------- */
 
-    function test_resetMultiplier(uint216 amountIn) public {
+    function test_setMultiplier(uint216 amountIn, uint216 amountSet) public {
         test_increaseMultiplier(amountIn);
 
-        token.resetMultiplier(alice);
-        assertEq(token.getMultiplier(alice), 0);
+        token.setMultiplier(alice, amountSet);
+        assertEq(token.getMultiplier(alice), amountSet);
     }
 
     /* ------------- pendingReward() ------------- */

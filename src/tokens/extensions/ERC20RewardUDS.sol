@@ -100,9 +100,9 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         s().userData[owner].multiplier -= quantity;
     }
 
-    function _resetRewardMultiplier(address owner) internal virtual {
+    function _setRewardMultiplier(address owner, uint216 quantity) internal virtual {
         _claimReward(owner);
 
-        s().userData[owner].multiplier = 0;
+        s().userData[owner].multiplier = quantity;
     }
 }
