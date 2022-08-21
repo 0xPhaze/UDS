@@ -69,17 +69,21 @@ abstract contract AccessControlUDS is Context, Initializable {
     function grantRole(bytes32 role, address account) public virtual {
         if (!hasRole(getRoleAdmin(role), _msgSender())) revert NotAuthorized();
 
-        s().roles[role].members[account] = true;
-
-        emit RoleGranted(role, account, _msgSender());
+        _grantRole(role, account);
     }
 
     function revokeRole(bytes32 role, address account) public virtual {
         if (!hasRole(getRoleAdmin(role), _msgSender())) revert NotAuthorized();
 
-        s().roles[role].members[account] = false;
+        _revokeRole(role, account);
+    }
 
-        emit RoleRevoked(role, account, _msgSender());
+    function setRoleAdmin(bytes32 role, bytes32 adminRole) public virtual {
+        bytes32 previousAdminRole = getRoleAdmin(role);
+
+        if (!hasRole(previousAdminRole, _msgSender())) revert NotAuthorized();
+
+        _setRoleAdmin(role, adminRole);
     }
 
     function renounceRole(bytes32 role) public virtual {
@@ -88,14 +92,24 @@ abstract contract AccessControlUDS is Context, Initializable {
         emit RoleRevoked(role, _msgSender(), _msgSender());
     }
 
-    function setRoleAdmin(bytes32 role, bytes32 adminRole) public virtual {
-        bytes32 previousAdminRole = getRoleAdmin(role);
+    /* ------------- internal ------------- */
 
-        if (!hasRole(previousAdminRole, _msgSender())) revert NotAuthorized();
+    function _grantRole(bytes32 role, address account) internal virtual {
+        s().roles[role].members[account] = true;
 
+        emit RoleGranted(role, account, _msgSender());
+    }
+
+    function _revokeRole(bytes32 role, address account) internal virtual {
+        s().roles[role].members[account] = false;
+
+        emit RoleRevoked(role, account, _msgSender());
+    }
+
+    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {
         s().roles[role].adminRole = adminRole;
 
-        emit RoleAdminChanged(role, previousAdminRole, adminRole);
+        emit RoleAdminChanged(role, getRoleAdmin(role), adminRole);
     }
 
     /* ------------- modifier ------------- */
