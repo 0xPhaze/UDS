@@ -24,11 +24,11 @@ contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS
 }
 
 contract MyNFTUpgradeableV2 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
+    string public override name = "Non-fungible Contract V2";
+    string public override symbol = "NFTV2";
+
     function init() public reinitializer {
-        // note that a direct call is guarded against for good reasons
-        // __ERC721_init("Non-fungible Contract V2", "NFTV2");
-        erc721ds().name = "Non-fungible Contract V2";
-        erc721ds().symbol = "NFTV2";
+        _mint(msg.sender, 1);
     }
 
     function tokenURI(uint256) public pure override returns (string memory) {
