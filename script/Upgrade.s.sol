@@ -30,6 +30,7 @@ source .env && forge script Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_K
 contract Upgrade is Script {
     function run() external {
         address proxyAddress = tryLoadEnvVar("PROXY_ADDRESS");
+        require(proxyAddress.code.length != 0, "Invalid proxy address. Address contains no code.");
 
         vm.startBroadcast();
 
@@ -53,7 +54,7 @@ contract Upgrade is Script {
         try vm.envAddress(key) returns (address addr) {
             return addr;
         } catch {
-            console.log("Make sure `%=` is set in your environment.", key);
+            console.log("Make sure `%s=` is set in your `.env` file.", key);
             revert("Could not load environment variable.");
         }
     }

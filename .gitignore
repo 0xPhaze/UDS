@@ -1,6 +1,7 @@
 !.prettierrc
 !.vscode
 !.gas-snapshot
+!.env.example
 
 node_modules
 .env
