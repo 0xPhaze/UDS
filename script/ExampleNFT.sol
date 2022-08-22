@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC721UDS} from "UDS/tokens/ERC721UDS.sol";
+import {ERC721UDS, s as erc721ds} from "UDS/tokens/ERC721UDS.sol";
 import {OwnableUDS} from "UDS/auth/OwnableUDS.sol";
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 import {Initializable} from "UDS/utils/Initializable.sol";
@@ -25,11 +25,14 @@ contract MyNFTUpgradeableV1 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS
 
 contract MyNFTUpgradeableV2 is UUPSUpgrade, Initializable, OwnableUDS, ERC721UDS {
     function init() public reinitializer {
-        __ERC721_init("Non-fungible Contract V2", "NFTV2");
+        // note that a direct call is guarded against for good reasons
+        // __ERC721_init("Non-fungible Contract V2", "NFTV2");
+        erc721ds().name = "Non-fungible Contract V2";
+        erc721ds().symbol = "NFTV2";
     }
 
     function tokenURI(uint256) public pure override returns (string memory) {
-        return "URI";
+        return "URIV2";
     }
 
     function mint(address to, uint256 tokenId) public onlyOwner {

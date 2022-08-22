@@ -8,14 +8,14 @@ import "forge-std/Script.sol";
 
 /* 
 
-1. create a .env file with the following variables:
+1. Create a .env file with the following variables:
 ```.env
 RPC_URL=https://eth-rinkeby.alchemyapi.io/v2/Q_w...
 ETHERSCAN_KEY=NZSD...
 PRIVATE_KEY=0x1234...
 ```
 
-2. run script
+2. Run script
 
 ```sh
 source .env && forge script Deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
@@ -26,6 +26,7 @@ source .env && forge script Deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KE
 source .env && forge script Deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
+4. Store deployed proxy address `PROXY_ADDRESS=...` in your .env file.
 */
 
 contract Deploy is Script {

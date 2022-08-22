@@ -7,34 +7,29 @@ import "forge-std/Script.sol";
 
 /* 
 
-1. make sure your .env file contains the following variables:
+1. Make sure your .env file now contains `PROX_ADDRESS`:
 ```.env
+PROXY_ADDRESS=0x1234...
 RPC_URL=https://eth-rinkeby.alchemyapi.io/v2/Q_w...
 ETHERSCAN_KEY=NZSD...
-PRIVATE_KEY=0x1234...
+PRIVATE_KEY=0xabcd...
 ```
 
-2. insert address of deployed proxy for `DEPLOYED_PROXY_ADDRESS` in script below
-
-3. run script
+3. Run script
 
 ```sh
-source .env && forge script script/Upgrade.s.sol:Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && forge script Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
 4. (optional) if verification failed
 ```sh
-source .env && forge script script/Upgrade.s.sol:Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && forge script Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
-
 */
-
-// insert deployed proxy address here!
-address constant DEPLOYED_PROXY_ADDRESS = address(0x1234);
 
 contract Upgrade is Script {
     function run() external {
-        require(DEPLOYED_PROXY_ADDRESS != address(0x1234), "insert your deployed proxy address in the script");
+        address proxyAddress = tryLoadEnvVar("PROXY_ADDRESS");
 
         vm.startBroadcast();
 
@@ -45,13 +40,22 @@ contract Upgrade is Script {
         bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV2.init.selector);
 
         // calls upgradeTo and MyNFTUpgradeableV2.init() in the context of the proxy
-        MyNFTUpgradeableV2(DEPLOYED_PROXY_ADDRESS).upgradeToAndCall(implementation, initCalldata);
+        MyNFTUpgradeableV2(proxyAddress).upgradeToAndCall(implementation, initCalldata);
 
-        integrationTest(MyNFTUpgradeableV2(DEPLOYED_PROXY_ADDRESS));
+        integrationTest(MyNFTUpgradeableV2(proxyAddress));
 
         console.log("new implementation:", implementation);
 
         vm.stopBroadcast();
+    }
+
+    function tryLoadEnvVar(string memory key) internal returns (address) {
+        try vm.envAddress(key) returns (address addr) {
+            return addr;
+        } catch {
+            console.log("Make sure `%=` is set in your environment.", key);
+            revert("Could not load environment variable.");
+        }
     }
 
     /// @notice the script will fail if these conditions aren't met
