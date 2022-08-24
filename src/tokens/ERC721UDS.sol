@@ -39,7 +39,7 @@ error CallerNotOwnerNorApproved();
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @notice Integrates EIP712Permit
 abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
-    ERC721DS private _layout; // storage layout for upgrade compatibility checks
+    ERC721DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
     event Approval(address indexed owner, address indexed operator, uint256 indexed id);

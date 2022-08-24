@@ -23,7 +23,7 @@ error AlreadyUnpaused();
 /// @title Puasable (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 contract PausableUDS {
-    PausableDS private _layout; // storage layout for upgrade compatibility checks
+    PausableDS private __storageLayout; // storage layout for upgrade compatibility checks
 
     /* ------------- internal ------------- */
 

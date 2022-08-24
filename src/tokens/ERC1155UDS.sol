@@ -28,7 +28,7 @@ error UnsafeRecipient();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
 abstract contract ERC1155UDS is Context, EIP712PermitUDS {
-    ERC1155DS private _layout; // storage layout for upgrade compatibility checks
+    ERC1155DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
     event URI(string value, uint256 indexed id);
