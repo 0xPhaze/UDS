@@ -32,6 +32,8 @@ source .env && forge script deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KE
 */
 
 contract deploy is Script {
+    MyNFTUpgradeableV1 myNFT;
+
     function run() external {
         vm.startBroadcast();
 
@@ -46,19 +48,21 @@ contract deploy is Script {
         // deploys the proxy contract and calls MyNFTUpgradeableV1.init() in the context of the proxy
         address proxy = address(new ERC1967Proxy(implementation, initCalldata));
 
-        integrationTest(MyNFTUpgradeableV1(proxy));
+        vm.stopBroadcast();
+
+        myNFT = MyNFTUpgradeableV1(proxy);
+
+        integrationTest();
 
         console.log("implementation:", implementation);
         console.log("Add `PROXY_ADDRESS=%s` to your .env", proxy);
-
-        vm.stopBroadcast();
     }
 
     /// @notice the script will fail if these conditions aren't met
-    function integrationTest(MyNFTUpgradeableV1 proxy) internal view {
-        require(proxy.owner() == msg.sender);
+    function integrationTest() internal view {
+        require(myNFT.owner() == msg.sender);
 
-        require(keccak256(abi.encode(proxy.name())) == keccak256(abi.encode("Non-fungible Contract")));
-        require(keccak256(abi.encode(proxy.symbol())) == keccak256(abi.encode("NFT")));
+        require(keccak256(abi.encode(myNFT.name())) == keccak256(abi.encode("Non-fungible Contract")));
+        require(keccak256(abi.encode(myNFT.symbol())) == keccak256(abi.encode("NFT")));
     }
 }

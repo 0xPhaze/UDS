@@ -20,9 +20,14 @@ source .env && PROXY_ADDRESS=0x123 forge script upgrade --rpc-url $RPC_URL  --pr
 */
 
 contract upgrade is Script {
+    address proxyAddress;
+    MyNFTUpgradeableV2 myNFT;
+
     function run() external {
-        address proxyAddress = tryLoadEnvVar("PROXY_ADDRESS");
+        proxyAddress = tryLoadEnvVar("PROXY_ADDRESS");
         require(proxyAddress.code.length != 0, "Invalid proxy address. Address contains no code.");
+
+        myNFT = MyNFTUpgradeableV2(proxyAddress);
 
         vm.startBroadcast();
 
@@ -33,13 +38,13 @@ contract upgrade is Script {
         bytes memory initCalldata = abi.encodePacked(MyNFTUpgradeableV2.init.selector);
 
         // calls upgradeTo and MyNFTUpgradeableV2.init() in the context of the proxy
-        MyNFTUpgradeableV2(proxyAddress).upgradeToAndCall(implementation, initCalldata);
-
-        integrationTest(MyNFTUpgradeableV2(proxyAddress));
-
-        console.log("new implementation:", implementation);
+        myNFT.upgradeToAndCall(implementation, initCalldata);
 
         vm.stopBroadcast();
+
+        integrationTest();
+
+        console.log("new implementation:", implementation);
     }
 
     function tryLoadEnvVar(string memory key) internal returns (address) {
@@ -52,10 +57,10 @@ contract upgrade is Script {
     }
 
     /// @notice the script will fail if these conditions aren't met
-    function integrationTest(MyNFTUpgradeableV2 proxy) internal view {
-        require(proxy.owner() == msg.sender);
+    function integrationTest() internal view {
+        require(myNFT.owner() == msg.sender);
 
-        require(keccak256(abi.encode(proxy.name())) == keccak256(abi.encode("Non-fungible Contract V2")));
-        require(keccak256(abi.encode(proxy.symbol())) == keccak256(abi.encode("NFTV2")));
+        require(keccak256(abi.encode(myNFT.name())) == keccak256(abi.encode("Non-fungible Contract V2")));
+        require(keccak256(abi.encode(myNFT.symbol())) == keccak256(abi.encode("NFTV2")));
     }
 }
