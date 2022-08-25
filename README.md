@@ -81,7 +81,8 @@ UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCalldata)
 ```
 
 A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
-can be found here [deploy](./script/deploy.s.sol) and here [upgrade](./script/upgrade.s.sol).
+can be found here [deploy](./script/deploy.s.sol) and here [upgrade](./script/upgrade.s.sol) 
+(note that these examples require you to install project dependencies by running `forge install`).
 
 ## Layout changes
 
