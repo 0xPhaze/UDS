@@ -28,7 +28,7 @@ source .env && forge script deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KE
 source .env && forge script deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
-4. Store deployed proxy address `PROXY_ADDRESS=...` in your `.env` file.
+4. Store deployed proxy address in your `.env` file: `PROXY_ADDRESS=...`.
 */
 
 contract deploy is Script {

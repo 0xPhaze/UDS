@@ -81,14 +81,14 @@ UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCalldata)
 ```
 
 A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
-can be found here [Deploy](./script/Deploy.s.sol) and here [Upgrade](./script/Upgrade.s.sol).
+can be found here [deploy](./script/deploy.s.sol) and here [upgrade](./script/upgrade.s.sol).
 
 ## Layout changes
 
 Although, re-ordering contract storage slots through adding inheritance or
 changing inheritance order won't cause storage collisions,
 changes in the internal layout of contract storage still can.
-The contracts contain the private `_layout` variable that can
+The contracts contain the private `__storageLayout` variable that can
 act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout`.
 
 To take a snapshot of a storage layout, run
