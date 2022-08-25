@@ -7,27 +7,19 @@ import "forge-std/Script.sol";
 
 /* 
 
-1. Make sure your .env file now contains `PROX_ADDRESS`:
-```.env
-PROXY_ADDRESS=0x1234...
-RPC_URL=https://eth-rinkeby.alchemyapi.io/v2/Q_w...
-ETHERSCAN_KEY=NZSD...
-PRIVATE_KEY=0xabcd...
-```
-
-3. Run script
+1. Run script (NOTE: replace `PROXY_ADDRESS=...` below with your deployed address or add it to your .env)
 
 ```sh
-source .env && forge script Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && PROXY_ADDRESS=0x123 forge script upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
 4. (optional) if verification failed
 ```sh
-source .env && forge script Upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && PROXY_ADDRESS=0x123 forge script upgrade --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 */
 
-contract Upgrade is Script {
+contract upgrade is Script {
     function run() external {
         address proxyAddress = tryLoadEnvVar("PROXY_ADDRESS");
         require(proxyAddress.code.length != 0, "Invalid proxy address. Address contains no code.");

@@ -20,18 +20,18 @@ Make sure it's called `.env`!
 2. Run script
 
 ```sh
-source .env && forge script Deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && forge script deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
 3. (optional) if verification failed
 ```sh
-source .env && forge script Deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
+source .env && forge script deploy --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --resume --verify --etherscan-api-key $ETHERSCAN_KEY -vvvv
 ```
 
 4. Store deployed proxy address `PROXY_ADDRESS=...` in your `.env` file.
 */
 
-contract Deploy is Script {
+contract deploy is Script {
     function run() external {
         vm.startBroadcast();
 
@@ -48,8 +48,8 @@ contract Deploy is Script {
 
         integrationTest(MyNFTUpgradeableV1(proxy));
 
-        console.log("proxy:", proxy);
         console.log("implementation:", implementation);
+        console.log("Add `PROXY_ADDRESS=%s` to your .env", proxy);
 
         vm.stopBroadcast();
     }
