@@ -31,6 +31,8 @@ error TransferFromIncorrectOwner();
 abstract contract ERC721EnumerableUDS is ERC721UDS {
     using LibEnumerableSet for Uint256Set;
 
+    ERC721EnumerableDS private __storageLayout; // storage layout for upgrade compatibility checks
+
     /* ------------- virtual ------------- */
 
     function tokenURI(uint256 id) public view virtual override returns (string memory);
