@@ -19,7 +19,7 @@ struct AddressSet {
 /// @title EnumerableSet
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
-/// @dev requires adding `using LibEnumerableSet for Uint256Set;`
+/// @dev usage: `using LibEnumerableSet for Uint256Set;`
 library LibEnumerableSet {
     // ---------------------------------------------------------------------
     // Bytes32Set
@@ -42,10 +42,15 @@ library LibEnumerableSet {
         uint256 lastIndex = set._values.length;
 
         if (indexToReplace != lastIndex) {
-            bytes32 lastValue = set._values[lastIndex - 1];
+            unchecked {
+                // lastIndex != 0,
+                // as otherwise .length would be 0
+                // and indexToReplace would be 0
+                bytes32 lastValue = set._values[lastIndex - 1];
 
-            set._values[indexToReplace - 1] = lastValue;
-            set._indices[lastValue] = indexToReplace;
+                set._values[indexToReplace - 1] = lastValue;
+                set._indices[lastValue] = indexToReplace;
+            }
         }
 
         set._indices[val] = 0;
@@ -121,7 +126,7 @@ library LibEnumerableSet {
         bytes32 val_;
         assembly {
             set_.slot := set.slot
-            val_ := val
+            val_ := shr(96, shl(96, val)) // make sure no "dirty" bits remain
         }
         return remove(set_, val_);
     }
