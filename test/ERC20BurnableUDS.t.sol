@@ -4,12 +4,10 @@ pragma solidity ^0.8.0;
 import {Test, stdError} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
-import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
+import {MockERC20BurnableUDS} from "./mocks/MockERC20BurnableUDS.sol";
 import {TestERC20, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
 import "UDS/tokens/extensions/ERC20BurnableUDS.sol";
-
-contract MockERC20BurnableUDS is MockERC20UDS, ERC20BurnableUDS {}
 
 contract TestERC20BurnableUDS is Test {
     address bob = address(0xb0b);
@@ -24,15 +22,15 @@ contract TestERC20BurnableUDS is Test {
     function setUp() public {
         logic = address(new MockERC20BurnableUDS());
 
-        bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20BurnableUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20BurnableUDS(address(new ERC1967Proxy(logic, initCalldata)));
+
+        token.scrambleStorage(0, 100);
     }
 
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        token.scrambleStorage(0, 100);
-
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
         assertEq(token.decimals(), 18);
@@ -140,7 +138,7 @@ contract TestERC20UDS is TestERC20 {
     function setUp() public override {
         logic = address(new MockERC20BurnableUDS());
 
-        bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, "Token", "TKN", 18);
+        bytes memory initCalldata = abi.encodeWithSelector(MockERC20BurnableUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20UDS(address(new ERC1967Proxy(logic, initCalldata)));
     }
 }

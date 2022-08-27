@@ -30,13 +30,13 @@ contract TestAccessControlUDS is Test {
         bytes memory initCalldata = abi.encodePacked(MockAccessControl.init.selector);
 
         proxy = MockAccessControl(address(new ERC1967Proxy(address(logic), initCalldata)));
+
+        proxy.scrambleStorage(0, 100);
     }
 
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        proxy.scrambleStorage(0, 100);
-
         proxy.hasRole(0x00, tester);
 
         assertEq(DIAMOND_STORAGE_ACCESS_CONTROL, keccak256("diamond.storage.access.control"));

@@ -31,8 +31,8 @@ error MintExistingToken();
 error MintToZeroAddress();
 error BalanceOfZeroAddress();
 error TransferToZeroAddress();
-error TransferFromIncorrectOwner();
 error CallerNotOwnerNorApproved();
+error TransferFromIncorrectOwner();
 
 /// @title ERC721 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)

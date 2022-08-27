@@ -30,13 +30,13 @@ contract TestOwnableUDS is Test {
         bytes memory initCalldata = abi.encodePacked(MockOwnable.init.selector);
 
         proxy = MockOwnable(address(new ERC1967Proxy(logic, initCalldata)));
+
+        proxy.scrambleStorage(0, 100);
     }
 
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        proxy.scrambleStorage(0, 100);
-
         assertEq(proxy.owner(), tester);
         assertEq(DIAMOND_STORAGE_OWNABLE, keccak256("diamond.storage.ownable"));
     }

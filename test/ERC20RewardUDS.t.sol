@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import {Test, stdError} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
-import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 import {MockERC20RewardUDS} from "./mocks/MockERC20RewardUDS.sol";
 import {TestERC20, MockERC20UDS} from "./solmate/ERC20UDS.t.sol";
 
@@ -23,13 +22,13 @@ contract TestERC20RewardUDS is Test {
 
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20RewardUDS.init.selector, "Token", "TKN", 18);
         token = MockERC20RewardUDS(address(new ERC1967Proxy(logic, initCalldata)));
+
+        token.scrambleStorage(0, 100);
     }
 
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        token.scrambleStorage(0, 100);
-
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
         assertEq(token.decimals(), 18);

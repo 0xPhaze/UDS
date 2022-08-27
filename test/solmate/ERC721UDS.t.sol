@@ -53,15 +53,15 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 contract NonERC721Recipient {}
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract TESTERC721 is Test {
+contract TestERC721 is Test {
     MockERC721UDS token;
-    MockERC721UDS logic;
+    address logic;
 
-    function setUp() public {
+    function setUp() public virtual {
         bytes memory initCalldata = abi.encodeWithSelector(MockERC721UDS.init.selector, "Token", "TKN");
 
-        logic = new MockERC721UDS();
-        token = MockERC721UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+        logic = address(new MockERC721UDS());
+        token = MockERC721UDS(address(new ERC1967Proxy(logic, initCalldata)));
 
         token.scrambleStorage(0, 100);
     }
@@ -381,7 +381,7 @@ contract TESTERC721 is Test {
     function testFuzzMetadata(string memory name, string memory symbol) public {
         bytes memory initCalldata = abi.encodeWithSelector(MockERC721UDS.init.selector, name, symbol);
 
-        MockERC721UDS tkn = MockERC721UDS(address(new ERC1967Proxy(address(logic), initCalldata)));
+        MockERC721UDS tkn = MockERC721UDS(address(new ERC1967Proxy(logic, initCalldata)));
 
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
