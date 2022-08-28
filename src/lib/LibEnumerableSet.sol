@@ -67,6 +67,10 @@ library LibEnumerableSet {
         return set._values;
     }
 
+    function at(Bytes32Set storage set, uint256 index) internal view returns (bytes32) {
+        return set._values[index];
+    }
+
     function length(Bytes32Set storage set) internal view returns (uint256) {
         return set._values.length;
     }
@@ -103,6 +107,10 @@ library LibEnumerableSet {
         return set._values;
     }
 
+    function at(Uint256Set storage set, uint256 index) internal view returns (uint256) {
+        return set._values[index];
+    }
+
     function length(Uint256Set storage set) internal view returns (uint256) {
         return set._values.length;
     }
@@ -133,6 +141,10 @@ library LibEnumerableSet {
 
     function includes(AddressSet storage set, address val) internal view returns (bool) {
         return set._indices[val] != 0;
+    }
+
+    function at(AddressSet storage set, uint256 index) internal view returns (address) {
+        return set._values[index];
     }
 
     function values(AddressSet storage set) internal view returns (address[] memory) {

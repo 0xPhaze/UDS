@@ -47,6 +47,7 @@ contract TestEnumerableUint256Set is Test {
 
         assertEq(added, !includes);
         assertTrue(set.includes(value));
+        assertEq(set.at(set._indices[value] - 1), value);
 
         // mirror by performing "dumb" O(n) operations
 
@@ -159,6 +160,7 @@ contract TestEnumerableBytes32Set is Test {
 
         assertEq(added, !includes);
         assertTrue(set.includes(value));
+        assertEq(set.at(set._indices[value] - 1), value);
 
         // mirror by performing "dumb" O(n) operations
 
@@ -271,6 +273,7 @@ contract TestEnumerableAddressSet is Test {
 
         assertEq(added, !includes);
         assertTrue(set.includes(value));
+        assertEq(set.at(set._indices[value] - 1), value);
 
         // mirror by performing "dumb" O(n) operations
 
