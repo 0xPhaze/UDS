@@ -86,23 +86,16 @@ can be found here [deploy](./script/deploy.s.sol) and here [upgrade](./script/up
 
 ## Layout changes
 
+
 Although, re-ordering contract storage slots through adding inheritance or
 changing inheritance order won't cause storage collisions,
 changes in the internal layout of contract storage still can.
 The contracts contain the private `__storageLayout` variable that can
 act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout`.
 
-To take a snapshot of a storage layout, run
-```sh
-./storage-inspect.sh generate ERC20UDS
-```
-
-To check storage layout compatibility with an existing storage layout snapshot, run
-```sh
-./storage-inspect.sh check ERC20UDS
-```
-
-Note that renaming contracts will trigger a positive find.
+For a full example of deploying, upgrading and maintaining proxy contracts, have a look at
+[upgrade-scripts](https://github.com/0xPhaze/upgrade-scripts).
+These scripts also include automated checks for storage layout compatibility when upgrading.
 
 ## Benefits
 
