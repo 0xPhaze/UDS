@@ -7,6 +7,10 @@ import {MyNFTUpgradeableV1} from "./ExampleNFT.sol";
 import "forge-std/Script.sol";
 
 /* 
+For a more complete example (of deploying, upgrading & keeping track of proxies),
+have a look at https://github.com/0xPhaze/upgrade-scripts.
+
+Steps to run these scripts:
 
 1. Create a `.env` file with the following variables:
 ```.env
