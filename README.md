@@ -1,9 +1,10 @@
 # Upgradeable Contracts Using Diamond Storage
 
 A collection of upgradeable contracts compatible with diamond storage.
+
 To clarify: these contracts DO NOT require [EIP-2535 Upgradeable Diamond Standard](https://eip2535diamonds.substack.com/p/diamond-upgrades) to be used.
 They are simply compatible. In fact, these contracts can also be used without any upgradeability at all.
-They can be used in a almost exactly the same way to OpenZeppelin's upgradeable contracts, but include some [beneficial properties](#benefits).
+They can be used in almost exactly the same way as OpenZeppelin's upgradeable contracts, but include some [beneficial properties](#benefits).
 
 ## Contracts
 ```ml
@@ -70,9 +71,9 @@ The example uses [OwnableUDS](./src/auth/OwnableUDS.sol) and [Initializable](./s
 ```solidity
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 
-bytes memory initCalldata = abi.encodeWithSelector(init.selector, param1, param2);
+bytes memory initCall = abi.encodeCall(Implementation.init, (param1, param2));
 
-address proxyAddress = new ERC1967Proxy(implementationAddress, initCalldata);
+address proxyAddress = new ERC1967Proxy(implementationAddress, initCall);
 ```
 
 ### Upgrading a Proxy Contract
@@ -80,25 +81,15 @@ address proxyAddress = new ERC1967Proxy(implementationAddress, initCalldata);
 ```solidity
 import {UUPSUpgrade} from "UDS/proxy/UUPSUpgrade.sol";
 
-UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCalldata);
+UUPSUpgrade(deployedProxy).upgradeToAndCall(implementationAddress, initCall);
 ```
 
 A full example using [Foundry](https://book.getfoundry.sh) and [Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting)
 can be found here [deploy](./script/deploy.s.sol) and here [upgrade](./script/upgrade.s.sol) 
 (note that these examples require you to install project dependencies by running `forge install`).
 
-## Layout changes
-
-
-Although, re-ordering contract storage slots through adding inheritance or
-changing inheritance order won't cause storage collisions,
-changes in the internal layout of contract storage still can.
-The contracts contain the private `__storageLayout` variable that can
-act as a storage layout "snapshot" to detect differences using `forge inspect {Contract} storagelayout`.
-
-For a full example of deploying, upgrading and maintaining proxy contracts, have a look at
-[upgrade-scripts](https://github.com/0xPhaze/upgrade-scripts).
-These scripts also include automated checks for storage layout compatibility when upgrading.
+A more advanced example of upgrading and maintaining proxies 
+(including safety checks for storage layout changes) can be found here: [upgrade-scripts](https://github.com/0xPhaze/upgrade-scripts).
 
 ## Benefits
 
