@@ -1,6 +1,9 @@
 # Upgradeable Contracts Using Diamond Storage
 
 A collection of upgradeable contracts compatible with diamond storage.
+To clarify: these contracts DO NOT require [EIP-2535 Upgradeable Diamond Standard](https://eip2535diamonds.substack.com/p/diamond-upgrades) to be used.
+They are simply compatible. In fact, these contracts can also be used without any upgradeability at all.
+They can be used in a almost exactly the same way to OpenZeppelin's upgradeable contracts, but include some [beneficial properties](#benefits).
 
 ## Contracts
 ```ml
