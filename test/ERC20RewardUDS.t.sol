@@ -40,15 +40,6 @@ contract TestERC20RewardUDS is Test {
 
     /* ------------- increaseMultiplier() ------------- */
 
-    function test_increaseMultiplier() public {
-        token.increaseMultiplier(alice, 100_000e18);
-        assertEq(token.getMultiplier(alice), 100_000e18);
-
-        // increase twice
-        token.increaseMultiplier(alice, 50_000e18);
-        assertEq(token.getMultiplier(alice), 150_000e18);
-    }
-
     function test_increaseMultiplier(uint216 amountIn) public {
         token.increaseMultiplier(alice, amountIn);
         assertEq(token.getMultiplier(alice), amountIn);
@@ -70,6 +61,18 @@ contract TestERC20RewardUDS is Test {
         }
     }
 
+    function test_increaseDecreaseMultiplier() public {
+        token.increaseMultiplier(alice, 100_000e18);
+        assertEq(token.getMultiplier(alice), 100_000e18);
+
+        // increase twice
+        token.increaseMultiplier(alice, 50_000e18);
+        assertEq(token.getMultiplier(alice), 150_000e18);
+
+        token.decreaseMultiplier(alice, 150_000e18);
+        assertEq(token.getMultiplier(alice), 0);
+    }
+
     /* ------------- setMultiplier() ------------- */
 
     function test_setMultiplier(uint216 amountIn, uint216 amountSet) public {
@@ -86,6 +89,7 @@ contract TestERC20RewardUDS is Test {
 
         assertEq(token.balanceOf(alice), 0);
         assertEq(token.pendingReward(alice), 0);
+        assertEq(token.getMultiplier(alice), 1_000);
 
         skip(100 days);
 
@@ -97,6 +101,7 @@ contract TestERC20RewardUDS is Test {
 
         assertEq(token.balanceOf(alice), 100_000e18);
         assertEq(token.pendingReward(alice), 0);
+        assertEq(token.getMultiplier(alice), 2_000);
 
         skip(200 days);
 
@@ -107,11 +112,17 @@ contract TestERC20RewardUDS is Test {
 
         assertEq(token.balanceOf(alice), 500_000e18);
         assertEq(token.pendingReward(alice), 0);
+        assertEq(token.getMultiplier(alice), 0);
+
+        skip(300 days);
     }
 
     /* ------------- claimReward() ------------- */
 
     function test_claimReward() public {
+        test_pendingReward();
+        token.burn(alice, 500_000e18);
+
         token.increaseMultiplier(alice, 1_000);
 
         vm.prank(alice);
@@ -119,6 +130,7 @@ contract TestERC20RewardUDS is Test {
 
         assertEq(token.balanceOf(alice), 0);
         assertEq(token.pendingReward(alice), 0);
+        assertEq(token.getMultiplier(alice), 1_000);
 
         skip(100 days);
 

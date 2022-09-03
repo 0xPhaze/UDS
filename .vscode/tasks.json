@@ -3,7 +3,7 @@
 	"tasks": [
 		{
             "type": "shell",
-			"command": "forge test -vvv",
+			"command": "forge test -vvv --match-contract Reward",
 			"group": {
 				"kind": "test",
 				"isDefault": true

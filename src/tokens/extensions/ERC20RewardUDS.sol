@@ -72,7 +72,7 @@ abstract contract ERC20RewardUDS is ERC20UDS {
         uint256 multiplier = userData.multiplier;
         uint256 lastClaimed = userData.lastClaimed;
 
-        if (multiplier != 0 || lastClaimed == 0) {
+        if (multiplier != 0) {
             // Only forego minting if multiplier == 0
             // checking for amount == 0 can lead to failed transactions
             // due to too little gas being supplied through estimation.
@@ -83,9 +83,9 @@ abstract contract ERC20RewardUDS is ERC20UDS {
 
                 _mint(owner, amount);
             }
-
-            s().userData[owner].lastClaimed = uint40(block.timestamp);
         }
+
+        s().userData[owner].lastClaimed = uint40(block.timestamp);
     }
 
     function _increaseRewardMultiplier(address owner, uint216 quantity) internal virtual {
