@@ -78,11 +78,9 @@ abstract contract ERC20RewardUDS is ERC20UDS {
             // due to too little gas being supplied through estimation.
             // This is under the assumption that _increaseRewardMultiplier
             // is unlikely to be called twice in a row.
-            if (multiplier != 0) {
-                uint256 amount = _calculateReward(multiplier, lastClaimed);
+            uint256 amount = _calculateReward(multiplier, lastClaimed);
 
-                _mint(owner, amount);
-            }
+            _mint(owner, amount);
         }
 
         s().userData[owner].lastClaimed = uint40(block.timestamp);
