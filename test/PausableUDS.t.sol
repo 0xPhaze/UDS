@@ -62,7 +62,7 @@ contract TestPausableUDS is Test {
     }
 
     /// call onlyUnpaused when contract is paused
-    function test_onlyUnpaused_fail_Paused() public {
+    function test_onlyUnpaused_revert_Paused() public {
         proxy.pause();
 
         vm.expectRevert(Paused.selector);
@@ -80,7 +80,7 @@ contract TestPausableUDS is Test {
     }
 
     /// pause contract when already paused
-    function test_pause_fail_AlreadyPaused() public {
+    function test_pause_revert_AlreadyPaused() public {
         proxy.pause();
 
         vm.expectRevert(AlreadyPaused.selector);
@@ -100,7 +100,7 @@ contract TestPausableUDS is Test {
     }
 
     /// unpause contract
-    function test_unpause_fail_AlreadyPaused() public {
+    function test_unpause_revert_AlreadyPaused() public {
         vm.expectRevert(AlreadyUnpaused.selector);
 
         proxy.unpause();

@@ -67,7 +67,7 @@ contract TestAccessControlUDS is Test {
         proxy.roleRestricted(role);
     }
 
-    function test_grantRole_fail_NotAuthorized(
+    function test_grantRole_revert_NotAuthorized(
         address caller,
         bytes32 role,
         address user
@@ -123,7 +123,7 @@ contract TestAccessControlUDS is Test {
         assertEq(proxy.getRoleAdmin(role), adminRole2);
     }
 
-    function test_setRoleAdmin_fail_NotAuthorized(
+    function test_setRoleAdmin_revert_NotAuthorized(
         address user,
         bytes32 role,
         bytes32 adminRole

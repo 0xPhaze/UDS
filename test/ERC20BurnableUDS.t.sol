@@ -48,7 +48,7 @@ contract TestERC20BurnableUDS is Test {
         assertEq(token.balanceOf(alice), 80e18);
     }
 
-    function test_burn_fail_Underflow() public {
+    function test_burn_revert_Underflow() public {
         token.mint(alice, 100e18);
 
         vm.prank(alice);
@@ -92,7 +92,7 @@ contract TestERC20BurnableUDS is Test {
         assertEq(token.allowance(alice, tester), 120e18);
     }
 
-    function test_burnFrom_fail_Underflow() public {
+    function test_burnFrom_revert_Underflow() public {
         token.mint(alice, 100e18);
 
         vm.prank(alice);

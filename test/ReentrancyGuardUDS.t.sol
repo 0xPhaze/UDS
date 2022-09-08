@@ -51,7 +51,7 @@ contract TestReentrancyGuardUDS is Test {
     /* ------------- guardedReentrancy() ------------- */
 
     /// call guardedReentrancy
-    function test_guardedReentrancy_fail_ReentrancyNotPermitted() public {
+    function test_guardedReentrancy_revert_ReentrancyNotPermitted() public {
         vm.expectRevert(ReentrancyNotPermitted.selector);
 
         proxy.guardedReentrancy();

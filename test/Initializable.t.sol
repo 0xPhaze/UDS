@@ -59,7 +59,7 @@ contract TestInitializable is Test {
     }
 
     /// call initializerRestricted during upgrade
-    function test_initializerRestricted_upgradeToAndCall_fail_AlreadyInitialized() public {
+    function test_initializerRestricted_upgradeToAndCall_revert_AlreadyInitialized() public {
         bytes memory initCalldata = abi.encodePacked(MockInitializable.initializerRestricted.selector);
 
         vm.expectRevert(AlreadyInitialized.selector);
@@ -68,7 +68,7 @@ contract TestInitializable is Test {
     }
 
     /// call initializerRestricted directly on implementation contract
-    function test_initializerRestricted_fail_AlreadyInitialized() public {
+    function test_initializerRestricted_revert_AlreadyInitialized() public {
         vm.expectRevert(AlreadyInitialized.selector);
         MockInitializable(logicV1).initializerRestricted();
 
@@ -102,7 +102,7 @@ contract TestInitializable is Test {
     }
 
     /// call reinitializerRestricted outside of upgrade
-    function test_reinitializerRestricted_fail_AlreadyInitialized() public {
+    function test_reinitializerRestricted_revert_AlreadyInitialized() public {
         vm.expectRevert(AlreadyInitialized.selector);
         proxy.reinitializerRestricted();
 
@@ -114,7 +114,7 @@ contract TestInitializable is Test {
     }
 
     /// call reinitializerRestricted directly on implementation contract
-    function test_reinitializerRestricted_fail_ProxyCallRequired() public {
+    function test_reinitializerRestricted_revert_ProxyCallRequired() public {
         vm.expectRevert(ProxyCallRequired.selector);
         MockInitializable(logicV1).reinitializerRestricted();
 

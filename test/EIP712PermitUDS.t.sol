@@ -64,7 +64,7 @@ contract TestEIP712PermitUDS is Test {
         assertEq(permit.nonces(owner), 1);
     }
 
-    function test_permit_fail_InvalidSigner() public {
+    function test_permit_revert_InvalidSigner() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
@@ -116,7 +116,7 @@ contract TestEIP712PermitUDS is Test {
         permit.usePermit(owner, address(0xCAFE), 1e18, block.timestamp, v_, r_, s_);
     }
 
-    function test_permit_fail_DeadlineExpired() public {
+    function test_permit_revert_DeadlineExpired() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 

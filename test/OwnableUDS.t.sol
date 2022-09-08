@@ -56,7 +56,7 @@ contract TestOwnableUDS is Test {
     }
 
     /// call ownerRestricted as non-owner
-    function test_ownerRestricted_fail_CallerNotOwner(address caller) public {
+    function test_ownerRestricted_revert_CallerNotOwner(address caller) public {
         vm.assume(caller != tester);
 
         vm.prank(caller);
@@ -66,7 +66,7 @@ contract TestOwnableUDS is Test {
     }
 
     /// don't call init on deployment, ownable should be 0
-    function test_ownerRestricted_fail_CallerNotOwner_uninitialized(address caller) public {
+    function test_ownerRestricted_revert_CallerNotOwner_uninitialized(address caller) public {
         vm.assume(caller != address(0));
 
         proxy = MockOwnable(address(new ERC1967Proxy(logic, "")));
@@ -93,7 +93,7 @@ contract TestOwnableUDS is Test {
     }
 
     /// transferOwnership should only be callable by owner
-    function test_transferOwnership_fail_CallerNotOwner(address caller) public {
+    function test_transferOwnership_revert_CallerNotOwner(address caller) public {
         vm.assume(caller != tester);
 
         vm.prank(caller);
