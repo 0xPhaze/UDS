@@ -15,7 +15,7 @@ abstract contract UUPSUpgrade is ERC1967 {
 
     /* ------------- external ------------- */
 
-    function upgradeToAndCall(address logic, bytes calldata data) external {
+    function upgradeToAndCall(address logic, bytes calldata data) external virtual {
         _authorizeUpgrade();
         _upgradeToAndCall(logic, data);
     }
