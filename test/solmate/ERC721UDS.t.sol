@@ -53,7 +53,7 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 contract NonERC721Recipient {}
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract TestERC721 is Test {
+contract TestERC721UDS is Test {
     MockERC721UDS token;
     address logic;
 

@@ -38,7 +38,7 @@ abstract contract ERC20UDS is Context, Initializable, EIP712PermitUDS {
         string memory _name,
         string memory _symbol,
         uint8 _decimals
-    ) internal initializer {
+    ) internal virtual initializer {
         s().name = _name;
         s().symbol = _symbol;
         s().decimals = _decimals;

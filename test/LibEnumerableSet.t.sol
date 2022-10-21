@@ -6,9 +6,9 @@ import "forge-std/Test.sol";
 import "UDS/lib/LibEnumerableSet.sol";
 
 contract TestEnumerableUint256Set is Test {
-    using LibEnumerableSet for Uint256Set;
+    using LibEnumerableSet for LibEnumerableSet.Uint256Set;
 
-    Uint256Set set;
+    LibEnumerableSet.Uint256Set set;
     uint256[] _setValues;
 
     /* ------------- O(n) helpers ------------- */
@@ -22,7 +22,7 @@ contract TestEnumerableUint256Set is Test {
         return indexOfValue(value) != type(uint256).max;
     }
 
-    function assertEq(Uint256Set storage set_, uint256[] storage values) internal {
+    function assertEq(LibEnumerableSet.Uint256Set storage set_, uint256[] storage values) internal {
         assertEq(set_.length(), values.length);
 
         for (uint256 i; i < values.length; i++) {
@@ -30,7 +30,7 @@ contract TestEnumerableUint256Set is Test {
         }
     }
 
-    function assertIsUniqueSet(Uint256Set storage set_) internal {
+    function assertIsUniqueSet(LibEnumerableSet.Uint256Set storage set_) internal {
         uint256[] memory values = set_.values();
         for (uint256 i; i < values.length; i++) {
             for (uint256 j = i + 1; j < values.length; j++) {
@@ -119,9 +119,9 @@ contract TestEnumerableUint256Set is Test {
 }
 
 contract TestEnumerableBytes32Set is Test {
-    using LibEnumerableSet for Bytes32Set;
+    using LibEnumerableSet for LibEnumerableSet.Bytes32Set;
 
-    Bytes32Set set;
+    LibEnumerableSet.Bytes32Set set;
     bytes32[] _setValues;
 
     /* ------------- O(n) helpers ------------- */
@@ -135,7 +135,7 @@ contract TestEnumerableBytes32Set is Test {
         return indexOfValue(value) != type(uint256).max;
     }
 
-    function assertEq(Bytes32Set storage set_, bytes32[] storage values) internal {
+    function assertEq(LibEnumerableSet.Bytes32Set storage set_, bytes32[] storage values) internal {
         assertEq(set_.length(), values.length);
 
         for (uint256 i; i < values.length; i++) {
@@ -143,7 +143,7 @@ contract TestEnumerableBytes32Set is Test {
         }
     }
 
-    function assertIsUniqueSet(Bytes32Set storage set_) internal {
+    function assertIsUniqueSet(LibEnumerableSet.Bytes32Set storage set_) internal {
         bytes32[] memory values = set_.values();
         for (uint256 i; i < values.length; i++) {
             for (uint256 j = i + 1; j < values.length; j++) {
@@ -232,9 +232,9 @@ contract TestEnumerableBytes32Set is Test {
 }
 
 contract TestEnumerableAddressSet is Test {
-    using LibEnumerableSet for AddressSet;
+    using LibEnumerableSet for LibEnumerableSet.AddressSet;
 
-    AddressSet set;
+    LibEnumerableSet.AddressSet set;
     address[] _setValues;
 
     /* ------------- O(n) helpers ------------- */
@@ -248,7 +248,7 @@ contract TestEnumerableAddressSet is Test {
         return indexOfValue(value) != type(uint256).max;
     }
 
-    function assertEq(AddressSet storage set_, address[] storage values) internal {
+    function assertEq(LibEnumerableSet.AddressSet storage set_, address[] storage values) internal {
         assertEq(set_.length(), values.length);
 
         for (uint256 i; i < values.length; i++) {
@@ -256,7 +256,7 @@ contract TestEnumerableAddressSet is Test {
         }
     }
 
-    function assertIsUniqueSet(AddressSet storage set_) internal {
+    function assertIsUniqueSet(LibEnumerableSet.AddressSet storage set_) internal {
         address[] memory values = set_.values();
         for (uint256 i; i < values.length; i++) {
             for (uint256 j = i + 1; j < values.length; j++) {

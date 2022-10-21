@@ -47,7 +47,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
 
     /* ------------- init ------------- */
 
-    function __ERC721_init(string memory name_, string memory symbol_) internal initializer {
+    function __ERC721_init(string memory name_, string memory symbol_) internal virtual initializer {
         s().name = name_;
         s().symbol = symbol_;
     }

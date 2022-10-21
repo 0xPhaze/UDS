@@ -108,7 +108,7 @@ contract WrongReturnDataERC1155Recipient is ERC1155TokenReceiver {
 contract NonERC1155Recipient {}
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract TestERC1155 is Test, ERC1155TokenReceiver {
+contract TestERC1155UDS is Test, ERC1155TokenReceiver {
     MockERC1155UDS token;
     MockERC1155UDS logic;
 
@@ -1024,32 +1024,32 @@ contract TestERC1155 is Test, ERC1155TokenReceiver {
         assertEq(token.isApprovedForAll(address(this), to), approved);
     }
 
-    // function testSafeTransferFromToEOA(
-    //     uint256 id,
-    //     uint256 mintAmount,
-    //     bytes memory mintData,
-    //     uint256 transferAmount,
-    //     address to,
-    //     bytes memory transferData
-    // ) public {
-    //     if (to == address(0)) to = address(0xBEEF);
+    function testSafeTransferFromToEOA(
+        uint256 id,
+        uint256 mintAmount,
+        bytes memory mintData,
+        uint256 transferAmount,
+        address to,
+        bytes memory transferData
+    ) public {
+        if (to == address(0)) to = address(0xBEEF);
 
-    //     if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
 
-    //     transferAmount = bound(transferAmount, 0, mintAmount);
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
-    //     address from = address(0xABCD);
+        address from = address(0xABCD);
 
-    //     token.mint(from, id, mintAmount, mintData);
+        token.mint(from, id, mintAmount, mintData);
 
-    //     vm.prank(from);
-    //     token.setApprovalForAll(address(this), true);
+        vm.prank(from);
+        token.setApprovalForAll(address(this), true);
 
-    //     token.safeTransferFrom(from, to, id, transferAmount, transferData);
+        token.safeTransferFrom(from, to, id, transferAmount, transferData);
 
-    //     assertEq(token.balanceOf(to, id), transferAmount);
-    //     assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
-    // }
+        assertEq(token.balanceOf(to, id), transferAmount);
+        assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+    }
 
     function testSafeTransferFromToERC1155Recipient(
         uint256 id,

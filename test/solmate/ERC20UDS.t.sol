@@ -8,7 +8,7 @@ import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
 import {DIAMOND_STORAGE_ERC20} from "UDS/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
-contract TestERC20 is Test {
+contract TestERC20UDS is Test {
     address logic;
     MockERC20UDS token;
 

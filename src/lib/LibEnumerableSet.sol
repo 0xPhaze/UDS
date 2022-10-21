@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-struct Bytes32Set {
-    bytes32[] _values;
-    mapping(bytes32 => uint256) _indices;
-}
-
-struct Uint256Set {
-    uint256[] _values;
-    mapping(uint256 => uint256) _indices;
-}
-
-struct AddressSet {
-    address[] _values;
-    mapping(address => uint256) _indices;
-}
-
 /// @title EnumerableSet
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts)
 /// @dev usage: `using LibEnumerableSet for Uint256Set;`
 library LibEnumerableSet {
+    struct Bytes32Set {
+        bytes32[] _values;
+        mapping(bytes32 => uint256) _indices;
+    }
+
+    struct Uint256Set {
+        uint256[] _values;
+        mapping(uint256 => uint256) _indices;
+    }
+
+    struct AddressSet {
+        address[] _values;
+        mapping(address => uint256) _indices;
+    }
+
     // ---------------------------------------------------------------------
     // Bytes32Set
     // ---------------------------------------------------------------------
