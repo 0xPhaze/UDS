@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Context} from "../utils/Context.sol";
 import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
@@ -27,7 +26,7 @@ error UnsafeRecipient();
 /// @title ERC1155 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate ERC1155 (https://github.com/Rari-Capital/solmate)
-abstract contract ERC1155UDS is Context, EIP712PermitUDS {
+abstract contract ERC1155UDS is EIP712PermitUDS {
     ERC1155DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
@@ -90,9 +89,9 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
     /* ------------- public ------------- */
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        s().isApprovedForAll[_msgSender()][operator] = approved;
+        s().isApprovedForAll[msg.sender][operator] = approved;
 
-        emit ApprovalForAll(_msgSender(), operator, approved);
+        emit ApprovalForAll(msg.sender, operator, approved);
     }
 
     function safeTransferFrom(
@@ -102,17 +101,17 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
         uint256 amount,
         bytes calldata data
     ) public virtual {
-        if (_msgSender() != from && !s().isApprovedForAll[from][_msgSender()]) revert NotAuthorized();
+        if (msg.sender != from && !s().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
 
         s().balanceOf[from][id] -= amount;
         s().balanceOf[to][id] += amount;
 
-        emit TransferSingle(_msgSender(), from, to, id, amount);
+        emit TransferSingle(msg.sender, from, to, id, amount);
 
         if (
             to.code.length == 0
                 ? to == address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(_msgSender(), from, id, amount, data) !=
+                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) !=
                     ERC1155TokenReceiver.onERC1155Received.selector
         ) revert UnsafeRecipient();
     }
@@ -125,7 +124,7 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
         bytes calldata data
     ) public virtual {
         if (ids.length != amounts.length) revert LengthMismatch();
-        if (_msgSender() != from && !s().isApprovedForAll[from][_msgSender()]) revert NotAuthorized();
+        if (msg.sender != from && !s().isApprovedForAll[from][msg.sender]) revert NotAuthorized();
 
         uint256 id;
         uint256 amount;
@@ -142,12 +141,12 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
             }
         }
 
-        emit TransferBatch(_msgSender(), from, to, ids, amounts);
+        emit TransferBatch(msg.sender, from, to, ids, amounts);
 
         if (
             to.code.length == 0
                 ? to == address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(_msgSender(), from, ids, amounts, data) !=
+                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) !=
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector
         ) revert UnsafeRecipient();
     }
@@ -178,12 +177,12 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
     ) internal virtual {
         s().balanceOf[to][id] += amount;
 
-        emit TransferSingle(_msgSender(), address(0), to, id, amount);
+        emit TransferSingle(msg.sender, address(0), to, id, amount);
 
         if (
             to.code.length == 0
                 ? to == address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(_msgSender(), address(0), id, amount, data) !=
+                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) !=
                     ERC1155TokenReceiver.onERC1155Received.selector
         ) revert UnsafeRecipient();
     }
@@ -206,12 +205,12 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
             }
         }
 
-        emit TransferBatch(_msgSender(), address(0), to, ids, amounts);
+        emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
         if (
             to.code.length == 0
                 ? to == address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(_msgSender(), address(0), ids, amounts, data) !=
+                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) !=
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector
         ) revert UnsafeRecipient();
     }
@@ -233,7 +232,7 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
             }
         }
 
-        emit TransferBatch(_msgSender(), from, address(0), ids, amounts);
+        emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
 
     function _burn(
@@ -243,7 +242,7 @@ abstract contract ERC1155UDS is Context, EIP712PermitUDS {
     ) internal virtual {
         s().balanceOf[from][id] -= amount;
 
-        emit TransferSingle(_msgSender(), from, address(0), id, amount);
+        emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
 }
 

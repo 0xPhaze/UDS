@@ -28,5 +28,5 @@ contract MockUUPSUpgrade is UUPSUpgrade {
         }
     }
 
-    function _authorizeUpgrade() internal virtual override {}
+    function _authorizeUpgrade(address) internal virtual override {}
 }

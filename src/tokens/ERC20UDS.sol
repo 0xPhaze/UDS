@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Context} from "../utils/Context.sol";
 import {Initializable} from "../utils/Initializable.sol";
 import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
@@ -26,7 +25,7 @@ struct ERC20DS {
 /// @title ERC20 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
-abstract contract ERC20UDS is Context, Initializable, EIP712PermitUDS {
+abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
     ERC20DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
@@ -73,21 +72,21 @@ abstract contract ERC20UDS is Context, Initializable, EIP712PermitUDS {
     /* ------------- public ------------- */
 
     function approve(address operator, uint256 amount) public virtual returns (bool) {
-        s().allowance[_msgSender()][operator] = amount;
+        s().allowance[msg.sender][operator] = amount;
 
-        emit Approval(_msgSender(), operator, amount);
+        emit Approval(msg.sender, operator, amount);
 
         return true;
     }
 
     function transfer(address to, uint256 amount) public virtual returns (bool) {
-        s().balanceOf[_msgSender()] -= amount;
+        s().balanceOf[msg.sender] -= amount;
 
         unchecked {
             s().balanceOf[to] += amount;
         }
 
-        emit Transfer(_msgSender(), to, amount);
+        emit Transfer(msg.sender, to, amount);
 
         return true;
     }
@@ -97,9 +96,9 @@ abstract contract ERC20UDS is Context, Initializable, EIP712PermitUDS {
         address to,
         uint256 amount
     ) public virtual returns (bool) {
-        uint256 allowed = s().allowance[from][_msgSender()];
+        uint256 allowed = s().allowance[from][msg.sender];
 
-        if (allowed != type(uint256).max) s().allowance[from][_msgSender()] = allowed - amount;
+        if (allowed != type(uint256).max) s().allowance[from][msg.sender] = allowed - amount;
 
         s().balanceOf[from] -= amount;
 

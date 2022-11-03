@@ -19,8 +19,7 @@ src
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
 ├── utils
-│   ├── Initializable.sol - "Allow initializing functions for upgradeable contracts"
-│   └── Context.sol - "Allows overrides for meta-transactions"
+│   └── Initializable.sol - "Allow initializing functions for upgradeable contracts"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
     ├── ERC1155UDS.sol - "Solmate's ERC1155"
@@ -60,7 +59,7 @@ contract UpgradeableERC20 is UUPSUpgrade, Initializable, OwnableUDS, ERC20UDS {
         _mint(msg.sender, 1_000_000e18);
     }
 
-    function _authorizeUpgrade() internal override onlyOwner {}
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
 ```
 

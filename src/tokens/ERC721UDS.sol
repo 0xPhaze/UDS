@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Context} from "../utils/Context.sol";
 import {Initializable} from "../utils/Initializable.sol";
 import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
@@ -38,7 +37,7 @@ error TransferFromIncorrectOwner();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @notice Integrates EIP712Permit
-abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
+abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     ERC721DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
@@ -96,7 +95,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
     function approve(address operator, uint256 id) public virtual {
         address owner = s().ownerOf[id];
 
-        if (_msgSender() != owner && !s().isApprovedForAll[owner][_msgSender()]) revert CallerNotOwnerNorApproved();
+        if (msg.sender != owner && !s().isApprovedForAll[owner][msg.sender]) revert CallerNotOwnerNorApproved();
 
         s().getApproved[id] = operator;
 
@@ -104,9 +103,9 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        s().isApprovedForAll[_msgSender()][operator] = approved;
+        s().isApprovedForAll[msg.sender][operator] = approved;
 
-        emit ApprovalForAll(_msgSender(), operator, approved);
+        emit ApprovalForAll(msg.sender, operator, approved);
     }
 
     function transferFrom(
@@ -117,9 +116,9 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
         if (to == address(0)) revert TransferToZeroAddress();
         if (from != s().ownerOf[id]) revert TransferFromIncorrectOwner();
 
-        bool isApprovedOrOwner = (_msgSender() == from ||
-            s().isApprovedForAll[from][_msgSender()] ||
-            s().getApproved[id] == _msgSender());
+        bool isApprovedOrOwner = (msg.sender == from ||
+            s().isApprovedForAll[from][msg.sender] ||
+            s().getApproved[id] == msg.sender);
 
         if (!isApprovedOrOwner) revert CallerNotOwnerNorApproved();
 
@@ -144,7 +143,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(_msgSender(), from, id, "") !=
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -159,7 +158,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(_msgSender(), from, id, data) !=
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -215,7 +214,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(_msgSender(), address(0), id, "") !=
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
@@ -229,7 +228,7 @@ abstract contract ERC721UDS is Context, Initializable, EIP712PermitUDS {
 
         if (
             to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(_msgSender(), address(0), id, data) !=
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) !=
             ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
