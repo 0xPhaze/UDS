@@ -19,7 +19,8 @@ src
 │   ├── ERC1967Proxy.sol - "ERC1967 proxy implementation"
 │   └── UUPSUpgrade.sol - "Minimal UUPS upgradeable contract"
 ├── utils
-│   └── Initializable.sol - "Allow initializing functions for upgradeable contracts"
+│   ├── Initializable.sol - "Allow initializing functions for upgradeable contracts"
+│   └── Multicallable.sol - "Batch transaction calls"
 └── tokens
     ├── ERC20UDS.sol - "Solmate's ERC20"
     ├── ERC1155UDS.sol - "Solmate's ERC1155"
