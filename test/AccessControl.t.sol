@@ -19,7 +19,7 @@ contract MockAccessControl is MockUUPSUpgrade, AccessControlUDS {
 contract TestAccessControlUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     MockAccessControl proxy;
     MockAccessControl logic;
@@ -37,7 +37,7 @@ contract TestAccessControlUDS is Test {
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        proxy.hasRole(0x00, tester);
+        proxy.hasRole(0x00, self);
 
         assertEq(DIAMOND_STORAGE_ACCESS_CONTROL, keccak256("diamond.storage.access.control"));
     }

@@ -12,7 +12,7 @@ import "UDS/tokens/extensions/ERC20BurnableUDS.sol";
 contract TestERC20BurnableUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     address logic;
     MockERC20BurnableUDS token;
@@ -84,19 +84,19 @@ contract TestERC20BurnableUDS is Test {
         token.mint(alice, 100e18);
 
         vm.prank(alice);
-        token.approve(tester, 200e18);
+        token.approve(self, 200e18);
 
         token.burnFrom(alice, 80e18);
 
         assertEq(token.balanceOf(alice), 20e18);
-        assertEq(token.allowance(alice, tester), 120e18);
+        assertEq(token.allowance(alice, self), 120e18);
     }
 
     function test_burnFrom_revert_Underflow() public {
         token.mint(alice, 100e18);
 
         vm.prank(alice);
-        token.approve(tester, 20e18);
+        token.approve(self, 20e18);
 
         vm.expectRevert(stdError.arithmeticError);
         token.burnFrom(alice, 80e18);
@@ -108,12 +108,12 @@ contract TestERC20BurnableUDS is Test {
         uint256 burnAmount,
         uint256 allowance
     ) public {
-        vm.assume(user != tester);
+        vm.assume(user != self);
 
         token.mint(user, mintAmount);
 
         vm.prank(user);
-        token.approve(tester, allowance);
+        token.approve(self, allowance);
 
         if (burnAmount > allowance) {
             vm.expectRevert(stdError.arithmeticError);
@@ -128,7 +128,7 @@ contract TestERC20BurnableUDS is Test {
 
             assertEq(token.balanceOf(user), mintAmount - burnAmount);
 
-            if (allowance != type(uint256).max) assertEq(token.allowance(user, tester), allowance - burnAmount);
+            if (allowance != type(uint256).max) assertEq(token.allowance(user, self), allowance - burnAmount);
         }
     }
 }

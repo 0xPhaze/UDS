@@ -19,7 +19,7 @@ contract MockOwnable is MockUUPSUpgrade, OwnableUDS {
 contract TestOwnableUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     address logic;
     MockOwnable proxy;
@@ -37,7 +37,7 @@ contract TestOwnableUDS is Test {
     /* ------------- setUp() ------------- */
 
     function test_setUp() public {
-        assertEq(proxy.owner(), tester);
+        assertEq(proxy.owner(), self);
         assertEq(DIAMOND_STORAGE_OWNABLE, keccak256("diamond.storage.ownable"));
     }
 
@@ -50,14 +50,14 @@ contract TestOwnableUDS is Test {
         // make sure owner stays after an upgrade
         proxy.upgradeToAndCall(address(new MockOwnable()), "");
 
-        assertEq(proxy.owner(), tester);
+        assertEq(proxy.owner(), self);
 
         proxy.ownerRestricted();
     }
 
     /// call ownerRestricted as non-owner
     function test_ownerRestricted_revert_CallerNotOwner(address caller) public {
-        vm.assume(caller != tester);
+        vm.assume(caller != self);
 
         vm.prank(caller);
         vm.expectRevert(CallerNotOwner.selector);
@@ -94,7 +94,7 @@ contract TestOwnableUDS is Test {
 
     /// transferOwnership should only be callable by owner
     function test_transferOwnership_revert_CallerNotOwner(address caller) public {
-        vm.assume(caller != tester);
+        vm.assume(caller != self);
 
         vm.prank(caller);
         vm.expectRevert(CallerNotOwner.selector);

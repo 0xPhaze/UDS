@@ -30,7 +30,7 @@ contract MockEIP712Permit is MockUUPSUpgrade, EIP712PermitUDS {
 contract TestEIP712PermitUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     MockEIP712Permit permit;
 

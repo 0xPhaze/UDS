@@ -12,7 +12,7 @@ import "UDS/tokens/extensions/ERC20RewardUDS.sol";
 contract TestERC20RewardUDS is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     address logic;
     MockERC20RewardUDS token;

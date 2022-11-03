@@ -28,7 +28,7 @@ contract MockInitializable is MockUUPSUpgrade, Initializable {
 contract TestInitializable is Test {
     address bob = address(0xb0b);
     address alice = address(0xbabe);
-    address tester = address(this);
+    address self = address(this);
 
     address logicV1;
     address logicV2;
