@@ -6,11 +6,14 @@ import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_ERC721 = keccak256("diamond.storage.erc721");
+/// @dev diamond storage slot `keccak256("diamond.storage.erc721")`
+bytes32 constant DIAMOND_STORAGE_ERC721 = 0xf2dec0acaef95de6625646379d631adff4db9f6c79b84a31adcb9a23bf6cea78;
 
 function s() pure returns (ERC721DS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ERC721;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 struct ERC721DS {
@@ -37,7 +40,7 @@ error TransferFromIncorrectOwner();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @notice Integrates EIP712Permit
-abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
+abstract contract ERC721UDS is Initializable, EIP712PermitUDS("ERC721Permit", "1") {
     ERC721DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
@@ -84,10 +87,9 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
-            interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
+        return interfaceId == 0x01ffc9a7 // ERC165 Interface ID for ERC165
+            || interfaceId == 0x80ac58cd // ERC165 Interface ID for ERC721
+            || interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
     }
 
     /* ------------- public ------------- */
@@ -108,17 +110,12 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual {
+    function transferFrom(address from, address to, uint256 id) public virtual {
         if (to == address(0)) revert TransferToZeroAddress();
         if (from != s().ownerOf[id]) revert TransferFromIncorrectOwner();
 
-        bool isApprovedOrOwner = (msg.sender == from ||
-            s().isApprovedForAll[from][msg.sender] ||
-            s().getApproved[id] == msg.sender);
+        bool isApprovedOrOwner =
+            (msg.sender == from || s().isApprovedForAll[from][msg.sender] || s().getApproved[id] == msg.sender);
 
         if (!isApprovedOrOwner) revert CallerNotOwnerNorApproved();
 
@@ -134,44 +131,28 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         emit Transfer(from, to, id);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 id) public virtual {
         transferFrom(from, to, id);
 
         if (
-            to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") !=
-            ERC721TokenReceiver.onERC721Received.selector
+            to.code.length != 0
+                && ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "")
+                    != ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes calldata data
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 id, bytes calldata data) public virtual {
         transferFrom(from, to, id);
 
         if (
-            to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) !=
-            ERC721TokenReceiver.onERC721Received.selector
+            to.code.length != 0
+                && ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data)
+                    != ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
 
     // EIP-4494 permit; differs from the current EIP
-    function permit(
-        address owner,
-        address operator,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s_
-    ) public virtual {
+    function permit(address owner, address operator, uint256 deadline, uint8 v, bytes32 r, bytes32 s_) public virtual {
         _usePermit(owner, operator, 1, deadline, v, r, s_);
 
         s().isApprovedForAll[owner][operator] = true;
@@ -213,23 +194,19 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
         _mint(to, id);
 
         if (
-            to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") !=
-            ERC721TokenReceiver.onERC721Received.selector
+            to.code.length != 0
+                && ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "")
+                    != ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
 
-    function _safeMint(
-        address to,
-        uint256 id,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 id, bytes memory data) internal virtual {
         _mint(to, id);
 
         if (
-            to.code.length != 0 &&
-            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) !=
-            ERC721TokenReceiver.onERC721Received.selector
+            to.code.length != 0
+                && ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data)
+                    != ERC721TokenReceiver.onERC721Received.selector
         ) revert NonERC721Receiver();
     }
 }
@@ -237,12 +214,7 @@ abstract contract ERC721UDS is Initializable, EIP712PermitUDS {
 /// @notice A generic interface for a contract which properly accepts ERC721 tokens.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
 abstract contract ERC721TokenReceiver {
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external virtual returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) external virtual returns (bytes4) {
         return ERC721TokenReceiver.onERC721Received.selector;
     }
 }

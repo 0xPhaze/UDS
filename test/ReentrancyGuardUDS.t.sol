@@ -45,6 +45,15 @@ contract TestReentrancyGuardUDS is Test {
     function test_setUp() public {
         proxy.scrambleStorage(0, 100);
 
+        ReentrancyGuardDS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.reentrancy.guard"));
         assertEq(DIAMOND_STORAGE_REENTRANCY_GUARD, keccak256("diamond.storage.reentrancy.guard"));
     }
 

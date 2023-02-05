@@ -6,11 +6,14 @@ import {LibEnumerableSet} from "UDS/lib/LibEnumerableSet.sol";
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_ERC721_ENUMERABLE = keccak256("diamond.storage.erc721.enumerable");
+/// @dev diamond storage slot `keccak256("diamond.storage.erc721.enumerable")`
+bytes32 constant DIAMOND_STORAGE_ERC721_ENUMERABLE = 0xb13150971e3afef78056ccfc1779e20a8a67d42719df5c7ff5fbadbf6ec20432;
 
 function s() pure returns (ERC721EnumerableDS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ERC721_ENUMERABLE;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 // Avoiding `LibEnumerableSet.Uint256Set` to save one sstore
@@ -34,9 +37,8 @@ abstract contract ERC721EnumerableUDS is ERC721UDS {
     /* ------------- view ------------- */
 
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return
-            interfaceId == 0x780e9d63 || // ERC165 Interface ID for ERC721Enumerable
-            ERC721UDS.supportsInterface(interfaceId);
+        return interfaceId == 0x780e9d63 // ERC165 Interface ID for ERC721Enumerable
+            || ERC721UDS.supportsInterface(interfaceId);
     }
 
     function totalSupply() public view virtual returns (uint256) {
@@ -97,11 +99,7 @@ abstract contract ERC721EnumerableUDS is ERC721UDS {
 
     /* ------------- override ------------- */
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual override {
+    function transferFrom(address from, address to, uint256 id) public virtual override {
         if (from != to) {
             _removeTokenOfUserEnumeration(from, id);
             _addTokenToUserEnumeration(to, id);

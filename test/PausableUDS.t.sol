@@ -45,6 +45,15 @@ contract TestPausableUDS is Test {
 
         assertEq(proxy.isPaused(), false);
 
+        PausableDS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.pausable"));
         assertEq(DIAMOND_STORAGE_PAUSABLE, keccak256("diamond.storage.pausable"));
     }
 

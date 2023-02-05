@@ -5,11 +5,14 @@ import {Initializable} from "../utils/Initializable.sol";
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = keccak256("diamond.storage.access.control");
+/// @dev diamond storage slot `keccak256("diamond.storage.access.control")`
+bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
 
 function s() pure returns (AccessControlDS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ACCESS_CONTROL;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 struct AccessControlDS {
@@ -50,9 +53,8 @@ abstract contract AccessControlUDS is Initializable {
     /* ------------- view ------------- */
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0x7965db0b; // ERC165 Interface ID for AccessControl
+        return interfaceId == 0x01ffc9a7 // ERC165 Interface ID for ERC165
+            || interfaceId == 0x7965db0b; // ERC165 Interface ID for AccessControl
     }
 
     function hasRole(bytes32 role, address account) public view virtual returns (bool) {

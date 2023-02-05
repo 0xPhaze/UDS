@@ -36,6 +36,15 @@ contract TestERC721UDSEnumerable is Test {
     }
 
     function test_setUp() public {
+        ERC721EnumerableDS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.erc721.enumerable"));
         assertEq(DIAMOND_STORAGE_ERC721_ENUMERABLE, keccak256("diamond.storage.erc721.enumerable"));
     }
 
@@ -57,11 +66,7 @@ contract TestERC721UDSEnumerable is Test {
         }
     }
 
-    function _transferFrom(
-        address from,
-        address to,
-        uint256[] memory ids
-    ) public {
+    function _transferFrom(address from, address to, uint256[] memory ids) public {
         uint256 length = ids.length;
 
         for (uint256 i; i < length; ++i) {
@@ -146,11 +151,7 @@ contract TestERC721UDSEnumerable is Test {
 
     /* ------------- transfer() ------------- */
 
-    function test_mint(
-        uint256 quantityA,
-        uint256 quantityB,
-        uint256 quantityE
-    ) public {
+    function test_mint(uint256 quantityA, uint256 quantityB, uint256 quantityE) public {
         quantityA = bound(quantityA, 1, 100);
         quantityB = bound(quantityB, 1, 100);
         quantityE = bound(quantityE, 1, 100);
@@ -180,9 +181,15 @@ contract TestERC721UDSEnumerable is Test {
         uint256 totalSupply = 3 * n;
         address[] memory owners = new address[](totalSupply);
 
-        for (uint256 i; i < n; ++i) owners[i] = alice;
-        for (uint256 i; i < n; ++i) owners[n + i] = bob;
-        for (uint256 i; i < n; ++i) owners[n + n + i] = eve;
+        for (uint256 i; i < n; ++i) {
+            owners[i] = alice;
+        }
+        for (uint256 i; i < n; ++i) {
+            owners[n + i] = bob;
+        }
+        for (uint256 i; i < n; ++i) {
+            owners[n + n + i] = eve;
+        }
 
         for (uint256 i; i < nextOwners.length; ++i) {
             uint256 id = random.next(totalSupply);
@@ -197,7 +204,9 @@ contract TestERC721UDSEnumerable is Test {
             owners[id] = newOwner;
 
             uint256[] memory newOwnerIds = owners.filterIndices(newOwner);
-            for (uint256 j; j < newOwnerIds.length; j++) ++newOwnerIds[j];
+            for (uint256 j; j < newOwnerIds.length; j++) {
+                ++newOwnerIds[j];
+            }
 
             assertEq(token.getOwnedIds(newOwner).sort(), newOwnerIds.sort());
         }

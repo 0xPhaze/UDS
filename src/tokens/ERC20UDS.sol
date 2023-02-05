@@ -6,11 +6,14 @@ import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_ERC20 = keccak256("diamond.storage.erc20");
+/// @dev diamond storage slot `keccak256("diamond.storage.erc20")`
+bytes32 constant DIAMOND_STORAGE_ERC20 = 0x0e539be85842d1c3b5b43263a827c1e07ab5a9c9536bf840ece723e480d80db7;
 
 function s() pure returns (ERC20DS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ERC20;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 struct ERC20DS {
@@ -25,7 +28,7 @@ struct ERC20DS {
 /// @title ERC20 (Upgradeable Diamond Storage)
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
-abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
+abstract contract ERC20UDS is Initializable, EIP712PermitUDS("ERC20Permit", "1") {
     ERC20DS private __storageLayout; // storage layout for upgrade compatibility checks
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
@@ -33,11 +36,7 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
 
     /* ------------- init ------------- */
 
-    function __ERC20_init(
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) internal virtual initializer {
+    function __ERC20_init(string memory _name, string memory _symbol, uint8 _decimals) internal virtual initializer {
         s().name = _name;
         s().symbol = _symbol;
         s().decimals = _decimals;
@@ -91,11 +90,7 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
         return true;
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public virtual returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) public virtual returns (bool) {
         uint256 allowed = s().allowance[from][msg.sender];
 
         if (allowed != type(uint256).max) s().allowance[from][msg.sender] = allowed - amount;
@@ -112,15 +107,10 @@ abstract contract ERC20UDS is Initializable, EIP712PermitUDS {
     }
 
     // EIP-2612 permit
-    function permit(
-        address owner,
-        address operator,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s_
-    ) public virtual {
+    function permit(address owner, address operator, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s_)
+        public
+        virtual
+    {
         _usePermit(owner, operator, value, deadline, v, r, s_);
 
         s().allowance[owner][operator] = value;

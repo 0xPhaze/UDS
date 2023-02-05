@@ -3,11 +3,14 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = keccak256("diamond.storage.eip.712.permit");
+/// @dev diamond storage slot `keccak256("diamond.storage.eip.712.permit")`
+bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
 
 function s() pure returns (EIP2612DS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_EIP_712_PERMIT;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 struct EIP2612DS {
@@ -23,9 +26,20 @@ error DeadlineExpired();
 /// @author phaze (https://github.com/0xPhaze/UDS)
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate)
 /// @dev `DOMAIN_SEPARATOR` needs to be re-computed every time
-/// @dev for use with a proxy due to `address(this)`
+///      when using with a proxy, due to `address(this)`
 abstract contract EIP712PermitUDS {
     EIP2612DS private __storageLayout; // storage layout for upgrade compatibility checks
+
+    bytes32 immutable _EIP_712_DOMAIN_TYPEHASH;
+    bytes32 immutable _NAME_HASH;
+    bytes32 immutable _VERSION_HASH;
+
+    constructor(string memory name, string memory version) {
+        _EIP_712_DOMAIN_TYPEHASH =
+            keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+        _NAME_HASH = keccak256(bytes(name));
+        _VERSION_HASH = keccak256(bytes(version));
+    }
 
     /* ------------- public ------------- */
 
@@ -34,16 +48,7 @@ abstract contract EIP712PermitUDS {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return
-            keccak256(
-                abi.encode(
-                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                    keccak256("EIP712"),
-                    keccak256("1"),
-                    block.chainid,
-                    address(this)
-                )
-            );
+        return keccak256(abi.encode(_EIP_712_DOMAIN_TYPEHASH, _NAME_HASH, _VERSION_HASH, block.chainid, address(this)));
     }
 
     /* ------------- internal ------------- */

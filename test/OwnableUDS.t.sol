@@ -38,6 +38,16 @@ contract TestOwnableUDS is Test {
 
     function test_setUp() public {
         assertEq(proxy.owner(), self);
+
+        OwnableDS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.ownable"));
         assertEq(DIAMOND_STORAGE_OWNABLE, keccak256("diamond.storage.ownable"));
     }
 

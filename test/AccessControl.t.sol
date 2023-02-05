@@ -39,6 +39,12 @@ contract TestAccessControlUDS is Test {
     function test_setUp() public {
         proxy.hasRole(0x00, self);
 
+        AccessControlDS storage diamondStorage = s();
+        bytes32 slot;
+        assembly {
+            slot := diamondStorage.slot
+        }
+        assertEq(slot, keccak256("diamond.storage.access.control"));
         assertEq(DIAMOND_STORAGE_ACCESS_CONTROL, keccak256("diamond.storage.access.control"));
     }
 
@@ -67,11 +73,7 @@ contract TestAccessControlUDS is Test {
         proxy.roleRestricted(role);
     }
 
-    function test_grantRole_revert_NotAuthorized(
-        address caller,
-        bytes32 role,
-        address user
-    ) public {
+    function test_grantRole_revert_NotAuthorized(address caller, bytes32 role, address user) public {
         proxy.renounceRole(0x00);
 
         vm.prank(caller);
@@ -105,12 +107,7 @@ contract TestAccessControlUDS is Test {
         assertEq(proxy.getRoleAdmin(role), adminRole);
     }
 
-    function test_setRoleAdmin2(
-        bytes32 role,
-        bytes32 adminRole1,
-        bytes32 adminRole2,
-        address user
-    ) public {
+    function test_setRoleAdmin2(bytes32 role, bytes32 adminRole1, bytes32 adminRole2, address user) public {
         proxy.grantRole(adminRole1, user);
         proxy.setRoleAdmin(role, adminRole1);
 
@@ -123,11 +120,7 @@ contract TestAccessControlUDS is Test {
         assertEq(proxy.getRoleAdmin(role), adminRole2);
     }
 
-    function test_setRoleAdmin_revert_NotAuthorized(
-        address user,
-        bytes32 role,
-        bytes32 adminRole
-    ) public {
+    function test_setRoleAdmin_revert_NotAuthorized(address user, bytes32 role, bytes32 adminRole) public {
         proxy.renounceRole(0x00);
 
         vm.prank(user);

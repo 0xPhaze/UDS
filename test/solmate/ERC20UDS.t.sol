@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
 import {MockERC20UDS} from "../mocks/MockERC20UDS.sol";
-import {DIAMOND_STORAGE_ERC20} from "UDS/tokens/ERC20UDS.sol";
+import "UDS/tokens/ERC20UDS.sol";
 
 /// @author Solmate (https://github.com/Rari-Capital/solmate/)
 contract TestERC20UDS is Test {
@@ -27,6 +27,15 @@ contract TestERC20UDS is Test {
     }
 
     function testSetUp() public {
+        ERC20DS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.erc20"));
         assertEq(DIAMOND_STORAGE_ERC20, keccak256("diamond.storage.erc20"));
     }
 
@@ -222,11 +231,7 @@ contract TestERC20UDS is Test {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testFuzzMetadata(
-        string calldata name,
-        string calldata symbol,
-        uint8 decimals
-    ) public {
+    function testFuzzMetadata(string calldata name, string calldata symbol, uint8 decimals) public {
         bytes memory initCalldata = abi.encodeWithSelector(MockERC20UDS.init.selector, name, symbol, decimals);
         MockERC20UDS tkn = MockERC20UDS(address(new ERC1967Proxy(logic, initCalldata)));
 
@@ -242,11 +247,7 @@ contract TestERC20UDS is Test {
         assertEq(token.balanceOf(from), amount);
     }
 
-    function testFuzzBurn(
-        address from,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testFuzzBurn(address from, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
@@ -276,11 +277,7 @@ contract TestERC20UDS is Test {
         }
     }
 
-    function testFuzzTransferFrom(
-        address to,
-        uint256 approval,
-        uint256 amount
-    ) public {
+    function testFuzzTransferFrom(address to, uint256 approval, uint256 amount) public {
         amount = bound(amount, 0, approval);
 
         address from = address(0xABCD);
@@ -304,12 +301,7 @@ contract TestERC20UDS is Test {
         }
     }
 
-    function testFuzzPermit(
-        uint248 privKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFuzzPermit(uint248 privKey, address to, uint256 amount, uint256 deadline) public {
         uint256 privateKey = privKey;
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
@@ -333,33 +325,21 @@ contract TestERC20UDS is Test {
         assertEq(token.nonces(owner), 1);
     }
 
-    function testFailFuzzBurnInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testFailFuzzBurnInsufficientBalance(address to, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(to, mintAmount);
         token.burn(to, burnAmount);
     }
 
-    function testFailFuzzTransferInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 sendAmount
-    ) public {
+    function testFailFuzzTransferInsufficientBalance(address to, uint256 mintAmount, uint256 sendAmount) public {
         sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(address(this), mintAmount);
         token.transfer(to, sendAmount);
     }
 
-    function testFailFuzzTransferFromInsufficientAllowance(
-        address to,
-        uint256 approval,
-        uint256 amount
-    ) public {
+    function testFailFuzzTransferFromInsufficientAllowance(address to, uint256 approval, uint256 amount) public {
         amount = bound(amount, approval + 1, type(uint256).max);
 
         address from = address(0xABCD);
@@ -372,11 +352,7 @@ contract TestERC20UDS is Test {
         token.transferFrom(from, to, amount);
     }
 
-    function testFailFuzzTransferFromInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 sendAmount
-    ) public {
+    function testFailFuzzTransferFromInsufficientBalance(address to, uint256 mintAmount, uint256 sendAmount) public {
         sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         address from = address(0xABCD);
@@ -389,13 +365,9 @@ contract TestERC20UDS is Test {
         token.transferFrom(from, to, sendAmount);
     }
 
-    function testFailFuzzPermitBadNonce(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline,
-        uint256 nonce
-    ) public {
+    function testFailFuzzPermitBadNonce(uint256 privateKey, address to, uint256 amount, uint256 deadline, uint256 nonce)
+        public
+    {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
         if (nonce == 0) nonce = 1;
@@ -416,12 +388,7 @@ contract TestERC20UDS is Test {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailFuzzPermitBadDeadline(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailFuzzPermitBadDeadline(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
@@ -441,12 +408,7 @@ contract TestERC20UDS is Test {
         token.permit(owner, to, amount, deadline + 1, v, r, s);
     }
 
-    function testFailFuzzPermitPastDeadline(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailFuzzPermitPastDeadline(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
@@ -466,12 +428,7 @@ contract TestERC20UDS is Test {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailFuzzPermitReplay(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailFuzzPermitReplay(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 

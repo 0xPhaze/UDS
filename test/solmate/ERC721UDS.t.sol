@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
 
+import "UDS/tokens/ERC721UDS.sol";
 import {ERC1967Proxy} from "UDS/proxy/ERC1967Proxy.sol";
-import {ERC721TokenReceiver, DIAMOND_STORAGE_ERC721} from "UDS/tokens/ERC721UDS.sol";
 import {MockERC721UDS, NonexistentToken} from "../mocks/MockERC721UDS.sol";
 
 contract ERC721Recipient is ERC721TokenReceiver {
@@ -13,12 +13,12 @@ contract ERC721Recipient is ERC721TokenReceiver {
     uint256 public id;
     bytes public data;
 
-    function onERC721Received(
-        address _operator,
-        address _from,
-        uint256 _id,
-        bytes calldata _data
-    ) public virtual override returns (bytes4) {
+    function onERC721Received(address _operator, address _from, uint256 _id, bytes calldata _data)
+        public
+        virtual
+        override
+        returns (bytes4)
+    {
         operator = _operator;
         from = _from;
         id = _id;
@@ -29,23 +29,13 @@ contract ERC721Recipient is ERC721TokenReceiver {
 }
 
 contract RevertingERC721Recipient is ERC721TokenReceiver {
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) public virtual override returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) public virtual override returns (bytes4) {
         revert(string(abi.encodePacked(ERC721TokenReceiver.onERC721Received.selector)));
     }
 }
 
 contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) public virtual override returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) public virtual override returns (bytes4) {
         return 0xCAFEBEEF;
     }
 }
@@ -67,6 +57,15 @@ contract TestERC721UDS is Test {
     }
 
     function testSetUp() public {
+        ERC721DS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.erc721"));
         assertEq(DIAMOND_STORAGE_ERC721, keccak256("diamond.storage.erc721"));
     }
 
@@ -619,11 +618,7 @@ contract TestERC721UDS is Test {
         token.approve(to, id);
     }
 
-    function testFailFuzzApproveUnAuthorized(
-        address owner,
-        uint256 id,
-        address to
-    ) public {
+    function testFailFuzzApproveUnAuthorized(address owner, uint256 id, address to) public {
         if (owner == address(0) || owner == address(this)) owner = address(0xBEEF);
 
         token.mint(owner, id);
@@ -631,20 +626,11 @@ contract TestERC721UDS is Test {
         token.approve(to, id);
     }
 
-    function testFailFuzzTransferFromUnOwned(
-        address from,
-        address to,
-        uint256 id
-    ) public {
+    function testFailFuzzTransferFromUnOwned(address from, address to, uint256 id) public {
         token.transferFrom(from, to, id);
     }
 
-    function testFailFuzzTransferFromWrongFrom(
-        address owner,
-        address from,
-        address to,
-        uint256 id
-    ) public {
+    function testFailFuzzTransferFromWrongFrom(address owner, address from, address to, uint256 id) public {
         if (owner == address(0)) to = address(0xBEEF);
         if (from == owner) revert();
 
@@ -659,11 +645,7 @@ contract TestERC721UDS is Test {
         token.transferFrom(address(this), address(0), id);
     }
 
-    function testFailFuzzTransferFromNotOwner(
-        address from,
-        address to,
-        uint256 id
-    ) public {
+    function testFailFuzzTransferFromNotOwner(address from, address to, uint256 id) public {
         if (from == address(this)) from = address(0xBEEF);
 
         token.mint(from, id);

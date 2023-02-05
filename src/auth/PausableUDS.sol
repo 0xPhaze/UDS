@@ -3,11 +3,14 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-bytes32 constant DIAMOND_STORAGE_PAUSABLE = keccak256("diamond.storage.pausable");
+/// @dev diamond storage slot `keccak256("diamond.storage.pausable")`
+bytes32 constant DIAMOND_STORAGE_PAUSABLE = 0x6c12717fc0c7e094d0863d3779f70ed6b10509e4c31b62218121f564c04c42d9;
 
 function s() pure returns (PausableDS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_PAUSABLE;
-    assembly { diamondStorage.slot := slot } // prettier-ignore
+    assembly {
+        diamondStorage.slot := slot
+    }
 }
 
 struct PausableDS {

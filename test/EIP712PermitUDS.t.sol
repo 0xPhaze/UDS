@@ -8,11 +8,10 @@ import {MockUUPSUpgrade} from "./mocks/MockUUPSUpgrade.sol";
 
 import "UDS/auth/EIP712PermitUDS.sol";
 
-bytes32 constant PERMIT_TYPEHASH = keccak256(
-    "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-);
+bytes32 constant PERMIT_TYPEHASH =
+    keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-contract MockEIP712Permit is MockUUPSUpgrade, EIP712PermitUDS {
+contract MockEIP712Permit is MockUUPSUpgrade, EIP712PermitUDS("EIP712Permit", "1") {
     function usePermit(
         address owner,
         address spender,
@@ -39,6 +38,12 @@ contract TestEIP712PermitUDS is Test {
     }
 
     function test_setUp() public {
+        EIP2612DS storage diamondStorage = s();
+        bytes32 slot;
+        assembly {
+            slot := diamondStorage.slot
+        }
+        assertEq(slot, keccak256("diamond.storage.eip.712.permit"));
         assertEq(DIAMOND_STORAGE_EIP_712_PERMIT, keccak256("diamond.storage.eip.712.permit"));
     }
 

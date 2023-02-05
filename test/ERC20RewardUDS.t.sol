@@ -35,6 +35,15 @@ contract TestERC20RewardUDS is Test {
         assertEq(token.rewardDailyRate(), 1e18);
         assertEq(token.rewardEndDate(), block.timestamp + 1000 days);
 
+        ERC20RewardDS storage diamondStorage = s();
+
+        bytes32 slot;
+
+        assembly {
+            slot := diamondStorage.slot
+        }
+
+        assertEq(slot, keccak256("diamond.storage.erc20.reward"));
         assertEq(DIAMOND_STORAGE_ERC20_REWARD, keccak256("diamond.storage.erc20.reward"));
     }
 
