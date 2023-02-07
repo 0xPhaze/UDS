@@ -8,12 +8,12 @@ abstract contract Multicallable {
     function multicall(bytes[] calldata data) external {
         unchecked {
             for (uint256 i; i < data.length; ++i) {
-                (bool success, ) = address(this).delegatecall(data[i]);
+                (bool success,) = address(this).delegatecall(data[i]);
 
                 if (!success) {
                     assembly {
                         returndatacopy(0, 0, returndatasize())
-                        return(0, returndatasize())
+                        revert(0, returndatasize())
                     }
                 }
             }
