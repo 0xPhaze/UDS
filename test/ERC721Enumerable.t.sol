@@ -176,7 +176,7 @@ contract TestERC721UDSEnumerable is Test {
 
         uint256 n = 10;
 
-        test_mint(n - 1, n - 1, n - 1);
+        test_mint(n, n, n);
 
         uint256 totalSupply = 3 * n;
         address[] memory owners = new address[](totalSupply);

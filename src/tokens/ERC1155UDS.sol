@@ -5,8 +5,7 @@ import {EIP712PermitUDS} from "../auth/EIP712PermitUDS.sol";
 
 // ------------- storage
 
-/// @dev diamond storage slot `keccak256("diamond.storage.erc1155")`
-bytes32 constant DIAMOND_STORAGE_ERC1155 = 0xc432b3ff6d454ea51d1c29dec0e3060b6cdfc10a502df1ecea67d37e67048eda;
+bytes32 constant DIAMOND_STORAGE_ERC1155 = keccak256("diamond.storage.erc1155");
 
 function s() pure returns (ERC1155DS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ERC1155;

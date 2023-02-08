@@ -3,11 +3,13 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-// keccak256("eip1967.proxy.implementation") - 1
+/// @dev computed as `keccak256("eip1967.proxy.implementation") - 1`
 bytes32 constant ERC1967_PROXY_STORAGE_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
 function s() pure returns (ERC1967UpgradeDS storage diamondStorage) {
-    assembly { diamondStorage.slot := ERC1967_PROXY_STORAGE_SLOT } // prettier-ignore
+    assembly {
+        diamondStorage.slot := ERC1967_PROXY_STORAGE_SLOT
+    }
 }
 
 struct ERC1967UpgradeDS {
@@ -30,7 +32,7 @@ abstract contract ERC1967 {
         if (ERC1822(logic).proxiableUUID() != ERC1967_PROXY_STORAGE_SLOT) revert InvalidUUID();
 
         if (data.length != 0) {
-            (bool success, ) = logic.delegatecall(data);
+            (bool success,) = logic.delegatecall(data);
 
             if (!success) {
                 assembly {
@@ -61,9 +63,7 @@ contract ERC1967Proxy is ERC1967 {
 
             returndatacopy(0, 0, returndatasize())
 
-            if success {
-                return(0, returndatasize())
-            }
+            if success { return(0, returndatasize()) }
 
             revert(0, returndatasize())
         }

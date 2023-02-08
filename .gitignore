@@ -17,3 +17,5 @@ broadcast
 #Hardhat files
 cache
 artifacts
+
+lcov.info

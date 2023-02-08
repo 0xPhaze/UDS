@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-/// @dev diamond storage slot `keccak256("diamond.storage.reentrancy.guard")`
-bytes32 constant DIAMOND_STORAGE_REENTRANCY_GUARD = 0xded7818ea165bb3b944d9c6669a17f73a83aecd88f6983ef92ba87bdc26813fa;
+bytes32 constant DIAMOND_STORAGE_REENTRANCY_GUARD = keccak256("diamond.storage.reentrancy.guard");
 
 function s() pure returns (ReentrancyGuardDS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_REENTRANCY_GUARD;

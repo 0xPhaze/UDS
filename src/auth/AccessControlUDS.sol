@@ -5,8 +5,7 @@ import {Initializable} from "../utils/Initializable.sol";
 
 // ------------- storage
 
-/// @dev diamond storage slot `keccak256("diamond.storage.access.control")`
-bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = 0xd229c8df724bc36c62cde04d6d208a43a60480edccfde27ef78f260014374ebd;
+bytes32 constant DIAMOND_STORAGE_ACCESS_CONTROL = keccak256("diamond.storage.access.control");
 
 function s() pure returns (AccessControlDS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_ACCESS_CONTROL;

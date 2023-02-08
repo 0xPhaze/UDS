@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 // ------------- storage
 
-/// @dev diamond storage slot `keccak256("diamond.storage.eip.712.permit")`
-bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = 0x24034dbc71162a0a127c76a8ce123f10641be888cbac564cd2e6e6f5e2c19b81;
+bytes32 constant DIAMOND_STORAGE_EIP_712_PERMIT = keccak256("diamond.storage.eip.712.permit");
 
 function s() pure returns (EIP2612DS storage diamondStorage) {
     bytes32 slot = DIAMOND_STORAGE_EIP_712_PERMIT;
